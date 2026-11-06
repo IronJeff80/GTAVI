@@ -219,7 +219,18 @@ const GTAOverlayConfig = (() => {
     // Shared Aesthetics & Colors
     fontHeading: params.get('fontHeading') || 'Bebas Neue',
     fontBody: params.get('fontBody') || 'Inter',
-    bgUrl: params.get('bg') || 'assets/gta6-bg.webp',
+    bgUrl: params.get('bg') || '',
+    walkonBg: params.get('walkon-bg') || params.get('walkonBg') || 'global',
+    soBg: params.get('so-bg') || params.get('soBg') || 'global',
+    qaBg: params.get('qa-bg') || params.get('qaBg') || 'global',
+    alertBg: params.get('alert-bg') || params.get('alertBg') || 'global',
+    chatBg: params.get('chat-bg') || params.get('chatBg') || 'global',
+    bgOpacity: parseInt(params.get('bgOpacity') || '65', 10),
+    walkonBgOpacity: parseInt(params.get('walkon-bgOpacity') || params.get('walkonBgOpacity') || '65', 10),
+    soBgOpacity: parseInt(params.get('so-bgOpacity') || params.get('soBgOpacity') || '65', 10),
+    qaBgOpacity: parseInt(params.get('qa-bgOpacity') || params.get('qaBgOpacity') || '65', 10),
+    alertBgOpacity: parseInt(params.get('alert-bgOpacity') || params.get('alertBgOpacity') || '65', 10),
+    chatBgOpacity: parseInt(params.get('chat-bgOpacity') || params.get('chatBgOpacity') || '65', 10),
 
     colors: {
       pink:       params.get('cPink')   || '#f4acc4',
@@ -307,6 +318,7 @@ class GTAOverlayEngine {
     this.applyGlobalStyles();
     window.addEventListener('resize', () => this.applyGlobalStyles());
 
+
     if (this.config.previewMode) {
       document.body.classList.add('preview-interactive');
       this.initStudioInteractivity();
@@ -318,6 +330,15 @@ class GTAOverlayEngine {
 
     this.initWebSocket();
     this.initPostMessageBridge();
+  }
+
+
+  resolveBg(override, globalBg, noBgFlag) {
+    // Empty override = solid fill (None)
+    if (override === '' || override === 'none') return 'none';
+    if (noBgFlag) return 'none';
+    if (override && override !== 'global') return override;
+    return globalBg || 'none';
   }
 
   resolveAssetUrl(rawPath) {
@@ -426,12 +447,15 @@ class GTAOverlayEngine {
     // Module 1: Walk-On Card Styling
     if (this.config.modules.walkon && this.dom.walkonCard) {
       const wasPinned = this.dom.walkonContainer && this.dom.walkonContainer.classList.contains('animate-in');
-      if (this.config.noBg || !this.config.bgUrl) {
+
+
+      const walkonResolved = this.resolveBg(this.config.walkonBg, this.config.bgUrl, this.config.noBg);
+      if (walkonResolved === 'none') {
         this.dom.walkonCard.classList.add('no-bg-image');
         root.style.setProperty('--card-bg-image', 'none');
       } else {
         this.dom.walkonCard.classList.remove('no-bg-image');
-        root.style.setProperty('--card-bg-image', resolvedBg);
+        root.style.setProperty('--card-bg-image', `url("${this.resolveAssetUrl(walkonResolved)}")`);
       }
       if (this.dom.walkonContainer) {
         this.dom.walkonContainer.className = `walkon-container ${this.config.cardAnim}` + (wasPinned ? ' animate-in' : '');
@@ -451,12 +475,13 @@ class GTAOverlayEngine {
     // Module 3: Shoutout Toast Styling
     if (this.config.modules.shoutout && this.dom.shoutoutWrapper) {
       const wasSoPinned = this.dom.shoutoutContainer && this.dom.shoutoutContainer.classList.contains('animate-in');
-      if (this.config.soNoBg || !this.config.bgUrl) {
+      const soResolved = this.resolveBg(this.config.soBg, this.config.bgUrl, this.config.soNoBg);
+      if (soResolved === 'none') {
         this.dom.shoutoutWrapper.classList.add('no-bg-image');
         root.style.setProperty('--so-bg-image', 'none');
       } else {
         this.dom.shoutoutWrapper.classList.remove('no-bg-image');
-        root.style.setProperty('--so-bg-image', resolvedBg);
+        root.style.setProperty('--so-bg-image', `url("${this.resolveAssetUrl(soResolved)}")`);
       }
       this.dom.shoutoutWrapper.classList.toggle('avatar-left', this.config.soLayout === 'left');
       this.applyShoutoutAccentColor();
@@ -487,12 +512,13 @@ class GTAOverlayEngine {
     // Module 5: Q&A Highlight Toast Styling
     if (this.config.modules.qa && this.dom.qaBox) {
       const wasQAPinned = this.dom.qaContainer && this.dom.qaContainer.classList.contains('animate-in');
-      if (this.config.qaNoBg || !this.config.bgUrl) {
+      const qaResolved = this.resolveBg(this.config.qaBg, this.config.bgUrl, this.config.qaNoBg);
+      if (qaResolved === 'none') {
         this.dom.qaBox.classList.add('no-bg-image');
         root.style.setProperty('--qa-bg-image', 'none');
       } else {
         this.dom.qaBox.classList.remove('no-bg-image');
-        root.style.setProperty('--qa-bg-image', resolvedBg);
+        root.style.setProperty('--qa-bg-image', `url("${this.resolveAssetUrl(qaResolved)}")`);
       }
       this.applyQAAccentColor();
       if (this.dom.qaBadge) {
@@ -505,6 +531,41 @@ class GTAOverlayEngine {
       this.recalculateQACoords(baseW, baseH);
     }
     
+
+      // Alerts header background - same treatment as Card/Shoutout/Q&A
+      if (this.dom.alertBox) {
+        const alertResolved = this.resolveBg(this.config.alertBg, this.config.bgUrl, false);
+        const header = this.dom.alertBox.querySelector('.alert-header');
+        if (alertResolved === 'none' || !alertResolved) {
+          root.style.setProperty('--alert-bg-image', 'none');
+          if (header) header.style.backgroundImage = 'none';
+        } else {
+          const url = `url("${this.resolveAssetUrl(alertResolved)}")`;
+          root.style.setProperty('--alert-bg-image', url);
+          if (header) {
+            header.style.backgroundImage = `linear-gradient(160deg, rgba(23, 26, 33, 0.65) 0%, color-mix(in srgb, var(--gta-bg-fill) 92%, transparent) 100%), ${url}`;
+            header.style.backgroundSize = 'cover';
+            header.style.backgroundPosition = 'center';
+          }
+        }
+      }
+
+
+      // Chat bar background - same treatment as Card/Shoutout/Q&A
+      if (this.dom.chatBar) {
+        const chatResolved = this.resolveBg(this.config.chatBg, this.config.bgUrl, this.config.chatNoBg);
+        if (chatResolved === 'none' || !chatResolved) {
+          root.style.setProperty('--chat-bg-image', 'none');
+          this.dom.chatBar.style.backgroundImage = 'none';
+        } else {
+          const url = `url("${this.resolveAssetUrl(chatResolved)}")`;
+          root.style.setProperty('--chat-bg-image', url);
+          this.dom.chatBar.style.backgroundImage = `linear-gradient(160deg, rgba(23, 26, 33, 0.65) 0%, color-mix(in srgb, var(--gta-bg-fill) 92%, transparent) 100%), ${url}`;
+          this.dom.chatBar.style.backgroundSize = 'cover';
+          this.dom.chatBar.style.backgroundPosition = 'center';
+        }
+      }
+
     this.updateLocalizedPreviewText();
     this.updateDomCoords();
   }
@@ -1126,7 +1187,18 @@ class GTAOverlayEngine {
         this.config.qaShowBadge = s.qaShowBadge !== '0';
         this.config.qaNoBg      = s.qaNoBg === '1';
         
-        this.config.fontHeading = s.fontHeading; this.config.fontBody = s.fontBody; this.config.bgUrl = s.bg;
+        this.config.fontHeading = s.fontHeading; this.config.fontBody = s.fontBody; this.config.bgUrl = s.bg || '';
+        this.config.walkonBg = s['walkon-bg'] || s.walkonBg || 'global';
+        this.config.soBg     = s['so-bg']     || s.soBg     || 'global';
+        this.config.qaBg     = s['qa-bg']     || s.qaBg     || 'global';
+        this.config.alertBg  = s['alert-bg']  || s.alertBg  || 'global';
+        this.config.chatBg   = s['chat-bg']   || s.chatBg   || 'global';
+        this.config.bgOpacity = parseInt(s.bgOpacity || '65', 10);
+        this.config.walkonBgOpacity = parseInt(s['walkon-bgOpacity'] || s.walkonBgOpacity || '65', 10);
+        this.config.soBgOpacity = parseInt(s['so-bgOpacity'] || s.soBgOpacity || '65', 10);
+        this.config.qaBgOpacity = parseInt(s['qa-bgOpacity'] || s.qaBgOpacity || '65', 10);
+        this.config.alertBgOpacity = parseInt(s['alert-bgOpacity'] || s.alertBgOpacity || '65', 10);
+        this.config.chatBgOpacity = parseInt(s['chat-bgOpacity'] || s.chatBgOpacity || '65', 10);
         this.config.colors = { pink: s.cPink, teal: s.cTeal, purple: s.cPurple, yellow: s.cYellow, iconStroke: s.cStroke, border: s.cBorder, bgFill: s.cBg };
         
         try { this.config.stats = JSON.parse(s.stats); } catch (e) {}
