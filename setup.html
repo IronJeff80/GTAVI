@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GTA VI Overlays - Universal Setup v0.1.4</title>
+  <title>GTA VI Overlays - Universal Setup v0.1.5</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -84,7 +84,9 @@
     .workspace { display: flex; flex-direction: column; background: #0e1014; min-width: 0; min-height: 0; width: 100%; height: 100vh; overflow: hidden; }
     .top-bar { padding: 16px 24px; background: #171a21; border-bottom: 2px solid var(--gta-border); display: flex; flex-direction: column; gap: 14px; }
     
-    .module-select-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #1a1e26; padding: 12px 16px; border-radius: 10px; border: 1px solid #282e3d; }
+    .module-select-bar { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; background: #1a1e26; padding: 10px 16px; border-radius: 10px; border: 1px solid #282e3d; }
+    .config-io-group { margin-left: auto; display: flex; align-items: center; gap: 8px; }
+    .config-io-group .btn { padding: 6px 12px; font-size: 0.72rem; }
     .module-select-title { font-size: 0.78rem; font-weight: 800; color: var(--gta-teal); text-transform: uppercase; margin-right: 10px; }
     .mod-chk-label { display: flex; align-items: center; gap: 6px; font-size: 0.72rem; font-weight: 600; color: #d0d7e2; cursor: pointer; user-select: none; }
     .mod-chk-label input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--gta-teal); cursor: pointer; }
@@ -138,7 +140,7 @@
   <aside class="sidebar">
     <div class="brand-header">
       <div class="brand-top">
-        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.1.4</span></div>
+        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.1.5</span></div>
         <div id="sb-status" class="sb-badge"><i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">Disconnected</span></div>
       </div>
       <div class="global-controls">
@@ -683,6 +685,16 @@
         <label class="mod-chk-label"><input type="checkbox" id="mod-shoutout" class="mod-chk" checked> <span data-i18n="mod_3_shoutout">3. Shoutout</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-chat" class="mod-chk" checked> <span data-i18n="mod_4_chat">4. Chat Bar</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-qa" class="mod-chk" checked> <span data-i18n="mod_5_qa">5. Q&amp;A Toast</span></label>
+
+        <div class="config-io-group">
+          <input type="file" id="import-config-file" accept=".json,application/json" style="display:none;">
+          <button class="btn btn-dark" id="btn-import-config" type="button" onclick="document.getElementById('import-config-file').click()">
+            <i class="fa-solid fa-file-import"></i> <span data-i18n="btn_import">Import</span>
+          </button>
+          <button class="btn btn-purple" id="btn-export-config" type="button" onclick="exportConfigFile(this)">
+            <i class="fa-solid fa-file-export"></i> <span data-i18n="btn_export">Export</span>
+          </button>
+        </div>
       </div>
 
       <div class="url-box">
@@ -1167,7 +1179,12 @@
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
     "tag_horiz_16_9": "HORIZONTAL (16:9)",
-    "tag_vert_9_16": "VERTICAL (9:16)"
+    "tag_vert_9_16": "VERTICAL (9:16)",
+    "btn_import": "Import",
+    "btn_imported": "Imported!",
+    "btn_export": "Export",
+    "btn_exported": "Exported!",
+    "err_import_invalid": "Invalid settings file."
   },
   "pt-br": {
     "tenure": "Tempo",
@@ -1357,7 +1374,12 @@
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
     "tag_horiz_16_9": "HORIZONTAL (16:9)",
-    "tag_vert_9_16": "VERTICAL (9:16)"
+    "tag_vert_9_16": "VERTICAL (9:16)",
+    "btn_import": "Importar",
+    "btn_imported": "Importado!",
+    "btn_export": "Exportar",
+    "btn_exported": "Exportado!",
+    "err_import_invalid": "Arquivo de configurações inválido."
   },
   "es": {
     "tenure": "Antigüedad",
@@ -1547,7 +1569,12 @@
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
     "tag_horiz_16_9": "HORIZONTAL (16:9)",
-    "tag_vert_9_16": "VERTICAL (9:16)"
+    "tag_vert_9_16": "VERTICAL (9:16)",
+    "btn_import": "Importar",
+    "btn_imported": "¡Importado!",
+    "btn_export": "Exportar",
+    "btn_exported": "¡Exportado!",
+    "err_import_invalid": "Archivo de configuración no válido."
   },
   "fr": {
     "tenure": "Ancienneté",
@@ -1737,7 +1764,12 @@
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
     "tag_horiz_16_9": "HORIZONTAL (16:9)",
-    "tag_vert_9_16": "VERTICAL (9:16)"
+    "tag_vert_9_16": "VERTICAL (9:16)",
+    "btn_import": "Importer",
+    "btn_imported": "Importé !",
+    "btn_export": "Exporter",
+    "btn_exported": "Exporté !",
+    "err_import_invalid": "Fichier de configuration invalide."
   },
   "de": {
     "tenure": "Dauer",
@@ -1927,7 +1959,12 @@
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertikal",
     "tag_horiz_16_9": "HORIZONTAL (16:9)",
-    "tag_vert_9_16": "VERTIKAL (9:16)"
+    "tag_vert_9_16": "VERTIKAL (9:16)",
+    "btn_import": "Importieren",
+    "btn_imported": "Importiert!",
+    "btn_export": "Exportieren",
+    "btn_exported": "Exportiert!",
+    "err_import_invalid": "Ungültige Einstellungsdatei."
   }
 };
     let currentLang = 'en';
@@ -2185,6 +2222,183 @@
         btnEl.innerHTML = `<i class="fa-solid fa-check"></i> <span data-i18n="btn_copied">${t('btn_copied')}</span>`;
         setTimeout(() => { btnEl.innerHTML = `<i class="fa-solid fa-copy"></i> <span data-i18n="btn_copy">${t('btn_copy')}</span>`; }, 2000);
       }
+    }
+
+    function exportConfigFile(btnEl) {
+      const state = getSetupState('horiz');
+      const exportPayload = {
+        app: 'GTA VI Overlay Hub',
+        version: '0.1.5',
+        exportedAt: new Date().toISOString(),
+        pinPreview: Boolean(pinCheckbox && pinCheckbox.checked),
+        previewMode: currentPreviewMode,
+        layoutEdit: currentLayoutEdit,
+        lookupAction: document.getElementById('cfg-lookupAction')?.value || 'GTA_LookupYouTubeUser',
+        testUserInput: document.getElementById('test-user-input')?.value || '',
+        testQaMsg: document.getElementById('test-qa-msg')?.value || '',
+        statRows: statRows,
+        state: state
+      };
+
+      const blob = new Blob([JSON.stringify(exportPayload, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'gta6-overlay-config-v0.1.5.json';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+
+      if (btnEl) {
+        btnEl.innerHTML = `<i class="fa-solid fa-check"></i> <span data-i18n="btn_exported">${t('btn_exported')}</span>`;
+        setTimeout(() => {
+          btnEl.innerHTML = `<i class="fa-solid fa-file-export"></i> <span data-i18n="btn_export">${t('btn_export')}</span>`;
+        }, 2000);
+      }
+    }
+
+    function applyImportedConfig(raw) {
+      if (!raw || typeof raw !== 'object') throw new Error('Invalid JSON');
+      const s = (raw.state && typeof raw.state === 'object')
+        ? raw.state
+        : ((raw.settings && typeof raw.settings === 'object') ? raw.settings : raw);
+
+      // 1. Restore Language Selection
+      if (s.lang && i18nDict[s.lang]) {
+        const langEl = document.getElementById('cfg-lang');
+        if (langEl) langEl.value = s.lang;
+      }
+
+      // 2. Restore Base Inputs
+      baseInputs.forEach(id => {
+        const el = document.getElementById(`cfg-${id}`);
+        if (el && s[id] !== undefined) {
+          el.value = s[id];
+        }
+      });
+      if (s.password === undefined && raw.password !== undefined) {
+        const passEl = document.getElementById('cfg-password');
+        if (passEl) passEl.value = raw.password;
+      }
+
+      // Sync Color Pickers with Text Inputs
+      [...Object.keys(DEFAULT_COLORS), ...CHAT_COLOR_KEYS].forEach(k => {
+        const picker = document.getElementById(`picker-${k}`);
+        const txt = document.getElementById(`cfg-${k}`);
+        if (picker && txt && /^#[0-9A-Fa-f]{6}$/.test(txt.value.trim())) {
+          picker.value = txt.value.trim();
+        }
+      });
+
+      // Restore Test Tab Auxiliary Inputs
+      if (raw.lookupAction !== undefined && document.getElementById('cfg-lookupAction')) {
+        document.getElementById('cfg-lookupAction').value = raw.lookupAction;
+      }
+      if (raw.testUserInput !== undefined && document.getElementById('test-user-input')) {
+        document.getElementById('test-user-input').value = raw.testUserInput;
+      }
+      if (raw.testQaMsg !== undefined && document.getElementById('test-qa-msg')) {
+        document.getElementById('test-qa-msg').value = raw.testQaMsg;
+      }
+
+      // 3. Restore Checkbox Toggles
+      checkboxToggles.forEach(id => {
+        const el = document.getElementById('chk-' + id);
+        if (el && s[id] !== undefined) {
+          el.checked = (String(s[id]) === '1' || s[id] === true);
+        }
+      });
+
+      // 4. Restore Horizontal & Vertical Alignment Checkboxes & Disabled States
+      const alignGroups = [
+        { h: 'alignH',       v: 'alignV',       scr: 'chk-alignScreen',       x: 'cfg-x',       y: 'cfg-y' },
+        { h: 'aAlignH',      v: 'aAlignV',      scr: 'chk-aAlignScreen',      x: 'cfg-ax',      y: 'cfg-ay' },
+        { h: 'soAlignH',     v: 'soAlignV',     scr: 'chk-soAlignScreen',     x: 'cfg-soX',     y: 'cfg-soY' },
+        { h: 'chatAlignH',   v: 'chatAlignV',   scr: 'chk-chatAlignScreen',   x: 'cfg-chatX',   y: 'cfg-chatY' },
+        { h: 'qaAlignH',     v: 'qaAlignV',     scr: 'chk-qaAlignScreen',     x: 'cfg-qaX',     y: 'cfg-qaY' },
+        { h: 'v_alignH',     v: 'v_alignV',     scr: 'chk-v_alignScreen',     x: 'cfg-v_x',     y: 'cfg-v_y' },
+        { h: 'v_aAlignH',    v: 'v_aAlignV',    scr: 'chk-v_aAlignScreen',    x: 'cfg-v_ax',    y: 'cfg-v_ay' },
+        { h: 'v_soAlignH',   v: 'v_soAlignV',   scr: 'chk-v_soAlignScreen',   x: 'cfg-v_soX',   y: 'cfg-v_soY' },
+        { h: 'v_chatAlignH', v: 'v_chatAlignV', scr: 'chk-v_chatAlignScreen', x: 'cfg-v_chatX', y: 'cfg-v_chatY' },
+        { h: 'v_qaAlignH',   v: 'v_qaAlignV',   scr: 'chk-v_qaAlignScreen',   x: 'cfg-v_qaX',   y: 'cfg-v_qaY' }
+      ];
+      alignGroups.forEach(g => {
+        const chkH = document.getElementById(`chk-${g.h}`);
+        const chkV = document.getElementById(`chk-${g.v}`);
+        const chkScr = document.getElementById(g.scr);
+        const inpX = document.getElementById(g.x);
+        const inpY = document.getElementById(g.y);
+
+        if (chkH && s[g.h] !== undefined) chkH.checked = (String(s[g.h]) === '1' || s[g.h] === true);
+        if (chkV && s[g.v] !== undefined) chkV.checked = (String(s[g.v]) === '1' || s[g.v] === true);
+        if (chkScr && chkH && chkV) chkScr.checked = chkH.checked && chkV.checked;
+        if (inpX && chkH) inpX.disabled = chkH.checked;
+        if (inpY && chkV) inpY.disabled = chkV.checked;
+      });
+
+      // 5. Restore Module Generator Checkboxes
+      if (s.modules !== undefined) {
+        const modStr = String(s.modules);
+        const isAll = (modStr === 'all');
+        const activeMods = modStr.split(',').map(m => m.trim());
+        ['walkon', 'alerts', 'shoutout', 'chat', 'qa'].forEach(modKey => {
+          const chk = document.getElementById(`mod-${modKey}`);
+          if (chk) chk.checked = isAll || activeMods.includes(modKey);
+        });
+      }
+
+      // 6. Restore Dynamic Card Stat Rows
+      if (Array.isArray(raw.statRows)) {
+        statRows = raw.statRows;
+      } else if (typeof s.stats === 'string') {
+        try {
+          const parsed = JSON.parse(s.stats);
+          if (Array.isArray(parsed)) statRows = parsed;
+        } catch (e) {}
+      } else if (Array.isArray(s.stats)) {
+        statRows = s.stats;
+      }
+
+      // 7. Restore Pin Visible & Preview View Mode
+      if (raw.pinPreview !== undefined && pinCheckbox) {
+        pinCheckbox.checked = Boolean(raw.pinPreview);
+      }
+      if (raw.previewMode && ['dual', 'horiz', 'vert'].includes(raw.previewMode)) {
+        const modeBtn = document.querySelector(`.view-toggles .btn[onclick*="'${raw.previewMode}'"]`);
+        if (modeBtn) setPreviewMode(raw.previewMode, modeBtn);
+      }
+
+      // 8. Apply Translations, Rebuild Stat Row Editors, and Reload Preview Iframes
+      applyLanguageTranslation(true);
+      initialLoadIframe();
+    }
+
+    const importFileInput = document.getElementById('import-config-file');
+    if (importFileInput) {
+      importFileInput.addEventListener('change', (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try {
+            const parsed = JSON.parse(ev.target.result);
+            applyImportedConfig(parsed);
+            const btnImp = document.getElementById('btn-import-config');
+            if (btnImp) {
+              btnImp.innerHTML = `<i class="fa-solid fa-check"></i> <span data-i18n="btn_imported">${t('btn_imported')}</span>`;
+              setTimeout(() => {
+                btnImp.innerHTML = `<i class="fa-solid fa-file-import"></i> <span data-i18n="btn_import">${t('btn_import')}</span>`;
+              }, 2000);
+            }
+          } catch (err) {
+            alert(t('err_import_invalid'));
+          } finally {
+            importFileInput.value = '';
+          }
+        };
+        reader.readAsText(file);
+      });
     }
 
     function connectSetupToSB() {
