@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GTA VI Overlays - Universal Setup v0.1.6</title>
+  <title>GTA VI Overlays - Universal Setup v0.1.7</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -145,7 +145,7 @@
   <aside class="sidebar">
     <div class="brand-header">
       <div class="brand-top">
-        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.1.6</span></div>
+        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.1.7</span></div>
         <div id="sb-status" class="sb-badge"><i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">Disconnected</span></div>
       </div>
       <div class="global-controls">
@@ -197,9 +197,15 @@
       <div class="panel">
         <div class="panel-title"><i class="fa-solid fa-file-import"></i> Streamer.bot Import</div>
         <p style="font-size:0.75rem; color:#9aa4b2; margin-bottom:10px;">Import all required Actions, Queues, Triggers, and Global Variable setup in one click.</p>
-        <button class="btn btn-pink" id="btn-open-sb-import" style="width:100%;">
-          <i class="fa-solid fa-download"></i> Open Import Code & Instructions
-        </button>
+        <div style="display:flex; flex-direction:column; gap:8px;">
+          <button class="btn btn-pink" id="btn-open-sb-import-107" style="width:100%;">
+            <i class="fa-solid fa-download"></i> Streamer.bot 1.0.7 Stable
+          </button>
+          <button class="btn btn-purple" id="btn-open-sb-import-110" style="width:100%;">
+            <i class="fa-solid fa-download"></i> Streamer.bot 1.1.0 Alpha
+          </button>
+        </div>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:6px;">Choose the button that matches your Streamer.bot version. 1.0.7 imports do not work on 1.1.0 Alpha and vice versa.</p>
       </div>
 
       <div class="panel">
@@ -2282,7 +2288,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'gta6-overlay-config-v0.1.6.json';
+      a.download = 'gta6-overlay-config-v0.1.7.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -2667,7 +2673,7 @@
 <div id="sb-import-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center; padding:20px;">
   <div style="background:#171a21; border:3px solid #0b2328; border-radius:12px; max-width:900px; width:100%; max-height:90vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
     <div style="padding:16px 20px; border-bottom:2px solid #232834; display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;">Streamer.bot Import — GTA VI Widget Hub v0.1.6</div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;">Streamer.bot Import — GTA VI Widget Hub v0.1.7</div>
       <button id="btn-close-sb-import" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
     </div>
     <div style="padding:20px;">
@@ -2751,11 +2757,36 @@
   }
 
 
-  // Streamer.bot Import Modal listeners (after DOM ready)
-  document.getElementById('btn-open-sb-import')?.addEventListener('click', () => {
+  // Streamer.bot Import Modal - dual version support
+  async function openSBImport(versionKey) {
     const modal = document.getElementById('sb-import-modal');
-    if (modal) modal.style.display = 'flex';
-  });
+    const ta = document.getElementById('sb-import-code');
+    const label = document.getElementById('sb-import-version-label');
+    if (!modal || !ta) return;
+
+    const versions = {
+      '1.0.7': { label: '1.0.7 Stable', file: 'streamerbot/Streamer.Bot-1.0.7-ImportCode.txt' },
+      '1.1.0': { label: '1.1.0 Alpha', file: 'streamerbot/Streamer.Bot-1.1.0-Alpha-ImportCode.txt' }
+    };
+    const ver = versions[versionKey];
+    if (!ver) return;
+
+    if (label) label.textContent = ver.label;
+    ta.value = 'Loading import code...';
+    modal.style.display = 'flex';
+
+    try {
+      const res = await fetch(ver.file);
+      if (!res.ok) throw new Error('File not found');
+      ta.value = await res.text();
+    } catch (e) {
+      ta.value = 'Could not load import code from ' + ver.file + '. Make sure the streamerbot folder is present and you are serving the site (not opening the HTML file directly).';
+      console.error('[GTA] Failed to load SB import', e);
+    }
+  }
+
+  document.getElementById('btn-open-sb-import-107')?.addEventListener('click', () => openSBImport('1.0.7'));
+  document.getElementById('btn-open-sb-import-110')?.addEventListener('click', () => openSBImport('1.1.0'));
   document.getElementById('btn-close-sb-import')?.addEventListener('click', () => {
     const modal = document.getElementById('sb-import-modal');
     if (modal) modal.style.display = 'none';
@@ -2779,7 +2810,7 @@
     const blob = new Blob([ta.value], {type: 'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.1.6.txt';
+    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.1.7.txt';
     a.click();
     URL.revokeObjectURL(a.href);
   });
