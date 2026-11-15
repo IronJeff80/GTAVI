@@ -1,6 +1,6 @@
 /* ==========================================================================
    GTA VI OBS OVERLAYS - CORE ENGINE (js/overlays.js)
-   v0.1.5 - Multi-Canvas, Multi-Language, Multi-Module Suite
+   v0.2.2 - Money goal values and alert message emotes
    ========================================================================== */
 
 const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -20,7 +20,8 @@ const i18nDict = {
     newSub: "New Subscriber",
     defaultQaMsg: "Welcome to Leonida! Drop your questions in chat!",
     dragWalkon: "Walk-On Card", dragAlert: "Alert Box", dragShoutout: "Shoutout Toast",
-    dragChat: "Horizontal Chat Bar", dragQA: "Q&A Highlight Toast"
+    dragChat: "Horizontal Chat Bar", dragQA: "Q&A Highlight Toast",
+    dragFirst5: "First 5", dragGoals: "Goal Bars"
   },
   'pt-br': {
     tenure: "Tempo", joined: "Membro", loyalty: "Lealdade", months: "Meses",
@@ -30,7 +31,8 @@ const i18nDict = {
     newSub: "Novo Inscrito",
     defaultQaMsg: "Bem-vindo a Leonida! Mande suas perguntas no chat!",
     dragWalkon: "Card de Entrada", dragAlert: "Caixa de Alerta", dragShoutout: "Destaque (Shoutout)",
-    dragChat: "Barra de Chat Horizontal", dragQA: "Destaque de P&R"
+    dragChat: "Barra de Chat Horizontal", dragQA: "Destaque de P&R",
+    dragFirst5: "First 5", dragGoals: "Barras de Metas"
   },
   es: {
     tenure: "Antigüedad", joined: "Unió", loyalty: "Lealtad", months: "Meses",
@@ -40,7 +42,8 @@ const i18nDict = {
     newSub: "Nuevo Suscriptor",
     defaultQaMsg: "¡Bienvenido a Leonida! ¡Deja tus preguntas en el chat!",
     dragWalkon: "Tarjeta de Entrada", dragAlert: "Caja de Alertas", dragShoutout: "Destacado (Shoutout)",
-    dragChat: "Barra de Chat Horizontal", dragQA: "Destacado de P&R"
+    dragChat: "Barra de Chat Horizontal", dragQA: "Destacado de P&R",
+    dragFirst5: "First 5", dragGoals: "Barras de Metas"
   },
   fr: {
     tenure: "Ancienneté", joined: "Rejoint", loyalty: "Fidélité", months: "Mois",
@@ -50,7 +53,8 @@ const i18nDict = {
     newSub: "Nouvel Abonné",
     defaultQaMsg: "Bienvenue à Leonida ! Posez vos questions dans le chat !",
     dragWalkon: "Carte d'Entrée", dragAlert: "Boîte d'Alerte", dragShoutout: "Toast Dédicace",
-    dragChat: "Barre de Chat Horizontale", dragQA: "Toast Q&R"
+    dragChat: "Barre de Chat Horizontale", dragQA: "Toast Q&R",
+    dragFirst5: "First 5", dragGoals: "Barres d'Objectifs"
   },
   de: {
     tenure: "Dauer", joined: "Dabei", loyalty: "Treue", months: "Monate",
@@ -60,9 +64,25 @@ const i18nDict = {
     newSub: "Neuer Abonnent",
     defaultQaMsg: "Willkommen in Leonida! Stellt eure Fragen im Chat!",
     dragWalkon: "Walk-On-Karte", dragAlert: "Alert-Box", dragShoutout: "Shoutout-Toast",
-    dragChat: "Horizontale Chatleiste", dragQA: "F&A-Highlight-Toast"
+    dragChat: "Horizontale Chatleiste", dragQA: "F&A-Highlight-Toast",
+    dragFirst5: "First 5", dragGoals: "Zielbalken"
   }
 };
+
+function parseGoalsCustom(raw) {
+  if (!raw) return [];
+  let list = raw;
+  if (typeof raw === 'string') {
+    try { list = JSON.parse(raw); } catch (e) { return []; }
+  }
+  if (!Array.isArray(list)) return [];
+  return list.map(item => ({
+    on: !(item && (item.on === 0 || item.on === '0' || item.on === false)),
+    title: String((item && item.title) || 'Custom'),
+    count: String((item && (item.count || item.countVar)) || '').trim(),
+    goal: String((item && (item.goal || item.goalVar)) || '').trim()
+  }));
+}
 
 const GTAOverlayConfig = (() => {
   const params = new URLSearchParams(window.location.search);
@@ -88,6 +108,8 @@ const GTAOverlayConfig = (() => {
   const enableShoutout = modulesParam === 'all' || modulesParam.includes('shoutout');
   const enableChat     = modulesParam === 'all' || modulesParam.includes('chat');
   const enableQA       = modulesParam === 'all' || modulesParam.includes('qa');
+  const enableFirst5   = modulesParam === 'all' || modulesParam.includes('first5');
+  const enableGoals    = modulesParam === 'all' || modulesParam.includes('goals');
 
   const layout = params.get('layout') || 'horizontal';
   const isVert = layout === 'vertical';
@@ -102,7 +124,9 @@ const GTAOverlayConfig = (() => {
       alerts:   enableAlerts,
       shoutout: enableShoutout,
       chat:     enableChat,
-      qa:       enableQA
+      qa:       enableQA,
+      first5:   enableFirst5,
+      goals:    enableGoals
     },
     
     layout: layout,
@@ -193,13 +217,12 @@ const GTAOverlayConfig = (() => {
     chatBgOpacity:    parseInt(params.get('chatBgOp') || '88', 10),
     chatNoBg:         params.get('chatNoBg') === '1',
     chatAccent:       params.get('chatAccent') || 'teal',
-    chatShowAvatars:  params.get('chatAv') === '1',
+    chatShowAvatars:  params.get('chatAv') !== '0',
     chatShowBadges:   params.get('chatBadges') !== '0',
     chatUppercase:    params.get('chatUpper') === '1',
     chatIgnoreCmds:   params.get('chatNoCmd') !== '0',
-    chatCmdPrefixes:  params.get('chatPrefixes') || '!, #, /',
+    chatCmdPrefixes:  params.get('chatPrefixes') || '!, #, /, $',
     chatIgnoreUsers:  params.get('chatIgUsers') || '',
-    chatIgnoreGroups: params.get('chatIgGroups') || '',
 
     // Module 5: Q&A Highlight Toast Config
     qaGlobalVar: params.get('qaVar') || 'viChatHighlight',
@@ -215,22 +238,87 @@ const GTAOverlayConfig = (() => {
     qaColor:     params.get('qaColor') || 'teal',
     qaShowBadge: params.get('qaShowBadge') !== '0',
     qaNoBg:      params.get('qaNoBg') === '1',
+    f5Event:  params.get('f5Event') || 'GTA_First5',
+    goalsX: getPos('goalsX', 'v_goalsX', isVert ? '60' : '1466'),
+    goalsY: getPos('goalsY', 'v_goalsY', isVert ? '60' : '243'),
+    goalsScale: getPos('goalsScale', 'v_goalsScale', '1'),
+    goalsAlignH: getBool('goalsAlignH', 'v_goalsAlignH', '0'),
+    goalsAlignV: getBool('goalsAlignV', 'v_goalsAlignV', '0'),
+    goalsMode: params.get('goalsMode') || 'ticker',
+    goalsShowDur: parseInt(params.get('goalsShowDur') || '10', 10) * 1000,
+    goalsGapDur: parseInt(params.get('goalsGapDur') || '1', 10) * 1000,
+    goalsRepeatDelay: parseInt(params.get('goalsRepeatDelay') || '30', 10) * 1000,
+    goalsAnimIn: params.get('goalsAnimIn') || 'zoom',
+    goalsAnimOut: params.get('goalsAnimOut') || 'slide-down',
+    goalsColor: params.get('goalsColor') || 'teal',
+    goalsLikes: params.get('goalsLikes') !== '0',
+    goalsMembers: params.get('goalsMembers') !== '0',
+    goalsJewels: params.get('goalsJewels') !== '0',
+    goalsSubs: params.get('goalsSubs') !== '0',
+    goalsGifts: params.get('goalsGifts') !== '0',
+    goalsSupers: params.get('goalsSupers') !== '0',
+    goalsBg: params.has('goals-bg') ? (params.get('goals-bg') ?? '') : (params.get('goalsBg') || 'assets/backgrounds/Palms.webp'),
+    goalsLikesTitle: params.get('goalsLikesTitle') || 'Likes',
+    goalsLikesCount: params.get('goalsLikesCount') || 'likesCount',
+    goalsLikesGoal: params.get('goalsLikesGoal') || 'LikesGoal',
+    goalsMembersTitle: params.get('goalsMembersTitle') || 'Memberships',
+    goalsMembersCount: params.get('goalsMembersCount') || 'memberCount',
+    goalsMembersGoal: params.get('goalsMembersGoal') || 'memberGoal',
+    goalsJewelsTitle: params.get('goalsJewelsTitle') || 'Jewels',
+    goalsJewelsCount: params.get('goalsJewelsCount') || 'jewelsCount',
+    goalsJewelsGoal: params.get('goalsJewelsGoal') || 'JewelsGoal',
+    goalsSubsTitle: params.get('goalsSubsTitle') || 'Subscribers',
+    goalsSubsCount: params.get('goalsSubsCount') || 'liveSubCount',
+    goalsSubsGoal: params.get('goalsSubsGoal') || 'liveSubGoal',
+    goalsGiftsTitle: params.get('goalsGiftsTitle') || 'Membership Gifts',
+    goalsGiftsCount: params.get('goalsGiftsCount') || 'membershipGiftsCount',
+    goalsGiftsGoal: params.get('goalsGiftsGoal') || 'membershipGiftsGoal',
+    goalsSupersTitle: params.get('goalsSupersTitle') || 'Super Chats/Stickers',
+    goalsSupersCount: params.get('goalsSupersCount') || 'superCount',
+    goalsSupersGoal: params.get('goalsSupersGoal') || 'superGoal',
+    goalsCustom: parseGoalsCustom(params.get('goalsCustom')),
+    f5X:      getPos('f5X', 'v_f5X', '0'),
+    f5Y:      getPos('f5Y', 'v_f5Y', '0'),
+    f5AlignH: (params.get(isVert ? 'v_f5AlignH' : 'f5AlignH') ?? (isVert ? '0' : '1')) === '1',
+    f5AlignV: getBool('f5AlignV', 'v_f5AlignV', '0'),
+    f5InDir:  params.get('f5InDir') || 'right',
+    f5InStyle: params.get('f5InStyle') || 'roll',
+    f5OutDir: params.get('f5OutDir') || 'left',
+    f5OutStyle: params.get('f5OutStyle') || 'fade',
+    f5Shape:  params.get('f5Shape') || 'rounded',
+    f5Height: getPos('f5Height', 'v_f5Height', isVert ? '200' : '1080'),
+    f5Size:   getPos('f5Size', 'v_f5Size', '80'),
+    f5GroupX: getPos('f5GroupX', 'v_f5GroupX', '0'),
+    f5GroupY: getPos('f5GroupY', 'v_f5GroupY', isVert ? '0' : '20'),
+    f5GroupCenterH: getBool('f5GroupCenterH', 'v_f5GroupCenterH', '1'),
+    f5GroupCenterV: getBool('f5GroupCenterV', 'v_f5GroupCenterV', '0'),
+    f5Gap:    getPos('f5Gap', 'v_f5Gap', isVert ? '12' : '30'),
+    f5Width:  getPos('f5Width', 'v_f5Width', isVert ? '1080' : '1920'),
+    f5Align:  params.get('f5Align') || 'center',
+    f5EndDelay: parseInt(params.get('f5EndDelay') || '60000', 10),
+    f5Exit:   params.get('f5Exit') || 'left',
+    f5Sfx:    params.get('f5Sfx') !== '0',
+    f5SfxVol: parseInt(params.get('f5SfxVol') || '57', 10),
+    f5Color1: params.get('f5Color1') || 'teal',
+    f5Color2: params.get('f5Color2') || 'pink',
+    f5Color3: params.get('f5Color3') || 'purple',
+    f5Color4: params.get('f5Color4') || 'yellow',
+    f5Color5: params.get('f5Color5') || 'yellow',
 
     // Shared Aesthetics & Colors
     fontHeading: params.get('fontHeading') || 'Bebas Neue',
     fontBody: params.get('fontBody') || 'Inter',
     bgUrl: params.get('bg') || '',
     walkonBg: params.get('walkon-bg') || params.get('walkonBg') || 'global',
-    soBg: params.get('so-bg') || params.get('soBg') || 'global',
+    soBg: params.has('so-bg') ? (params.get('so-bg') ?? '') : (params.has('soBg') ? (params.get('soBg') ?? '') : 'assets/backgrounds/Palms-Vertical.webp'),
     qaBg: params.get('qa-bg') || params.get('qaBg') || 'global',
     alertBg: params.get('alert-bg') || params.get('alertBg') || 'global',
-    chatBg: params.get('chat-bg') || params.get('chatBg') || 'global',
+    chatBg: params.has('chat-bg') ? (params.get('chat-bg') ?? '') : (params.get('chatBg') || 'assets/backgrounds/Ultimate.webp'),
     bgOpacity: parseInt(params.get('bgOpacity') || '65', 10),
     walkonBgOpacity: parseInt(params.get('walkon-bgOpacity') || params.get('walkonBgOpacity') || '65', 10),
     soBgOpacity: parseInt(params.get('so-bgOpacity') || params.get('soBgOpacity') || '65', 10),
     qaBgOpacity: parseInt(params.get('qa-bgOpacity') || params.get('qaBgOpacity') || '65', 10),
     alertBgOpacity: parseInt(params.get('alert-bgOpacity') || params.get('alertBgOpacity') || '65', 10),
-    chatBgOpacity: parseInt(params.get('chat-bgOpacity') || params.get('chatBgOpacity') || '65', 10),
 
     colors: {
       pink:       params.get('cPink')   || '#f4acc4',
@@ -271,6 +359,10 @@ class GTAOverlayEngine {
     
     this.lastWalkonData = {};
     this.lastAlertType = 'sub';
+    this.goalsData = {};
+    this.memberEmojiMap = {};
+    this._memberEmojiKeys = [];
+    this.first5Avatars = [];
 
     this.dom = {
       walkonContainer:   document.getElementById('walkon-container'),
@@ -295,7 +387,11 @@ class GTAOverlayEngine {
       qaAvatar:          document.getElementById('qa-avatar'),
       qaUsername:        document.getElementById('qa-username'),
       qaBadge:           document.getElementById('qa-badge'),
-      qaMessage:         document.getElementById('qa-message')
+      qaMessage:         document.getElementById('qa-message'),
+      first5Container:   document.getElementById('first5-container'),
+      first5Row:         document.getElementById('first5-row'),
+      goalsContainer:    document.getElementById('goals-container'),
+      goalsInner:        document.getElementById('goals-inner')
     };
 
     [this.dom.avatar, document.getElementById('alert-avatar'), this.dom.shoutoutAvatar, this.dom.qaAvatar].forEach(imgEl => {
@@ -310,6 +406,8 @@ class GTAOverlayEngine {
     if (this.dom.shoutoutContainer && !this.config.modules.shoutout) this.dom.shoutoutContainer.style.display = 'none';
     if (this.dom.chatContainer && !this.config.modules.chat) this.dom.chatContainer.style.display = 'none';
     if (this.dom.qaContainer && !this.config.modules.qa) this.dom.qaContainer.style.display = 'none';
+    if (this.dom.first5Container && !this.config.modules.first5) this.dom.first5Container.style.display = 'none';
+    if (this.dom.goalsContainer && !this.config.modules.goals) this.dom.goalsContainer.style.display = 'none';
 
     if (this.config.modules.walkon) {
       this.renderStatRows({});
@@ -330,6 +428,9 @@ class GTAOverlayEngine {
 
     this.initWebSocket();
     this.initPostMessageBridge();
+    if (this.config.previewMode && window.parent !== window) {
+      window.parent.postMessage({ type: 'OVERLAY_READY', layout: this.config.layout }, '*');
+    }
   }
 
 
@@ -412,6 +513,12 @@ class GTAOverlayEngine {
     const tokens = this.resolveAccentTokens(this.config.qaColor || 'teal');
     this.dom.qaBox.style.setProperty('--qa-accent', tokens.accent);
     this.dom.qaBox.style.setProperty('--qa-glow', tokens.glow);
+  }
+
+  applyGoalsAccentColor() {
+    const tokens = this.resolveAccentTokens(this.config.goalsColor || 'teal');
+    document.documentElement.style.setProperty('--goals-accent', tokens.accent);
+    if (this.dom.goalsInner) this.dom.goalsInner.style.setProperty('--goals-accent', tokens.accent);
   }
 
   applyGlobalStyles() {
@@ -530,6 +637,29 @@ class GTAOverlayEngine {
       }
       this.recalculateQACoords(baseW, baseH);
     }
+
+    if (this.config.modules.first5) {
+      this.recalculateFirst5Coords(baseW, baseH);
+      if (this.config.previewMode && this.first5Avatars && this.first5Avatars.length > 0) this.renderFirst5();
+    }
+    if (this.config.modules.goals) {
+      this.applyGoalsAccentColor();
+      const goalsResolved = this.resolveBg(this.config.goalsBg, this.config.bgUrl, false);
+      if (this.dom.goalsInner) {
+        if (goalsResolved === 'none' || !goalsResolved) {
+          root.style.setProperty('--goals-bg-image', 'none');
+          this.dom.goalsInner.style.backgroundImage = 'none';
+        } else {
+          const url = `url("${this.resolveAssetUrl(goalsResolved)}")`;
+          root.style.setProperty('--goals-bg-image', url);
+          this.dom.goalsInner.style.backgroundImage = `linear-gradient(160deg, rgba(23, 26, 33, 0.55) 0%, color-mix(in srgb, var(--gta-bg-fill) 78%, transparent) 100%), ${url}`;
+          this.dom.goalsInner.style.backgroundSize = 'cover';
+          this.dom.goalsInner.style.backgroundPosition = 'center';
+        }
+      }
+      this.recalculateGoalsCoords(baseW, baseH);
+      this.syncGoalsView();
+    }
     
 
       // Alerts header background - same treatment as Card/Shoutout/Q&A
@@ -586,7 +716,9 @@ class GTAOverlayEngine {
       alert:    [this.dom.alertContainer,    t.dragAlert],
       shoutout: [this.dom.shoutoutContainer, t.dragShoutout],
       chat:     [this.dom.chatContainer,     t.dragChat],
-      qa:       [this.dom.qaContainer,       t.dragQA]
+      qa:       [this.dom.qaContainer,       t.dragQA],
+      first5:   [this.dom.first5Container,   t.dragFirst5],
+      goals:    [this.dom.goalsContainer,    t.dragGoals]
     };
     Object.values(pillMap).forEach(([cont, label]) => {
       if (!cont || !label) return;
@@ -687,6 +819,30 @@ class GTAOverlayEngine {
       root.style.setProperty('--qa-x', `${Math.round(this.config.qaX)}px`);
       root.style.setProperty('--qa-y', `${Math.round(this.config.qaY)}px`);
     }
+    if (this.config.modules.goals) {
+      root.style.setProperty('--goals-x', `${Math.round(this.config.goalsX)}px`);
+      root.style.setProperty('--goals-y', `${Math.round(this.config.goalsY)}px`);
+      root.style.setProperty('--goals-scale', this.config.goalsScale);
+    }
+    if (this.config.modules.first5) {
+      root.style.setProperty('--f5-x', `${Math.round(this.config.f5X)}px`);
+      root.style.setProperty('--f5-y', `${Math.round(this.config.f5Y)}px`);
+      root.style.setProperty('--f5-width', this.config.f5Width + 'px');
+      root.style.setProperty('--f5-height', this.config.f5Height + 'px');
+      root.style.setProperty('--f5-avatar-size', this.config.f5Size + 'px');
+      const count = Math.max(1, Math.min(5, this.first5Avatars.length || (this.config.previewMode ? 5 : 1)));
+      const gaps = Math.max(0, count - 1);
+      if (this.config.f5GroupCenterH) {
+        const groupW = (this.config.f5Size * count) + (this.config.f5Gap * gaps);
+        this.config.f5GroupX = Math.round((this.config.f5Width - groupW) / 2);
+      }
+      if (this.config.f5GroupCenterV) {
+        this.config.f5GroupY = Math.round((this.config.f5Height - this.config.f5Size) / 2);
+      }
+      root.style.setProperty('--f5-group-x', this.config.f5GroupX + 'px');
+      root.style.setProperty('--f5-group-y', this.config.f5GroupY + 'px');
+      root.style.setProperty('--f5-gap', this.config.f5Gap + 'px');
+    }
   }
 
   setPreviewPinned(pinned) {
@@ -698,6 +854,13 @@ class GTAOverlayEngine {
       if (this.config.modules.shoutout && !this.isShoutoutAnimating && this.dom.shoutoutContainer) this.dom.shoutoutContainer.classList.add('animate-in');
       if (this.config.modules.chat && this.dom.chatContainer) this.dom.chatContainer.classList.add('animate-in');
       if (this.config.modules.qa && !this.isQAAnimating && this.dom.qaContainer) this.dom.qaContainer.classList.add('animate-in');
+      if (this.config.modules.first5 && this.dom.first5Container) this.showFirst5Placeholders();
+      if (this.config.modules.goals && this.dom.goalsContainer) {
+        this.dom.goalsContainer.style.display = '';
+        this.seedPreviewGoals();
+        this.dom.goalsContainer.classList.add('animate-in');
+        this.syncGoalsView();
+      }
     } else {
       document.body.classList.remove('preview-interactive');
       if (this.config.modules.walkon && !this.isWalkonAnimating && this.dom.walkonContainer) this.dom.walkonContainer.classList.remove('animate-in');
@@ -705,6 +868,15 @@ class GTAOverlayEngine {
       if (this.config.modules.shoutout && !this.isShoutoutAnimating && this.dom.shoutoutContainer) this.dom.shoutoutContainer.classList.remove('animate-in');
       if (this.config.modules.chat && this.dom.chatContainer) this.dom.chatContainer.classList.remove('animate-in');
       if (this.config.modules.qa && !this.isQAAnimating && this.dom.qaContainer) this.dom.qaContainer.classList.remove('animate-in');
+      if (this.config.modules.first5 && this.dom.first5Container) {
+        this.dom.first5Container.classList.remove('animate-in');
+        this.first5Avatars = [];
+        if (this.dom.first5Row) this.dom.first5Row.innerHTML = '';
+      }
+      if (this.config.modules.goals && this.dom.goalsContainer) {
+        this.dom.goalsContainer.classList.remove('animate-in');
+        this.stopGoalsTicker(true);
+      }
     }
   }
 
@@ -746,29 +918,98 @@ class GTAOverlayEngine {
     const baseW = isVert ? 1080 : 1920;
     const baseH = isVert ? 1920 : 1080;
 
-    const guideV = document.createElement('div'); guideV.className = 'snap-guide vertical'; guideV.style.left = (baseW / 2) + 'px'; document.body.appendChild(guideV);
-    const guideH = document.createElement('div'); guideH.className = 'snap-guide horizontal'; guideH.style.top = (baseH / 2) + 'px'; document.body.appendChild(guideH);
+    const guideV = document.createElement('div');
+    guideV.className = 'snap-guide vertical';
+    guideV.style.left = (baseW / 2) + 'px';
+    document.body.appendChild(guideV);
+    const guideH = document.createElement('div');
+    guideH.className = 'snap-guide horizontal';
+    guideH.style.top = (baseH / 2) + 'px';
+    document.body.appendChild(guideH);
 
-    this.setupDraggable(this.dom.walkonContainer, 'walkon', guideV, guideH, baseW, baseH);
-    this.setupDraggable(this.dom.alertContainer, 'alert', guideV, guideH, baseW, baseH);
-    this.setupDraggable(this.dom.shoutoutContainer, 'shoutout', guideV, guideH, baseW, baseH);
-    this.setupDraggable(this.dom.chatContainer, 'chat', guideV, guideH, baseW, baseH);
-    this.setupDraggable(this.dom.qaContainer, 'qa', guideV, guideH, baseW, baseH);
+    ['walkon', 'alert', 'shoutout', 'chat', 'qa', 'first5', 'goals'].forEach((id) => {
+      const spec = this.widgetSpec(id);
+      if (spec && spec.el) this.setupDraggable(spec.el, id, guideV, guideH, baseW, baseH);
+    });
+    this.setupFirst5GroupDrag();
+  }
+
+  widgetSpec(modType) {
+    const c = this.config;
+    const specs = {
+      walkon: {
+        el: this.dom.walkonContainer, label: 'Walk-On Card',
+        x: 'posX', y: 'posY', scale: 'scale', alignH: 'alignH', alignV: 'alignV',
+        yDir: -1, centerX: false,
+        recalc: (w, h) => this.recalculateWalkonCoords(w, h),
+        msg: 'CARD_MANIPULATED',
+        payload: () => ({ x: c.posX, y: c.posY, scale: c.scale, alignH: c.alignH, alignV: c.alignV })
+      },
+      alert: {
+        el: this.dom.alertContainer, label: 'Alert Box',
+        x: 'alertX', y: 'alertY', scale: 'alertScale', alignH: 'alertAlignH', alignV: 'alertAlignV',
+        yDir: 1, centerX: true,
+        recalc: (w, h) => this.recalculateAlertCoords(w, h),
+        msg: 'ALERT_MANIPULATED',
+        payload: () => ({ ax: c.alertX, ay: c.alertY, ascale: c.alertScale, aAlignH: c.alertAlignH, aAlignV: c.alertAlignV })
+      },
+      shoutout: {
+        el: this.dom.shoutoutContainer, label: 'Shoutout Toast',
+        x: 'soX', y: 'soY', scale: 'soScale', alignH: 'soAlignH', alignV: 'soAlignV',
+        yDir: 1, centerX: false,
+        recalc: (w, h) => this.recalculateShoutoutCoords(w, h),
+        msg: 'SHOUTOUT_MANIPULATED',
+        payload: () => ({ soX: c.soX, soY: c.soY, soScale: c.soScale, soAlignH: c.soAlignH, soAlignV: c.soAlignV })
+      },
+      chat: {
+        el: this.dom.chatContainer, label: 'Horizontal Chat Bar',
+        x: 'chatX', y: 'chatY', scale: 'chatScale', alignH: 'chatAlignH', alignV: 'chatAlignV',
+        yDir: -1, centerX: false,
+        recalc: (w, h) => this.recalculateChatCoords(w, h),
+        msg: 'CHAT_MANIPULATED',
+        payload: () => ({ chatX: c.chatX, chatY: c.chatY, chatScale: c.chatScale, chatAlignH: c.chatAlignH, chatAlignV: c.chatAlignV })
+      },
+      qa: {
+        el: this.dom.qaContainer, label: 'Q&A Highlight Toast',
+        x: 'qaX', y: 'qaY', scale: 'qaScale', alignH: 'qaAlignH', alignV: 'qaAlignV',
+        yDir: -1, centerX: true,
+        recalc: (w, h) => this.recalculateQACoords(w, h),
+        msg: 'QA_MANIPULATED',
+        payload: () => ({ qaX: c.qaX, qaY: c.qaY, qaScale: c.qaScale, qaAlignH: c.qaAlignH, qaAlignV: c.qaAlignV })
+      },
+      first5: {
+        el: this.dom.first5Container, label: (c.t && c.t.dragFirst5) || 'First 5',
+        x: 'f5X', y: 'f5Y', scale: null, alignH: 'f5AlignH', alignV: 'f5AlignV',
+        yDir: 1, centerX: false,
+        recalc: (w, h) => this.recalculateFirst5Coords(w, h),
+        msg: 'FIRST5_MANIPULATED',
+        payload: () => ({
+          f5X: c.f5X, f5Y: c.f5Y, f5Size: c.f5Size,
+          f5GroupX: c.f5GroupX, f5GroupY: c.f5GroupY,
+          f5AlignH: c.f5AlignH, f5AlignV: c.f5AlignV,
+          f5GroupCenterH: c.f5GroupCenterH, f5GroupCenterV: c.f5GroupCenterV
+        })
+      },
+      goals: {
+        el: this.dom.goalsContainer, label: (c.t && c.t.dragGoals) || 'Goal Bars',
+        x: 'goalsX', y: 'goalsY', scale: 'goalsScale', alignH: 'goalsAlignH', alignV: 'goalsAlignV',
+        yDir: 1, centerX: false,
+        recalc: (w, h) => this.recalculateGoalsCoords(w, h),
+        msg: 'GOALS_MANIPULATED',
+        payload: () => ({ goalsX: c.goalsX, goalsY: c.goalsY, goalsScale: c.goalsScale, goalsAlignH: c.goalsAlignH, goalsAlignV: c.goalsAlignV })
+      }
+    };
+    return specs[modType] || null;
   }
 
   setupDraggable(container, modType, guideV, guideH, baseW, baseH) {
     if (!container) return;
+    const spec = this.widgetSpec(modType);
+    if (!spec) return;
 
-    const labels = {
-      walkon:   'Walk-On Card',
-      alert:    'Alert Box',
-      shoutout: 'Shoutout Toast',
-      chat:     'Horizontal Chat Bar',
-      qa:       'Q&A Highlight Toast'
-    };
     const dragPill = document.createElement('div');
     dragPill.className = 'studio-drag-pill';
-    dragPill.innerHTML = `<i class="fa-solid fa-up-down-left-right"></i> ${labels[modType]}`;
+    dragPill.innerHTML = `<i class="fa-solid fa-up-down-left-right"></i> ${spec.label}`;
     container.appendChild(dragPill);
 
     const resizeHandle = document.createElement('div');
@@ -776,183 +1017,114 @@ class GTAOverlayEngine {
     container.appendChild(resizeHandle);
 
     let isDragging = false, isResizing = false;
-    let startX = 0, startY = 0, startObjX = 0, startObjY = 0, startScale = 1;
+    let startX = 0, startY = 0, startObjX = 0, startObjY = 0, startScale = 1, startSize = 80;
     let startBoxW = 0, startBoxH = 0;
     const SNAP = 14;
+    const canvasScaleOf = () => parseFloat(document.documentElement.style.getPropertyValue('--canvas-scale') || '1') || 1;
 
     container.addEventListener('mousedown', (e) => {
       if (e.target === resizeHandle || !this.config.previewMode) return;
+      if (e.target.closest && e.target.closest('.first5-row')) return;
       if ((modType === 'walkon' && this.isWalkonAnimating) ||
           (modType === 'alert' && this.isAlertAnimating) ||
           (modType === 'shoutout' && this.isShoutoutAnimating) ||
           (modType === 'qa' && this.isQAAnimating)) return;
       e.preventDefault();
       isDragging = true;
-      // Adjust pointer events for scaling frame
-      const canvasScale = parseFloat(document.documentElement.style.getPropertyValue('--canvas-scale') || '1');
-      startX = e.clientX / canvasScale; startY = e.clientY / canvasScale;
-      startObjX = modType === 'walkon' ? this.config.posX :
-                 (modType === 'alert' ? this.config.alertX :
-                 (modType === 'shoutout' ? this.config.soX :
-                 (modType === 'chat' ? this.config.chatX : this.config.qaX)));
-      startObjY = modType === 'walkon' ? this.config.posY :
-                 (modType === 'alert' ? this.config.alertY :
-                 (modType === 'shoutout' ? this.config.soY :
-                 (modType === 'chat' ? this.config.chatY : this.config.qaY)));
-      startBoxW = container.offsetWidth; startBoxH = container.offsetHeight;
+      const canvasScale = canvasScaleOf();
+      startX = e.clientX / canvasScale;
+      startY = e.clientY / canvasScale;
+      startObjX = this.config[spec.x];
+      startObjY = this.config[spec.y];
+      startBoxW = container.offsetWidth;
+      startBoxH = container.offsetHeight;
       container.classList.add('is-manipulating');
     });
 
     resizeHandle.addEventListener('mousedown', (e) => {
       if (!this.config.previewMode) return;
-      e.stopPropagation(); e.preventDefault();
+      e.stopPropagation();
+      e.preventDefault();
       isResizing = true;
-      const canvasScale = parseFloat(document.documentElement.style.getPropertyValue('--canvas-scale') || '1');
-      startX = e.clientX / canvasScale; startY = e.clientY / canvasScale;
-      startScale = modType === 'walkon' ? this.config.scale :
-                  (modType === 'alert' ? this.config.alertScale :
-                  (modType === 'shoutout' ? this.config.soScale :
-                  (modType === 'chat' ? this.config.chatScale : this.config.qaScale)));
-      startBoxW = container.offsetWidth; startBoxH = container.offsetHeight;
+      const canvasScale = canvasScaleOf();
+      startX = e.clientX / canvasScale;
+      startY = e.clientY / canvasScale;
+      startScale = spec.scale ? (this.config[spec.scale] || 1) : 1;
+      startSize = this.config.f5Size || 80;
+      startBoxW = container.offsetWidth;
+      startBoxH = container.offsetHeight;
       container.classList.add('is-manipulating');
     });
 
     window.addEventListener('mousemove', (e) => {
       if (!isDragging && !isResizing) return;
-      const canvasScale = parseFloat(document.documentElement.style.getPropertyValue('--canvas-scale') || '1');
+      const canvasScale = canvasScaleOf();
       const dx = (e.clientX / canvasScale) - startX;
       const dy = (e.clientY / canvasScale) - startY;
 
       if (isDragging) {
-        const scale = modType === 'walkon' ? this.config.scale :
-                     (modType === 'alert' ? this.config.alertScale :
-                     (modType === 'shoutout' ? this.config.soScale :
-                     (modType === 'chat' ? this.config.chatScale : this.config.qaScale)));
-        let nextX = 0, nextY = 0;
-
-        if (modType === 'walkon') {
-          nextX = Math.round(Math.max(0, Math.min(baseW - (startBoxW * scale), startObjX + dx)));
-          nextY = Math.round(Math.max(0, Math.min(baseH - (startBoxH * scale), startObjY - dy))); 
-          if (!e.altKey) {
-            const cx = Math.round((baseW - (startBoxW * scale)) / 2);
-            const cy = Math.round((baseH - (startBoxH * scale)) / 2);
-            guideV.style.display = Math.abs(nextX - cx) < SNAP ? 'block' : 'none';
-            guideH.style.display = Math.abs(nextY - cy) < SNAP ? 'block' : 'none';
-            if (guideV.style.display === 'block') nextX = cx;
-            if (guideH.style.display === 'block') nextY = cy;
-          }
-          this.config.alignH = false; this.config.alignV = false;
-          this.config.posX = nextX; this.config.posY = nextY;
-        } else if (modType === 'alert') {
-          nextX = Math.round(Math.max((startBoxW * scale)/2, Math.min(baseW - (startBoxW * scale)/2, startObjX + dx)));
-          nextY = Math.round(Math.max(0, Math.min(baseH - (startBoxH * scale), startObjY + dy))); 
-          if (!e.altKey) {
-            const cx = baseW / 2;
-            const cy = Math.round((baseH - (startBoxH * scale)) / 2);
-            guideV.style.display = Math.abs(nextX - cx) < SNAP ? 'block' : 'none';
-            guideH.style.display = Math.abs(nextY - cy) < SNAP ? 'block' : 'none';
-            if (guideV.style.display === 'block') nextX = cx;
-            if (guideH.style.display === 'block') nextY = cy;
-          }
-          this.config.alertAlignH = false; this.config.alertAlignV = false;
-          this.config.alertX = nextX; this.config.alertY = nextY;
-        } else if (modType === 'shoutout') {
-          nextX = Math.round(Math.max(0, Math.min(baseW - (startBoxW * scale), startObjX + dx)));
-          nextY = Math.round(Math.max(0, Math.min(baseH - (startBoxH * scale), startObjY + dy))); 
-          if (!e.altKey) {
-            const cx = Math.round((baseW - (startBoxW * scale)) / 2);
-            const cy = Math.round((baseH - (startBoxH * scale)) / 2);
-            guideV.style.display = Math.abs(nextX - cx) < SNAP ? 'block' : 'none';
-            guideH.style.display = Math.abs(nextY - cy) < SNAP ? 'block' : 'none';
-            if (guideV.style.display === 'block') nextX = cx;
-            if (guideH.style.display === 'block') nextY = cy;
-          }
-          this.config.soAlignH = false; this.config.soAlignV = false;
-          this.config.soX = nextX; this.config.soY = nextY;
-        } else if (modType === 'chat') {
-          nextX = Math.round(Math.max(0, Math.min(baseW - (startBoxW * scale), startObjX + dx)));
-          nextY = Math.round(Math.max(0, Math.min(baseH - (startBoxH * scale), startObjY - dy))); 
-          if (!e.altKey) {
-            const cx = Math.round((baseW - (startBoxW * scale)) / 2);
-            const cy = Math.round((baseH - (startBoxH * scale)) / 2);
-            guideV.style.display = Math.abs(nextX - cx) < SNAP ? 'block' : 'none';
-            guideH.style.display = Math.abs(nextY - cy) < SNAP ? 'block' : 'none';
-            if (guideV.style.display === 'block') nextX = cx;
-            if (guideH.style.display === 'block') nextY = cy;
-          }
-          this.config.chatAlignH = false; this.config.chatAlignV = false;
-          this.config.chatX = nextX; this.config.chatY = nextY;
-        } else if (modType === 'qa') {
-          nextX = Math.round(Math.max((startBoxW * scale)/2, Math.min(baseW - (startBoxW * scale)/2, startObjX + dx)));
-          nextY = Math.round(Math.max(0, Math.min(baseH - (startBoxH * scale), startObjY - dy))); 
-          if (!e.altKey) {
-            const cx = baseW / 2;
-            const cy = Math.round((baseH - (startBoxH * scale)) / 2);
-            guideV.style.display = Math.abs(nextX - cx) < SNAP ? 'block' : 'none';
-            guideH.style.display = Math.abs(nextY - cy) < SNAP ? 'block' : 'none';
-            if (guideV.style.display === 'block') nextX = cx;
-            if (guideH.style.display === 'block') nextY = cy;
-          }
-          this.config.qaAlignH = false; this.config.qaAlignV = false;
-          this.config.qaX = nextX; this.config.qaY = nextY;
+        const scale = spec.scale ? (this.config[spec.scale] || 1) : 1;
+        const boxW = startBoxW * scale;
+        const boxH = startBoxH * scale;
+        let nextX = startObjX + dx;
+        let nextY = startObjY + (dy * spec.yDir);
+        if (spec.centerX) {
+          nextX = Math.max(boxW / 2, Math.min(baseW - boxW / 2, nextX));
+        } else {
+          nextX = Math.max(0, Math.min(baseW - boxW, nextX));
         }
-
+        nextY = Math.max(0, Math.min(baseH - boxH, nextY));
+        nextX = Math.round(nextX);
+        nextY = Math.round(nextY);
+        if (!e.altKey) {
+          const cx = spec.centerX ? baseW / 2 : Math.round((baseW - boxW) / 2);
+          const cy = Math.round((baseH - boxH) / 2);
+          guideV.style.display = Math.abs(nextX - cx) < SNAP ? 'block' : 'none';
+          guideH.style.display = Math.abs(nextY - cy) < SNAP ? 'block' : 'none';
+          if (guideV.style.display === 'block') nextX = cx;
+          if (guideH.style.display === 'block') nextY = cy;
+        }
+        this.config[spec.alignH] = false;
+        this.config[spec.alignV] = false;
+        this.config[spec.x] = nextX;
+        this.config[spec.y] = nextY;
         this.updateDomCoords();
         this.broadcastManipulate(modType);
-
       } else if (isResizing) {
-        const isBottomAnchored = (modType === 'walkon' || modType === 'chat' || modType === 'qa');
-        const isCenteredX = (modType === 'alert' || modType === 'qa');
-        const vDelta = isBottomAnchored ? -dy : dy;
-        const hDelta = isCenteredX ? (dx * 2) : dx;
+        const vDelta = spec.yDir < 0 ? -dy : dy;
+        const hDelta = spec.centerX ? (dx * 2) : dx;
         const delta = Math.abs(hDelta) >= Math.abs(vDelta) ? hDelta : vDelta;
-
-        const startScaledW = Math.max(80, startBoxW * startScale);
-        const rawScale = startScale * ((startScaledW + delta) / startScaledW);
-        const newScale = Math.round(Math.max(0.5, Math.min(2.0, rawScale)) * 20) / 20;
-        
-        if (modType === 'walkon') {
-          this.config.scale = newScale;
-          this.recalculateWalkonCoords(baseW, baseH);
-        } else if (modType === 'alert') {
-          this.config.alertScale = newScale;
-          this.recalculateAlertCoords(baseW, baseH);
-        } else if (modType === 'shoutout') {
-          this.config.soScale = newScale;
-          this.recalculateShoutoutCoords(baseW, baseH);
-        } else if (modType === 'chat') {
-          this.config.chatScale = newScale;
-          this.recalculateChatCoords(baseW, baseH);
-        } else if (modType === 'qa') {
-          this.config.qaScale = newScale;
-          this.recalculateQACoords(baseW, baseH);
+        if (modType === 'first5') {
+          const base = Math.max(40, startSize);
+          const factor = (base + delta) / base;
+          this.config.f5Size = Math.round(Math.max(40, Math.min(200, startSize * factor)));
+        } else if (spec.scale) {
+          const startScaledW = Math.max(80, startBoxW * startScale);
+          const rawScale = startScale * ((startScaledW + delta) / startScaledW);
+          this.config[spec.scale] = Math.round(Math.max(0.5, Math.min(2.0, rawScale)) * 20) / 20;
+          if (spec.recalc) spec.recalc(baseW, baseH);
         }
         this.updateDomCoords();
+        if (modType === 'first5' && this.config.previewMode) this.renderFirst5();
         this.broadcastManipulate(modType);
       }
     });
 
     window.addEventListener('mouseup', () => {
-      isDragging = false; isResizing = false;
-      guideV.style.display = 'none'; guideH.style.display = 'none';
+      if (!isDragging && !isResizing) return;
+      isDragging = false;
+      isResizing = false;
+      guideV.style.display = 'none';
+      guideH.style.display = 'none';
       container.classList.remove('is-manipulating');
     });
   }
 
   broadcastManipulate(modType) {
     if (window.parent === window) return;
-    const l = this.config.layout;
-    if (modType === 'walkon') {
-      window.parent.postMessage({ type: 'CARD_MANIPULATED', layout: l, x: this.config.posX, y: this.config.posY, scale: this.config.scale, alignH: this.config.alignH, alignV: this.config.alignV }, '*');
-    } else if (modType === 'alert') {
-      window.parent.postMessage({ type: 'ALERT_MANIPULATED', layout: l, ax: this.config.alertX, ay: this.config.alertY, ascale: this.config.alertScale, aAlignH: this.config.alertAlignH, aAlignV: this.config.alertAlignV }, '*');
-    } else if (modType === 'shoutout') {
-      window.parent.postMessage({ type: 'SHOUTOUT_MANIPULATED', layout: l, soX: this.config.soX, soY: this.config.soY, soScale: this.config.soScale, soAlignH: this.config.soAlignH, soAlignV: this.config.soAlignV }, '*');
-    } else if (modType === 'chat') {
-      window.parent.postMessage({ type: 'CHAT_MANIPULATED', layout: l, chatX: this.config.chatX, chatY: this.config.chatY, chatScale: this.config.chatScale, chatAlignH: this.config.chatAlignH, chatAlignV: this.config.chatAlignV }, '*');
-    } else if (modType === 'qa') {
-      window.parent.postMessage({ type: 'QA_MANIPULATED', layout: l, qaX: this.config.qaX, qaY: this.config.qaY, qaScale: this.config.qaScale, qaAlignH: this.config.qaAlignH, qaAlignV: this.config.qaAlignV }, '*');
-    }
+    const spec = this.widgetSpec(modType);
+    if (!spec) return;
+    window.parent.postMessage(Object.assign({ type: spec.msg, layout: this.config.layout }, spec.payload()), '*');
   }
 
   initWebSocket() {
@@ -969,7 +1141,14 @@ class GTAOverlayEngine {
         YouTube: ['Message', 'MessageDeleted', 'UserBanned'],
         Twitch: ['ChatMessage', 'ChatMessageDeleted', 'UserTimedOut', 'UserBanned']
       },
-      onConnect: () => {
+      onConnect: async () => {
+      try {
+        const res = await this.client.getGlobals(true);
+        if (res && res.variables) {
+          this.updateGoalsFromGlobals(res.variables);
+          if (res.variables.memberEmojiMap) this.applyMemberEmojiMap(res.variables.memberEmojiMap);
+        }
+      } catch(e) {}
         console.log(`[GTA-Overlay] Connected to Streamer.bot (${this.config.host}:${this.config.port})`);
       },
       onDisconnect: () => {
@@ -1000,11 +1179,20 @@ class GTAOverlayEngine {
         if (this.config.modules.chat) this.handleIncomingChatMessage(data);
       } else if (ev === this.config.qaEvent) {
         if (this.config.modules.qa) this.enqueueQA(data);
+      } else if (ev === this.config.f5Event) {
+        if (this.config.modules.first5) this.enqueueFirst5(data);
       }
     });
 
     // 2. Global Variable Updated Listener (viShoutOuts & viChatHighlight)
     this.client.on('Misc.GlobalVariableUpdated', (payload) => {
+      const gVarName = payload?.data?.name;
+      const gNewValue = payload?.data?.newValue;
+      if (gVarName === 'memberEmojiMap') this.applyMemberEmojiMap(gNewValue);
+      if (gVarName && this.isGoalVar(gVarName)) {
+        this.goalsData[gVarName] = gNewValue;
+        this.syncGoalsView();
+      }
       const varName = payload?.data?.name;
       const newValue = payload?.data?.newValue;
       if (!varName || !newValue) return;
@@ -1076,8 +1264,35 @@ class GTAOverlayEngine {
         if (this.config.modules.shoutout) this.enqueueShoutout(msg.payload || {});
       } else if (msg.type === 'TRIGGER_CHAT_TEST') {
         if (this.config.modules.chat) this.handleIncomingChatMessage(msg.payload || {});
+      } else if (msg.type === 'TRIGGER_GOALS_TEST') {
+        if (this.config.modules.goals) {
+          this.goalsData[this.config.goalsLikesCount] = 2400;
+          this.goalsData[this.config.goalsLikesGoal] = 5000;
+          this.goalsData[this.config.goalsMembersCount] = 64;
+          this.goalsData[this.config.goalsMembersGoal] = 100;
+          this.goalsData[this.config.goalsJewelsCount] = 1500;
+          this.goalsData[this.config.goalsJewelsGoal] = 2000;
+          this.goalsData[this.config.goalsSubsCount] = 420;
+          this.goalsData[this.config.goalsSubsGoal] = 1000;
+          this.goalsData[this.config.goalsGiftsCount] = 18;
+          this.goalsData[this.config.goalsGiftsGoal] = 50;
+          this.goalsData[this.config.goalsSupersCount] = 12;
+          this.goalsData[this.config.goalsSupersGoal] = 40;
+          (this.config.goalsCustom || []).forEach((g, i) => {
+            if (g.count) this.goalsData[g.count] = (i + 1) * 15;
+            if (g.goal) this.goalsData[g.goal] = 100;
+          });
+          this._goalsPreviewSeeded = false;
+          if (this.dom.goalsContainer) this.dom.goalsContainer.classList.add('animate-in');
+          this.syncGoalsView();
+        }
+      } else if (msg.type === 'TRIGGER_FIRST5_TEST') {
+        this.clearFirst5();
+        [{avatar:DEFAULT_AVATAR_SVG,name:'ViceKing'},{avatar:DEFAULT_AVATAR_SVG,name:'NeonRider'},{avatar:DEFAULT_AVATAR_SVG,name:'PinkPanther'},{avatar:DEFAULT_AVATAR_SVG,name:'TealWolf'},{avatar:DEFAULT_AVATAR_SVG,name:'PurpleHaze'}].forEach((m,i)=>setTimeout(()=>this.enqueueFirst5(m),i*1000));
       } else if (msg.type === 'TRIGGER_QA_TEST') {
         if (this.config.modules.qa) this.enqueueQA(msg.payload || {});
+      } else if (msg.type === 'MEMBER_EMOJI_MAP') {
+        this.applyMemberEmojiMap(msg.map || {});
       } else if (msg.type === 'SET_PREVIEW_PINNED') {
         this.setPreviewPinned(Boolean(msg.pinned));
       } else if (msg.type === 'LIVE_CONFIG_UPDATE') {
@@ -1169,9 +1384,8 @@ class GTAOverlayEngine {
         this.config.chatShowBadges   = s.chatBadges !== '0';
         this.config.chatUppercase    = s.chatUpper === '1';
         this.config.chatIgnoreCmds   = s.chatNoCmd !== '0';
-        this.config.chatCmdPrefixes  = s.chatPrefixes || '!, #, /';
+        this.config.chatCmdPrefixes  = s.chatPrefixes || '!, #, /, $';
         this.config.chatIgnoreUsers  = s.chatIgUsers || '';
-        this.config.chatIgnoreGroups = s.chatIgGroups || '';
 
         // Q&A Highlight Toast
         this.config.qaTitle     = s.qaTitle || this.config.t.qa;
@@ -1186,19 +1400,90 @@ class GTAOverlayEngine {
         this.config.qaColor     = s.qaColor || 'teal';
         this.config.qaShowBadge = s.qaShowBadge !== '0';
         this.config.qaNoBg      = s.qaNoBg === '1';
+        this.config.goalsX = parseFloat(isVert ? s.v_goalsX : s.goalsX);
+        if (!Number.isFinite(this.config.goalsX)) this.config.goalsX = isVert ? 60 : 1466;
+        this.config.goalsY = parseFloat(isVert ? s.v_goalsY : s.goalsY);
+        if (!Number.isFinite(this.config.goalsY)) this.config.goalsY = isVert ? 60 : 243;
+        this.config.goalsScale = parseFloat(isVert ? s.v_goalsScale : s.goalsScale) || 1;
+        this.config.goalsAlignH = (isVert ? (s.v_goalsAlignH ?? s.goalsAlignH) : s.goalsAlignH) === '1';
+        this.config.goalsAlignV = (isVert ? (s.v_goalsAlignV ?? s.goalsAlignV) : s.goalsAlignV) === '1';
+        this.config.goalsMode = s.goalsMode || 'ticker';
+        this.config.goalsShowDur = parseInt(s.goalsShowDur || '10', 10) * 1000;
+        this.config.goalsGapDur = parseInt(s.goalsGapDur || '1', 10) * 1000;
+        this.config.goalsRepeatDelay = parseInt(s.goalsRepeatDelay || '30', 10) * 1000;
+        this.config.goalsAnimIn = s.goalsAnimIn || 'zoom';
+        this.config.goalsAnimOut = s.goalsAnimOut || 'slide-down';
+        this.config.goalsColor = s.goalsColor || 'teal';
+        this.config.goalsLikes = s.goalsLikes !== '0';
+        this.config.goalsMembers = s.goalsMembers !== '0';
+        this.config.goalsJewels = s.goalsJewels !== '0';
+        this.config.goalsSubs = s.goalsSubs !== '0';
+        this.config.goalsGifts = s.goalsGifts !== '0';
+        this.config.goalsSupers = s.goalsSupers !== '0';
+        this.config.goalsBg = s['goals-bg'] !== undefined ? s['goals-bg'] : (s.goalsBg !== undefined ? s.goalsBg : this.config.goalsBg);
+        this.config.goalsLikesTitle = s.goalsLikesTitle || 'Likes';
+        this.config.goalsLikesCount = s.goalsLikesCount || 'likesCount';
+        this.config.goalsLikesGoal = s.goalsLikesGoal || 'LikesGoal';
+        this.config.goalsMembersTitle = s.goalsMembersTitle || 'Memberships';
+        this.config.goalsMembersCount = s.goalsMembersCount || 'memberCount';
+        this.config.goalsMembersGoal = s.goalsMembersGoal || 'memberGoal';
+        this.config.goalsJewelsTitle = s.goalsJewelsTitle || 'Jewels';
+        this.config.goalsJewelsCount = s.goalsJewelsCount || 'jewelsCount';
+        this.config.goalsJewelsGoal = s.goalsJewelsGoal || 'JewelsGoal';
+        this.config.goalsSubsTitle = s.goalsSubsTitle || 'Subscribers';
+        this.config.goalsSubsCount = s.goalsSubsCount || 'liveSubCount';
+        this.config.goalsSubsGoal = s.goalsSubsGoal || 'liveSubGoal';
+        this.config.goalsGiftsTitle = s.goalsGiftsTitle || 'Membership Gifts';
+        this.config.goalsGiftsCount = s.goalsGiftsCount || 'membershipGiftsCount';
+        this.config.goalsGiftsGoal = s.goalsGiftsGoal || 'membershipGiftsGoal';
+        this.config.goalsSupersTitle = s.goalsSupersTitle || 'Super Chats/Stickers';
+        this.config.goalsSupersCount = s.goalsSupersCount || 'superCount';
+        this.config.goalsSupersGoal = s.goalsSupersGoal || 'superGoal';
+        if (s.goalsCustom !== undefined) this.config.goalsCustom = parseGoalsCustom(s.goalsCustom);
+
+        this.config.f5X = this.num(isVert ? s.v_f5X : s.f5X, 0);
+        this.config.f5Y = this.num(isVert ? s.v_f5Y : s.f5Y, 0);
+        this.config.f5AlignH = (isVert ? (s.v_f5AlignH ?? s.f5AlignH ?? '0') : (s.f5AlignH ?? '1')) === '1';
+        this.config.f5AlignV = (isVert ? (s.v_f5AlignV ?? s.f5AlignV) : s.f5AlignV) === '1';
+        this.config.f5InDir = s.f5InDir || 'right';
+        this.config.f5InStyle = s.f5InStyle || 'roll';
+        this.config.f5OutDir = s.f5OutDir || 'left';
+        this.config.f5OutStyle = s.f5OutStyle || 'fade';
+        this.config.f5Shape = s.f5Shape || 'rounded';
+        this.config.f5Height = this.num(isVert ? s.v_f5Height : s.f5Height, isVert ? 200 : 1080);
+        this.config.f5Size = this.num(isVert ? s.v_f5Size : s.f5Size, 80);
+        this.config.f5GroupX = this.num(isVert ? s.v_f5GroupX : s.f5GroupX, 0);
+        this.config.f5GroupY = this.num(isVert ? s.v_f5GroupY : s.f5GroupY, isVert ? 0 : 20);
+        this.config.f5GroupCenterH = (isVert ? (s.v_f5GroupCenterH ?? s.f5GroupCenterH) : s.f5GroupCenterH) === '1';
+        this.config.f5GroupCenterV = (isVert ? (s.v_f5GroupCenterV ?? s.f5GroupCenterV) : s.f5GroupCenterV) === '1';
+        this.config.f5Gap = this.num(isVert ? s.v_f5Gap : s.f5Gap, isVert ? 12 : 30);
+        this.config.f5Width = this.num(isVert ? s.v_f5Width : s.f5Width, isVert ? 1080 : 1920);
+        this.config.f5Align = s.f5Align || 'center';
+        this.config.f5EndDelay = parseInt(s.f5EndDelay || '60000', 10);
+        this.config.f5Exit = s.f5Exit || 'left';
+        this.config.f5Sfx = s.f5Sfx !== '0';
+        this.config.f5SfxVol = parseInt(s.f5SfxVol || '57', 10);
+        this.config.f5Color1 = s.f5Color1 || 'teal';
+        this.config.f5Color2 = s.f5Color2 || 'pink';
+        this.config.f5Color3 = s.f5Color3 || 'purple';
+        this.config.f5Color4 = s.f5Color4 || 'yellow';
+        this.config.f5Color5 = s.f5Color5 || 'yellow';
+        if (this.config.previewMode && this.config.modules.first5) {
+          if (!this.first5Avatars || this.first5Avatars.length === 0) this.showFirst5Placeholders();
+          else this.renderFirst5();
+        }
         
         this.config.fontHeading = s.fontHeading; this.config.fontBody = s.fontBody; this.config.bgUrl = s.bg || '';
         this.config.walkonBg = s['walkon-bg'] || s.walkonBg || 'global';
-        this.config.soBg     = s['so-bg']     || s.soBg     || 'global';
+        this.config.soBg     = s['so-bg'] !== undefined ? s['so-bg'] : (s.soBg !== undefined ? s.soBg : 'assets/backgrounds/Palms-Vertical.webp');
         this.config.qaBg     = s['qa-bg']     || s.qaBg     || 'global';
         this.config.alertBg  = s['alert-bg']  || s.alertBg  || 'global';
-        this.config.chatBg   = s['chat-bg']   || s.chatBg   || 'global';
+        this.config.chatBg   = s['chat-bg'] !== undefined ? s['chat-bg'] : (s.chatBg !== undefined ? s.chatBg : 'assets/backgrounds/Ultimate.webp');
         this.config.bgOpacity = parseInt(s.bgOpacity || '65', 10);
         this.config.walkonBgOpacity = parseInt(s['walkon-bgOpacity'] || s.walkonBgOpacity || '65', 10);
         this.config.soBgOpacity = parseInt(s['so-bgOpacity'] || s.soBgOpacity || '65', 10);
         this.config.qaBgOpacity = parseInt(s['qa-bgOpacity'] || s.qaBgOpacity || '65', 10);
         this.config.alertBgOpacity = parseInt(s['alert-bgOpacity'] || s.alertBgOpacity || '65', 10);
-        this.config.chatBgOpacity = parseInt(s['chat-bgOpacity'] || s.chatBgOpacity || '65', 10);
         this.config.colors = { pink: s.cPink, teal: s.cTeal, purple: s.cPurple, yellow: s.cYellow, iconStroke: s.cStroke, border: s.cBorder, bgFill: s.cBg };
         
         try { this.config.stats = JSON.parse(s.stats); } catch (e) {}
@@ -1206,6 +1491,11 @@ class GTAOverlayEngine {
         this.applyGlobalStyles();
       }
     });
+  }
+
+  num(value, fallback) {
+    const n = parseFloat(value);
+    return Number.isFinite(n) ? n : fallback;
   }
 
   wait(ms) { return new Promise(resolve => setTimeout(resolve, ms)); }
@@ -1345,7 +1635,13 @@ class GTAOverlayEngine {
     }
 
     if (message) {
-      bodyEl.innerHTML += `<div class="alert-message">${message}</div>`;
+      const formatted = this.sanitizeAndFormatChatMessage(
+        message,
+        raw.emotes || raw.emoji,
+        raw.parts || raw.messageParts,
+        { uppercase: false }
+      );
+      bodyEl.innerHTML += `<div class="alert-message">${formatted}</div>`;
     }
 
     bodyEl.style.display = bodyEl.innerHTML === '' ? 'none' : 'flex';
@@ -1440,8 +1736,8 @@ class GTAOverlayEngine {
     const message = d.message || d.rawInput || '';
     const isMod = Boolean(u.isModerator || u.isOwner || d.isModerator || d.isOwner);
     const isMember = Boolean(u.isSponsor || u.isMember || d.isSponsor || d.isMember);
-    const groups = d.userGroups || u.groups || [];
     const emotes = d.emotes || [];
+    const parts = d.parts || [];
     const avatar = u.profileImageUrl || d.userProfileUrl || '';
     const msgId = d.eventId || d.messageId || `yt-${Date.now()}`;
 
@@ -1450,8 +1746,8 @@ class GTAOverlayEngine {
       userId,
       message,
       role: isMod ? 'mod' : (isMember ? 'member' : 'viewer'),
-      groups,
       emotes,
+      parts,
       avatar,
       msgId
     });
@@ -1465,7 +1761,6 @@ class GTAOverlayEngine {
     const roleNum = parseInt(d.role || '1', 10);
     const isMod = Boolean(d.isModerator || roleNum >= 3);
     const isMember = Boolean(d.isSubscriber || d.isVip || roleNum === 2);
-    const groups = d.userGroups || [];
     const emotes = d.emotes || [];
     const avatar = d.avatarUrl || d.userProfileUrl || '';
     const msgId = d.msgId || `tw-${Date.now()}`;
@@ -1475,7 +1770,6 @@ class GTAOverlayEngine {
       userId,
       message,
       role: isMod ? 'mod' : (isMember ? 'member' : 'viewer'),
-      groups,
       emotes,
       avatar,
       msgId
@@ -1511,40 +1805,171 @@ class GTAOverlayEngine {
       }
     }
 
-    // 3. Check Ignored Groups (by groupName)
-    const ignoredGroups = (this.config.chatIgnoreGroups || '')
-      .split(',')
-      .map(g => g.trim().toLowerCase())
-      .filter(Boolean);
-    if (ignoredGroups.length > 0 && item.groups) {
-      const userGroupsList = Array.isArray(item.groups)
-        ? item.groups.map(g => String(g).trim().toLowerCase())
-        : String(item.groups).split(',').map(g => g.trim().toLowerCase());
-      for (const g of userGroupsList) {
-        if (g && ignoredGroups.includes(g)) return true;
-      }
-    }
-
     return false;
   }
 
-  sanitizeAndFormatChatMessage(text, emotes) {
-    let safe = String(text || '');
-    if (Array.isArray(emotes) && emotes.length > 0 && emotes[0].startIndex !== undefined) {
-      const sorted = [...emotes].sort((a, b) => b.startIndex - a.startIndex);
-      sorted.forEach(em => {
-        const url = em.imageUrl || em.url;
-        if (url) {
-          const imgTag = `<img src="${url}" class="emote" alt="" />`;
-          safe = safe.substring(0, em.startIndex) + imgTag + safe.substring(em.endIndex + 1);
-        }
-      });
-      return safe;
+  escapeHtml(s) {
+    return String(s ?? '').replace(/[&<>"']/g, ch => ({
+      '&': '&', '<': '<', '>': '>', '"': '"', "'": '&#39;'
+    }[ch]));
+  }
+
+  emoteImageUrl(em) {
+    if (!em || typeof em !== 'object') return '';
+    return em.imageUrl || em.url || em.image || (em.images && (em.images[0]?.url || em.images.url)) || '';
+  }
+
+  wrapEmojiChars(escaped) {
+    const source = String(escaped ?? '');
+    if (!source) return '';
+    if (!this._emojiSeg && typeof Intl !== 'undefined' && Intl.Segmenter) {
+      this._emojiSeg = new Intl.Segmenter(undefined, { granularity: 'grapheme' });
     }
-    return safe
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
+    const isEmoji = (g) => /\p{Extended_Pictographic}/u.test(g);
+    let out = '';
+    let prevEmoji = false;
+    if (this._emojiSeg) {
+      for (const part of this._emojiSeg.segment(source)) {
+        const g = part.segment;
+        if (isEmoji(g)) {
+          if (prevEmoji) out += '\u200B';
+          out += `<span class="emoji-char">${g}</span>`;
+          prevEmoji = true;
+        } else {
+          out += g;
+          prevEmoji = false;
+        }
+      }
+      return out;
+    }
+    return source.replace(/\p{Extended_Pictographic}(?:\uFE0F|\uFE0E|\u200D\p{Extended_Pictographic})*/gu, (g) => `<span class="emoji-char">${g}</span>`)
+      .replace(/<\/span><span class="emoji-char">/g, '</span>\u200B<span class="emoji-char">');
+  }
+
+  applyMemberEmojiMap(raw) {
+    let value = raw;
+    if (value && typeof value === 'object' && !Array.isArray(value) && 'value' in value && ('lastWrite' in value || 'name' in value)) {
+      value = value.value;
+    }
+    for (let i = 0; i < 2 && typeof value === 'string'; i++) {
+      const trimmed = value.trim();
+      if (!trimmed) { value = {}; break; }
+      try { value = JSON.parse(trimmed); } catch (e) { value = {}; break; }
+    }
+    const map = {};
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      Object.keys(value).forEach(k => {
+        const url = value[k];
+        if (!k || typeof url !== 'string') return;
+        const clean = url.trim();
+        if (/^https?:\/\//i.test(clean)) map[k] = clean;
+      });
+    }
+    this.memberEmojiMap = map;
+    this._memberEmojiKeys = Object.keys(map).sort((a, b) => b.length - a.length);
+  }
+
+  splitMemberEmoji(raw) {
+    const text = String(raw ?? '');
+    const keys = this._memberEmojiKeys || [];
+    if (!keys.length || !text) return [{ type: 'text', text }];
+    const out = [];
+    let buf = '';
+    let i = 0;
+    while (i < text.length) {
+      let hit = '';
+      if (text.charCodeAt(i) === 58) {
+        for (let k = 0; k < keys.length; k++) {
+          if (text.startsWith(keys[k], i)) { hit = keys[k]; break; }
+        }
+      }
+      if (hit) {
+        if (buf) { out.push({ type: 'text', text: buf }); buf = ''; }
+        out.push({ type: 'emote', url: this.memberEmojiMap[hit] });
+        i += hit.length;
+      } else {
+        buf += text.charAt(i);
+        i += 1;
+      }
+    }
+    if (buf) out.push({ type: 'text', text: buf });
+    return out;
+  }
+
+  formatTextSegment(text, opts) {
+    const forceUpper = opts && Object.prototype.hasOwnProperty.call(opts, 'uppercase')
+      ? Boolean(opts.uppercase)
+      : Boolean(this.config.chatUppercase);
+    const chunks = this.splitMemberEmoji(text);
+    return chunks.map(chunk => {
+      if (chunk.type === 'emote') {
+        return `<img class="emote" alt="" src="${this.escapeHtml(chunk.url)}" />`;
+      }
+      let s = chunk.text;
+      if (forceUpper) s = s.toUpperCase();
+      const re = /https?:\/\/(?:yt3\.ggpht\.com|yt3\.googleusercontent\.com|static-cdn\.jtvnw\.net|cdn\.betterttv\.net|cdn\.frankerfacez\.com|cdn\.7tv\.app|7tv\.io)\/(?:(?!https?:\/\/)[^\s<])+/g;
+      let html = '';
+      let last = 0;
+      let match;
+      while ((match = re.exec(s))) {
+        html += this.wrapEmojiChars(this.escapeHtml(s.slice(last, match.index)));
+        html += `<img class="emote" alt="" src="${this.escapeHtml(match[0])}" />`;
+        last = match.index + match[0].length;
+      }
+      html += this.wrapEmojiChars(this.escapeHtml(s.slice(last)));
+      return html;
+    }).join('');
+  }
+
+  sanitizeAndFormatChatMessage(text, emotes, parts, opts) {
+    let partList = parts;
+    if (typeof partList === 'string') {
+      try { partList = JSON.parse(partList); } catch (e) { partList = null; }
+    }
+    if (Array.isArray(partList) && partList.some(p => p && (p.image || p.imageUrl || p.emoji || p.type === 'emote' || p.type === 'emoji'))) {
+      return partList.map(p => {
+        if (!p || typeof p !== 'object') return '';
+        const url = this.emoteImageUrl(p);
+        const isEmote = Boolean(url) && (p.emoji || p.image || p.imageUrl || p.type === 'emote' || p.type === 'emoji');
+        if (isEmote) return `<img class="emote" alt="" src="${this.escapeHtml(url)}" />`;
+        return this.formatTextSegment(p.text || '', opts);
+      }).join('');
+    }
+
+    let list = emotes;
+    if (typeof list === 'string') {
+      try { list = JSON.parse(list); } catch (e) { list = []; }
+    }
+    if (!Array.isArray(list)) list = [];
+    const raw = String(text || '');
+    const usable = list.map(em => {
+      const url = this.emoteImageUrl(em);
+      const start = Number(em && em.startIndex);
+      if (!url || !Number.isFinite(start)) return null;
+      return { url, start, end: Number(em.endIndex), name: String((em && (em.name || em.text)) || '') };
+    }).filter(Boolean).sort((a, b) => a.start - b.start);
+
+    if (!usable.length) return this.formatTextSegment(raw, opts);
+
+    let html = '';
+    let cursor = 0;
+    for (const em of usable) {
+      let start = em.start < cursor ? cursor : em.start;
+      let endExclusive = Number.isFinite(em.end) ? em.end + 1 : start;
+      if (em.name && start >= 0 && start <= raw.length) {
+        const incl = raw.substring(start, Number.isFinite(em.end) ? em.end + 1 : start);
+        const excl = raw.substring(start, Number.isFinite(em.end) ? em.end : start);
+        if (incl !== em.name && excl === em.name) endExclusive = em.end;
+        else if (incl !== em.name && em.name && raw.substring(start, start + em.name.length) === em.name) endExclusive = start + em.name.length;
+      }
+      if (endExclusive < start) endExclusive = start;
+      if (start > raw.length) break;
+      if (start > cursor) html += this.formatTextSegment(raw.substring(cursor, start), opts);
+      html += `<img class="emote" alt="" src="${this.escapeHtml(em.url)}" />`;
+      cursor = Math.min(raw.length, Math.max(cursor, endExclusive));
+    }
+    if (cursor < raw.length) html += this.formatTextSegment(raw.substring(cursor), opts);
+    return html;
   }
 
   handleIncomingChatMessage(raw) {
@@ -1553,8 +1978,8 @@ class GTAOverlayEngine {
       userId:   raw.userId || raw.id || '',
       message:  raw.message !== undefined ? raw.message : (raw.rawInput || ''),
       role:     raw.role || (raw.isModerator ? 'mod' : (raw.isSponsor || raw.isMember ? 'member' : 'viewer')),
-      groups:   raw.groups || raw.userGroups || '',
       emotes:   raw.emotes || [],
+      parts:    raw.parts || [],
       avatar:   raw.avatar || raw.userProfileUrl || raw.avatarUrl || '',
       msgId:    raw.msgId || raw.messageId || `msg-${Date.now()}-${++this.chatMsgCounter}`
     };
@@ -1573,10 +1998,7 @@ class GTAOverlayEngine {
 
     let uName = String(item.userName || 'Viewer').trim();
     let msgText = String(item.message || '').trim();
-    if (this.config.chatUppercase) {
-      uName = uName.toUpperCase();
-      msgText = msgText.toUpperCase();
-    }
+    if (this.config.chatUppercase) uName = uName.toUpperCase();
 
     const roleClass = item.role === 'mod' ? 'role-mod' : (item.role === 'member' ? 'role-member' : 'role-viewer');
 
@@ -1594,7 +2016,7 @@ class GTAOverlayEngine {
       }
     }
 
-    const formattedMsg = this.sanitizeAndFormatChatMessage(msgText, item.emotes);
+    const formattedMsg = this.sanitizeAndFormatChatMessage(msgText, item.emotes, item.parts);
 
     el.innerHTML = `
       ${avatarHtml}
@@ -1681,7 +2103,9 @@ class GTAOverlayEngine {
       this.dom.qaUsername.textContent = String(userName).toUpperCase();
     }
     if (this.dom.qaMessage) {
-      this.dom.qaMessage.textContent = message;
+      const emotes = raw.emotes || raw.emoji || [];
+      const parts = raw.parts || raw.messageParts || [];
+      this.dom.qaMessage.innerHTML = this.sanitizeAndFormatChatMessage(message, emotes, parts, { uppercase: false });
     }
     if (this.dom.qaAvatar) {
       this.dom.qaAvatar.src = avatarUrl;
@@ -1702,7 +2126,383 @@ class GTAOverlayEngine {
 
     await this.wait(650);
   }
+
+  recalculateGoalsCoords(baseW, baseH) {
+    if (!this.dom.goalsContainer) return;
+    const scale = this.config.goalsScale || 1;
+    const w = this.dom.goalsContainer.offsetWidth || 380;
+    const h = this.dom.goalsContainer.offsetHeight || 180;
+    const maxX = Math.max(0, baseW - (w * scale));
+    const maxY = Math.max(0, baseH - (h * scale));
+    if (this.config.goalsAlignH) this.config.goalsX = Math.round(maxX / 2);
+    else this.config.goalsX = Math.round(Math.max(0, Math.min(maxX, this.config.goalsX)));
+    if (this.config.goalsAlignV) this.config.goalsY = Math.round(maxY / 2);
+    else this.config.goalsY = Math.round(Math.max(0, Math.min(maxY, this.config.goalsY)));
+  }
+
+  recalculateFirst5Coords(baseW, baseH) {
+    if (!this.dom.first5Container) return;
+    const w = this.config.f5Width || this.dom.first5Container.offsetWidth || 200;
+    const h = this.config.f5Height || this.dom.first5Container.offsetHeight || 100;
+    const maxX = Math.max(0, baseW - w);
+    const maxY = Math.max(0, baseH - h);
+    if (this.config.f5AlignH) this.config.f5X = Math.round(maxX / 2);
+    else this.config.f5X = Math.round(Math.max(0, Math.min(maxX, this.config.f5X)));
+    if (this.config.f5AlignV) this.config.f5Y = Math.round(maxY / 2);
+    else this.config.f5Y = Math.round(Math.max(0, Math.min(maxY, this.config.f5Y)));
+  }
+
+  enqueueFirst5(data) {
+    if (!this.dom.first5Row) return;
+    if (!this.first5Avatars) this.first5Avatars = [];
+    const avatar = data.avatar || data.avatarUrl || data.userProfileUrl || DEFAULT_AVATAR_SVG;
+    const name = data.user || data.userName || data.displayName || '';
+    if (this.first5Avatars.length >= 5) return;
+    this.first5Avatars.push({ avatar, name });
+    this.renderFirst5();
+    if (this.config.f5Sfx) {
+      const audio = new Audio('assets/sfx/platinum.mp3');
+      audio.volume = Math.max(0, Math.min(100, this.config.f5SfxVol || 80)) / 100;
+      audio.play().catch(() => {});
+    }
+  }
+
+  renderFirst5() {
+    if (!this.dom.first5Row) return;
+    if (!this.first5Avatars) this.first5Avatars = [];
+    const colors = [this.config.f5Color1, this.config.f5Color2, this.config.f5Color3, this.config.f5Color4, this.config.f5Color5];
+    const row = this.dom.first5Row;
+    while (row.children.length > this.first5Avatars.length) row.removeChild(row.lastChild);
+    for (let i = 0; i < this.first5Avatars.length; i++) {
+      const item = this.first5Avatars[i];
+      let img = row.children[i];
+      const isNew = !img;
+      if (!img) {
+        img = document.createElement('img');
+        row.appendChild(img);
+      }
+      const tokens = this.resolveAccentTokens(colors[i] || 'pink');
+      img.style.setProperty('--f5-accent', tokens.accent);
+      img.style.setProperty('--f5-glow', tokens.glow);
+      if (img.getAttribute('src') !== item.avatar) img.src = item.avatar;
+      img.alt = item.name || '';
+      img.onerror = () => { if (img.src !== DEFAULT_AVATAR_SVG) img.src = DEFAULT_AVATAR_SVG; };
+      img.classList.remove('shape-circle', 'shape-rounded');
+      img.classList.add('first5-avatar', 'shape-' + (this.config.f5Shape || 'rounded'));
+      if (isNew) {
+        const dir = this.config.f5InDir === 'random' ? ['left','right','top','bottom'][Math.floor(Math.random()*4)] : this.config.f5InDir;
+        const style = this.config.f5InStyle || 'slide';
+        const animClass = (style === 'zoom' || style === 'fade') ? `in-${style}` : `in-${dir}-${style}`;
+        img.classList.add(animClass);
+      }
+    }
+    row.className = `first5-row align-${this.config.f5Align || 'center'}`;
+    if (this.first5Avatars.length > 0 && this.dom.first5Container) {
+      this.dom.first5Container.classList.add('animate-in');
+      this.dom.first5Container.classList.remove('animate-out');
+    }
+    if (!this.config.previewMode && this.first5Avatars.length >= 5 && this.config.f5EndDelay > 0) {
+      clearTimeout(this._f5ExitTimer);
+      this._f5ExitTimer = setTimeout(() => this.exitFirst5(), this.config.f5EndDelay);
+    }
+    // Recenter the row for the avatars that are actually on screen.
+    // OBS used to center a single slot, then grow the rest to the right.
+    this.updateDomCoords();
+  }
+
+  exitFirst5() {
+    if (!this.dom.first5Container || !this.dom.first5Row) return;
+    const dir = this.config.f5OutDir === 'random' ? ['left','right','top','bottom'][Math.floor(Math.random()*4)] : this.config.f5OutDir;
+    const style = this.config.f5OutStyle || 'fade';
+    const animClass = (style === 'zoom' || style === 'fade') ? `out-${style}` : `out-${dir}-${style}`;
+    Array.from(this.dom.first5Row.children).forEach(img => {
+      img.className = img.className.replace(/\bin-\S+/g, '').replace(/\bout-\S+/g, '');
+      img.classList.add(animClass);
+    });
+    setTimeout(() => {
+      this.first5Avatars = [];
+      if (this.dom.first5Row) this.dom.first5Row.innerHTML = '';
+      this.dom.first5Container.classList.remove('animate-in');
+    }, 500);
+  }
+
+  clearFirst5() {
+    this.first5Avatars = [];
+    clearTimeout(this._f5ExitTimer);
+    if (this.dom.first5Container) this.dom.first5Container.classList.remove('animate-in');
+    if (this.dom.first5Row) this.dom.first5Row.innerHTML = '';
+  }
+
+  stopGoalsTicker(showAll) {
+    if (this._goalsTickerTimer) clearTimeout(this._goalsTickerTimer);
+    this._goalsTickerTimer = null;
+    this._goalsTickerGen = (this._goalsTickerGen || 0) + 1;
+    this.clearGoalsWidgetMotion();
+    if (showAll && this.dom.goalsInner) {
+      this.dom.goalsInner.querySelectorAll('.goal-bar').forEach(b => { b.style.display = ''; });
+    }
+  }
+
+  goalsMotionClasses() {
+    return ['widget-in-slide-up','widget-in-fade','widget-in-zoom','widget-out-slide-down','widget-out-fade','widget-out-zoom','widget-hidden'];
+  }
+
+  clearGoalsWidgetMotion() {
+    if (!this.dom.goalsInner) return;
+    this.dom.goalsInner.classList.remove(...this.goalsMotionClasses());
+  }
+
+  playGoalsWidgetAnim(phase) {
+    const el = this.dom.goalsInner;
+    if (!el) return;
+    const raw = phase === 'in' ? (this.config.goalsAnimIn || 'zoom') : (this.config.goalsAnimOut || 'slide-down');
+    const cls = (phase === 'in' ? 'widget-in-' : 'widget-out-') + raw;
+    el.classList.remove(...this.goalsMotionClasses());
+    void el.offsetWidth;
+    el.classList.add(cls);
+  }
+
+  startGoalsTicker() {
+    this.stopGoalsTicker(false);
+    if (!this.dom.goalsInner) return;
+    const bars = Array.from(this.dom.goalsInner.querySelectorAll('.goal-bar'));
+    if (bars.length === 0) return;
+    const gen = this._goalsTickerGen;
+    let idx = 0;
+    const alive = () => gen === this._goalsTickerGen;
+    const animMs = 480;
+    const showCurrent = () => {
+      if (!alive()) return;
+      bars.forEach((b, i) => { b.style.display = i === idx ? '' : 'none'; });
+      this.playGoalsWidgetAnim('in');
+      const hold = animMs + (this.config.goalsShowDur || 10000);
+      this._goalsTickerTimer = setTimeout(() => {
+        if (!alive()) return;
+        this.playGoalsWidgetAnim('out');
+        this._goalsTickerTimer = setTimeout(() => {
+          if (!alive()) return;
+          if (this.dom.goalsInner) {
+            this.dom.goalsInner.classList.remove(...this.goalsMotionClasses());
+            this.dom.goalsInner.classList.add('widget-hidden');
+          }
+          const isLast = idx === bars.length - 1;
+          const gap = isLast ? (this.config.goalsRepeatDelay || 0) : (this.config.goalsGapDur || 0);
+          idx = (idx + 1) % bars.length;
+          this._goalsTickerTimer = setTimeout(showCurrent, gap);
+        }, animMs);
+      }, hold);
+    };
+    showCurrent();
+  }
+
+  isGoalVar(name) {
+    const vars = [
+      this.config.goalsLikesCount, this.config.goalsLikesGoal,
+      this.config.goalsMembersCount, this.config.goalsMembersGoal,
+      this.config.goalsJewelsCount, this.config.goalsJewelsGoal,
+      this.config.goalsSubsCount, this.config.goalsSubsGoal,
+      this.config.goalsGiftsCount, this.config.goalsGiftsGoal,
+      this.config.goalsSupersCount, this.config.goalsSupersGoal
+    ];
+    (this.config.goalsCustom || []).forEach(g => {
+      if (g.count) vars.push(g.count);
+      if (g.goal) vars.push(g.goal);
+    });
+    return vars.includes(name);
+  }
+
+  unwrapGlobal(entry) {
+    if (entry && typeof entry === 'object' && 'value' in entry) return entry.value;
+    return entry;
+  }
+
+  updateGoalsFromGlobals(vars) {
+    if (!vars || !this.goalsData) this.goalsData = this.goalsData || {};
+    let hit = false;
+    Object.keys(vars || {}).forEach(k => {
+      if (!this.isGoalVar(k)) return;
+      this.goalsData[k] = this.unwrapGlobal(vars[k]);
+      hit = true;
+    });
+    if (hit) this._goalsPreviewSeeded = false;
+    this.syncGoalsView();
+  }
+
+  seedPreviewGoals() {
+    if (!this.config.previewMode || this._goalsPreviewSeeded === false) return;
+    const samples = [
+      [this.config.goalsLikesCount, 1280, this.config.goalsLikesGoal, 5000],
+      [this.config.goalsMembersCount, 42, this.config.goalsMembersGoal, 100],
+      [this.config.goalsJewelsCount, 860, this.config.goalsJewelsGoal, 2000],
+      [this.config.goalsSubsCount, 310, this.config.goalsSubsGoal, 1000],
+      [this.config.goalsGiftsCount, 18, this.config.goalsGiftsGoal, 50],
+      [this.config.goalsSupersCount, 12, this.config.goalsSupersGoal, 40]
+    ];
+    (this.config.goalsCustom || []).forEach((g, i) => {
+      if (g.count && g.goal) samples.push([g.count, (i + 1) * 15, g.goal, 100]);
+    });
+    const hasLive = samples.some(([c]) => this.goalsData[c] !== undefined && this.goalsData[c] !== '');
+    if (hasLive) return;
+    samples.forEach(([c, cv, g, gv]) => {
+      this.goalsData[c] = cv;
+      this.goalsData[g] = gv;
+    });
+    this._goalsPreviewSeeded = true;
+  }
+
+  syncGoalsView() {
+    const rebuilt = this.renderGoals();
+    if (this.config.goalsMode !== 'ticker') {
+      this._goalsTickerKey = '';
+      this.stopGoalsTicker(true);
+      return;
+    }
+    const key = [this.config.goalsShowDur, this.config.goalsGapDur, this.config.goalsRepeatDelay, this.config.goalsAnimIn, this.config.goalsAnimOut].join('|');
+    if (rebuilt || !this._goalsTickerTimer || this._goalsTickerKey !== key) {
+      this._goalsTickerKey = key;
+      this.startGoalsTicker();
+    }
+  }
+
+  parseGoalNumber(value) {
+    if (typeof value === 'number') return Number.isFinite(value) ? value : NaN;
+    if (value == null) return NaN;
+    let s = String(value).trim();
+    if (!s) return NaN;
+    let neg = false;
+    if (s.charAt(0) === '-') { neg = true; s = s.slice(1).trim(); }
+    s = s.replace(/[^\d.,]/g, '');
+    if (!s) return NaN;
+    const lastComma = s.lastIndexOf(',');
+    const lastDot = s.lastIndexOf('.');
+    if (lastComma >= 0 && lastDot >= 0) {
+      if (lastComma > lastDot) s = s.replace(/\./g, '').replace(',', '.');
+      else s = s.replace(/,/g, '');
+    } else if (lastComma >= 0) {
+      const bits = s.split(',');
+      if (bits.length === 2 && bits[1].length === 2) s = bits[0].replace(/\./g, '') + '.' + bits[1];
+      else s = s.replace(/,/g, '');
+    } else if ((s.match(/\./g) || []).length > 1) {
+      s = s.replace(/\./g, '');
+    }
+    const n = Number(s);
+    if (!Number.isFinite(n)) return NaN;
+    return neg ? -n : n;
+  }
+
+  formatGoalAmount(raw, num) {
+    if (typeof raw === 'string') {
+      const trimmed = raw.trim();
+      if (trimmed && /[^\d\s.,-]/.test(trimmed)) return trimmed;
+    }
+    const n = Number.isFinite(num) ? num : 0;
+    return n.toLocaleString();
+  }
+
+  renderGoals() {
+    if (!this.dom.goalsInner) return false;
+    if (!this.goalsData) this.goalsData = {};
+    const bars = [];
+    const add = (enabled, title, countVar, goalVar) => {
+      if (!enabled || !countVar || !goalVar) return;
+      const rawCurrent = this.goalsData[countVar];
+      const current = this.parseGoalNumber(rawCurrent);
+      const currentNum = Number.isFinite(current) ? current : 0;
+      const rawTarget = this.goalsData[goalVar];
+      const missingTarget = rawTarget === undefined || rawTarget === '';
+      const parsedTarget = this.parseGoalNumber(rawTarget);
+      const target = missingTarget ? 100 : (Number.isFinite(parsedTarget) ? parsedTarget : 0);
+      const pct = target > 0 ? Math.min((currentNum / target) * 100, 100) : 0;
+      const label = `${this.formatGoalAmount(rawCurrent, currentNum)} / ${this.formatGoalAmount(missingTarget ? 100 : rawTarget, target)}`;
+      bars.push({ title, current: currentNum, target, pct, countVar, label });
+    };
+    add(this.config.goalsLikes, this.config.goalsLikesTitle, this.config.goalsLikesCount, this.config.goalsLikesGoal);
+    add(this.config.goalsMembers, this.config.goalsMembersTitle, this.config.goalsMembersCount, this.config.goalsMembersGoal);
+    add(this.config.goalsJewels, this.config.goalsJewelsTitle, this.config.goalsJewelsCount, this.config.goalsJewelsGoal);
+    add(this.config.goalsSubs, this.config.goalsSubsTitle, this.config.goalsSubsCount, this.config.goalsSubsGoal);
+    add(this.config.goalsGifts, this.config.goalsGiftsTitle, this.config.goalsGiftsCount, this.config.goalsGiftsGoal);
+    add(this.config.goalsSupers, this.config.goalsSupersTitle, this.config.goalsSupersCount, this.config.goalsSupersGoal);
+    (this.config.goalsCustom || []).forEach(g => add(g.on, g.title, g.count, g.goal));
+    const signature = bars.map(b => b.title + '\u0002' + b.countVar).join('\u0001');
+    const inner = this.dom.goalsInner;
+    const existing = inner.querySelectorAll('.goal-bar');
+    if (this.dom.goalsContainer) this.dom.goalsContainer.classList.toggle('ticker', this.config.goalsMode === 'ticker');
+    if (inner.dataset.signature === signature && existing.length === bars.length) {
+      bars.forEach((b, i) => {
+        const el = existing[i];
+        const spans = el.querySelectorAll('.goal-bar-label span');
+        if (spans[0]) spans[0].textContent = b.title;
+        if (spans[1]) spans[1].textContent = b.label;
+        const fill = el.querySelector('.goal-bar-fill');
+        if (fill) fill.style.width = b.pct + '%';
+      });
+      return false;
+    }
+    inner.dataset.signature = signature;
+    inner.innerHTML = bars.map(b => `
+      <div class="goal-bar">
+        <div class="goal-bar-label"><span>${this.escapeHtml(b.title)}</span><span>${this.escapeHtml(b.label)}</span></div>
+        <div class="goal-bar-track"><div class="goal-bar-fill" style="width:${b.pct}%"></div></div>
+      </div>
+    `).join('');
+    return true;
+  }
+
+  showFirst5Placeholders() {
+    this.first5Avatars = [
+      {avatar:DEFAULT_AVATAR_SVG,name:'User 1'},
+      {avatar:DEFAULT_AVATAR_SVG,name:'User 2'},
+      {avatar:DEFAULT_AVATAR_SVG,name:'User 3'},
+      {avatar:DEFAULT_AVATAR_SVG,name:'User 4'},
+      {avatar:DEFAULT_AVATAR_SVG,name:'User 5'}
+    ];
+    if (this.dom.first5Row) this.dom.first5Row.innerHTML = '';
+    this.renderFirst5();
+  }
+
+  setupFirst5GroupDrag() {
+    if (!this.dom.first5Row) return;
+    let dragging = false, startX, startY, startGroupX, startGroupY;
+    this.dom.first5Row.style.cursor = 'grab';
+    const begin = (e) => {
+      if (!this.config.previewMode) return;
+      dragging = true;
+      startX = e.clientX; startY = e.clientY;
+      startGroupX = this.config.f5GroupX; startGroupY = this.config.f5GroupY;
+      this.dom.first5Row.style.cursor = 'grabbing';
+      this.dom.first5Row.style.transition = 'none';
+      e.stopPropagation();
+      if (e.preventDefault) e.preventDefault();
+    };
+    this.dom.first5Row.addEventListener('pointerdown', begin);
+    this.dom.first5Row.addEventListener('mousedown', (e) => { e.stopPropagation(); });
+    window.addEventListener('pointermove', (e) => {
+      if (!dragging) return;
+      const canvasScale = parseFloat(document.documentElement.style.getPropertyValue('--canvas-scale') || '1') || 1;
+      const dx = (e.clientX - startX) / canvasScale;
+      const dy = (e.clientY - startY) / canvasScale;
+      const count = Math.max(1, this.first5Avatars.length || 1);
+      const groupW = (this.config.f5Size * count) + (this.config.f5Gap * Math.max(0, count - 1));
+      const maxX = Math.max(0, this.config.f5Width - groupW);
+      const maxY = Math.max(0, this.config.f5Height - this.config.f5Size);
+      this.config.f5GroupX = Math.round(Math.max(0, Math.min(maxX, startGroupX + dx)));
+      this.config.f5GroupY = Math.round(Math.max(0, Math.min(maxY, startGroupY + dy)));
+      this.config.f5GroupCenterH = false;
+      this.config.f5GroupCenterV = false;
+      document.documentElement.style.setProperty('--f5-group-x', this.config.f5GroupX + 'px');
+      document.documentElement.style.setProperty('--f5-group-y', this.config.f5GroupY + 'px');
+    });
+    window.addEventListener('pointerup', () => {
+      if (!dragging) return;
+      dragging = false;
+      this.dom.first5Row.style.cursor = 'grab';
+      this.dom.first5Row.style.transition = '';
+      this.broadcastManipulate('first5');
+    });
+  }
+
 }
+
 
 document.addEventListener('DOMContentLoaded', () => {
   window.gtaOverlay = new GTAOverlayEngine(GTAOverlayConfig);

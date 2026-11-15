@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GTA VI Overlays - Universal Setup v0.1.7</title>
+  <title>GTA VI Overlays - Universal Setup v0.2.2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -32,8 +32,8 @@
     
     .global-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     
-    .tab-nav { display: grid; grid-template-columns: repeat(4, 1fr); background: #12151a; border-bottom: 2px solid #232834; }
-    .tab-btn { background: transparent; border: none; border-bottom: 3px solid transparent; color: #8c96a6; padding: 9px 4px; font-size: 0.69rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.4px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 5px; transition: all 0.15s ease; white-space: nowrap; }
+    .tab-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #12151a; border-bottom: 2px solid #232834; }
+    .tab-btn { background: transparent; border: none; border-bottom: 3px solid transparent; color: #8c96a6; padding: 8px 2px; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.15s ease; white-space: nowrap; }
     .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.03); }
     .tab-btn.active { color: var(--gta-teal); border-bottom-color: var(--gta-teal); background: #171a21; }
     .tab-content { display: none; padding: 14px 18px; overflow-y: auto; flex: 1; flex-direction: column; gap: 14px; }
@@ -41,13 +41,29 @@
     
     .panel { background: #1e222b; border: 2px solid var(--gta-border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; }
-    .panel-title { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--gta-teal); display: flex; align-items: center; gap: 8px; }
+    .panel-title { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--gta-teal); display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
+    .panel-chevron { margin-left: 2px; font-size: 0.62rem; opacity: 0.7; transition: transform 0.15s ease; }
+    .panel.collapsed .panel-chevron { transform: rotate(-90deg); }
+    .panel.collapsed > :not(.panel-title):not(.panel-header) { display: none !important; }
     
     /* Layout Switcher */
     .layout-switcher { display: flex; gap: 4px; background: #14171f; padding: 4px; border-radius: 8px; border: 1px solid #282e3d; margin-bottom: 4px; }
     .layout-btn { flex: 1; background: transparent; border: none; color: #8c96a6; font-size: 0.72rem; font-weight: 700; padding: 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .layout-btn:hover { background: rgba(255,255,255,0.05); }
     .layout-btn.active { background: #232834; color: var(--gta-yellow); }
+    .choice-switcher { display: flex; gap: 4px; background: #14171f; padding: 4px; border-radius: 8px; border: 1px solid #282e3d; }
+    .choice-btn { flex: 1; background: transparent; border: none; color: #8c96a6; font-size: 0.72rem; font-weight: 700; padding: 6px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .choice-btn:hover { background: rgba(255,255,255,0.05); }
+    .choice-btn.active { background: #232834; color: var(--gta-yellow); }
+    .livesub-steps { font-size: 0.74rem; color: #d0d7e2; line-height: 1.45; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; }
+    .livesub-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .livesub-box { background: #14171f; border: 1px solid #282e3d; border-radius: 8px; padding: 8px 10px; display: flex; flex-direction: column; gap: 4px; }
+    .livesub-box strong { font-size: 0.68rem; letter-spacing: 0.4px; text-transform: uppercase; }
+    .livesub-box.on strong { color: var(--gta-teal); }
+    .livesub-box.off strong { color: #ff8aa0; }
+    .livesub-box code, .livesub-keep code { color: var(--gta-yellow); font-size: 0.68rem; }
+    .livesub-keep { font-size: 0.72rem; color: #d0d7e2; }
+    .livesub-code { width: 100%; min-height: 180px; resize: vertical; font-family: monospace; font-size: 0.66rem; line-height: 1.35; }
 
     .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; }
@@ -138,6 +154,17 @@
     .status-log { font-size: 0.74rem; padding: 8px 10px; border-radius: 6px; background: #12151a; border: 1px solid #2b313e; color: #9aa4b2; min-height: 46px; display: flex; align-items: center; line-height: 1.35; word-break: break-word; }
     
     .edit-vert { display: none; }
+    .emote-list { display: flex; flex-direction: column; gap: 6px; max-height: 240px; overflow: auto; }
+    .emote-row { display: flex; align-items: center; gap: 8px; background: #14171f; border: 1px solid #282e3d; border-radius: 8px; padding: 6px 8px; }
+    .emote-row img { width: 28px; height: 28px; object-fit: contain; background: #0e1015; border-radius: 4px; flex-shrink: 0; }
+    .emote-row code { font-size: 0.72rem; color: var(--gta-yellow); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .emote-row .btn { padding: 4px 8px; font-size: 0.65rem; }
+    .emote-code { display: flex; align-items: center; background: #12151a; border: 1px solid #303642; border-radius: 6px; overflow: hidden; }
+    .emote-code span { color: #8c96a6; font-family: monospace; padding-left: 8px; font-size: 0.78rem; }
+    .emote-code strong { color: #53d8bf; font-family: monospace; font-size: 0.78rem; }
+    .emote-code input { border: none; background: transparent; }
+    details.emote-help { font-size: 0.72rem; color: #b0b8c4; background: #14171f; border: 1px solid #282e3d; border-radius: 8px; padding: 8px 10px; }
+    details.emote-help pre { margin-top: 8px; max-height: 180px; overflow: auto; background: #0e1015; color: #e0e6ed; padding: 8px; border-radius: 6px; font-size: 0.68rem; white-space: pre-wrap; }
   </style>
 </head>
 <body>
@@ -145,7 +172,7 @@
   <aside class="sidebar">
     <div class="brand-header">
       <div class="brand-top">
-        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.1.7</span></div>
+        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.2.2</span></div>
         <div id="sb-status" class="sb-badge"><i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">Disconnected</span></div>
       </div>
       <div class="global-controls">
@@ -173,12 +200,14 @@
 
     <nav class="tab-nav">
       <button class="tab-btn active" data-tab="tab-general"><i class="fa-solid fa-sliders"></i> <span data-i18n="tab_general">General</span></button>
+      <button class="tab-btn" data-tab="tab-settings"><i class="fa-solid fa-gear"></i> <span data-i18n="tab_settings">Settings</span></button>
       <button class="tab-btn" data-tab="tab-walkon"><i class="fa-solid fa-id-card"></i> <span data-i18n="tab_card">Card</span></button>
       <button class="tab-btn" data-tab="tab-alerts"><i class="fa-solid fa-bell"></i> <span data-i18n="tab_alerts">Alerts</span></button>
       <button class="tab-btn" data-tab="tab-shoutout"><i class="fa-solid fa-bullhorn"></i> <span data-i18n="tab_shoutout">Shoutout</span></button>
       <button class="tab-btn" data-tab="tab-chat"><i class="fa-solid fa-comments"></i> <span data-i18n="tab_chat">Chat</span></button>
       <button class="tab-btn" data-tab="tab-qa"><i class="fa-solid fa-circle-question"></i> <span data-i18n="tab_qa">Q&amp;A</span></button>
-      <button class="tab-btn" data-tab="tab-colors"><i class="fa-solid fa-palette"></i> <span data-i18n="tab_colors">Colors</span></button>
+      <button class="tab-btn" data-tab="tab-first5"><i class="fa-solid fa-users"></i> <span data-i18n="tab_first5">First 5</span></button>
+      <button class="tab-btn" data-tab="tab-goals"><i class="fa-solid fa-chart-simple"></i> <span data-i18n="tab_goals">Goals</span></button>
       <button class="tab-btn" data-tab="tab-test"><i class="fa-solid fa-flask"></i> <span data-i18n="tab_test">Test</span></button>
     </nav>
 
@@ -195,19 +224,63 @@
       </div>
 
       <div class="panel">
-        <div class="panel-title"><i class="fa-solid fa-file-import"></i> Streamer.bot Import</div>
-        <p style="font-size:0.75rem; color:#9aa4b2; margin-bottom:10px;">Import all required Actions, Queues, Triggers, and Global Variable setup in one click.</p>
+        <div class="panel-title"><i class="fa-solid fa-file-import"></i> <span data-i18n="panel_sb_import">Streamer.bot Import</span></div>
+        <p style="font-size:0.75rem; color:#9aa4b2; margin-bottom:10px;" data-i18n="desc_sb_import">Import all required Actions, Queues, Triggers, and Global Variable setup in one click.</p>
         <div style="display:flex; flex-direction:column; gap:8px;">
           <button class="btn btn-pink" id="btn-open-sb-import-107" style="width:100%;">
-            <i class="fa-solid fa-download"></i> Streamer.bot 1.0.7 Stable
+            <i class="fa-solid fa-download"></i> <span data-i18n="btn_sb_107">Streamer.bot 1.0.7 Stable</span>
           </button>
           <button class="btn btn-purple" id="btn-open-sb-import-110" style="width:100%;">
-            <i class="fa-solid fa-download"></i> Streamer.bot 1.1.0 Alpha
+            <i class="fa-solid fa-download"></i> <span data-i18n="btn_sb_110">Streamer.bot 1.1.0 Alpha</span>
           </button>
         </div>
-        <p style="font-size:0.68rem; color:#8c96a6; margin-top:6px;">Choose the button that matches your Streamer.bot version. 1.0.7 imports do not work on 1.1.0 Alpha and vice versa.</p>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:6px;" data-i18n="desc_sb_import_ver">Choose the button that matches your Streamer.bot version. 1.0.7 imports do not work on 1.1.0 Alpha and vice versa.</p>
       </div>
 
+      <div class="panel" id="panel-livesub">
+        <div class="panel-title"><i class="fa-brands fa-youtube"></i> <span data-i18n="panel_livesub">Live Subscriber Count</span></div>
+        <p style="font-size:0.75rem; color:#9aa4b2;" data-i18n="desc_livesub">YouTube Studio does not send the live subscriber total through chat. A Tampermonkey script reads the number on screen and sends it to Streamer.bot. Pick the browser you will leave open.</p>
+        <div class="choice-switcher" id="livesub-browser">
+          <button type="button" class="choice-btn active" data-browser="chrome"><i class="fa-brands fa-chrome"></i> Chrome</button>
+          <button type="button" class="choice-btn" data-browser="firefox"><i class="fa-brands fa-firefox-browser"></i> Firefox</button>
+        </div>
+        <div class="choice-switcher" id="livesub-view">
+          <button type="button" class="choice-btn active" data-view="instructions"><i class="fa-solid fa-list-ol"></i> <span data-i18n="btn_livesub_help">Instructions</span></button>
+          <button type="button" class="choice-btn" data-view="code"><i class="fa-solid fa-code"></i> <span data-i18n="btn_livesub_code">Userscript</span></button>
+        </div>
+        <div id="livesub-instructions">
+          <ol class="livesub-steps">
+            <li data-i18n="livesub_step_1">Install the Tampermonkey extension in the browser you selected.</li>
+            <li data-i18n="livesub_step_2">Create a new Tampermonkey script, replace the template with the code from the Userscript view, and save it. It runs on studio.youtube.com.</li>
+            <li data-i18n="livesub_step_3">In Streamer.bot, turn on the two actions for this browser and turn off the other pair. The import already includes them.</li>
+            <li data-i18n="livesub_step_4">Launch runs when Streamer.bot opens and opens YouTube Studio. Close runs when the YouTube broadcast ends and closes that window.</li>
+            <li data-i18n="livesub_step_5">Leave that Studio window open and not minimized. The count does not update if Streamer.bot is closed, or if the window is closed or minimized.</li>
+            <li data-i18n="livesub_step_6">The script calls the action Update Sub Count with liveSubCount on ws://127.0.0.1:8080/. Use the same port as this page. It does not send a WebSocket password.</li>
+          </ol>
+          <div class="livesub-actions">
+            <div class="livesub-box on">
+              <strong data-i18n="livesub_on">Turn these on</strong>
+              <div id="livesub-on-list"></div>
+            </div>
+            <div class="livesub-box off">
+              <strong data-i18n="livesub_off">Turn these off</strong>
+              <div id="livesub-off-list"></div>
+            </div>
+          </div>
+          <p class="livesub-keep"><span data-i18n="livesub_keep">Leave this enabled:</span> <code>Update Sub Count</code></p>
+        </div>
+        <div id="livesub-code" style="display:none;">
+          <p style="font-size:0.68rem; color:#8c96a6;" id="livesub-file"></p>
+          <textarea id="livesub-code-ta" class="livesub-code" readonly spellcheck="false"></textarea>
+          <button type="button" class="btn btn-teal" id="btn-livesub-copy"><i class="fa-solid fa-copy"></i> <span data-i18n="btn_copy">Copy</span></button>
+          <p id="livesub-code-status" style="font-size:0.72rem; color:#53d8bf; min-height:1em;"></p>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- TAB: SETTINGS -->
+    <div id="tab-settings" class="tab-content">
       <div class="panel">
         <div class="panel-title"><i class="fa-solid fa-font"></i> <span data-i18n="panel_typo">Global Typography &amp; Shared Texture</span></div>
         <div class="grid-2">
@@ -228,11 +301,117 @@
         </div>
         <label><span data-i18n="lbl_bg_url">Global Background</span>
           <select id="cfg-bg">
-            <option value="">None (Solid Fill Only)</option>
+            <option value="" data-i18n="opt_bg_none_only">None (Solid Fill Only)</option>
             <option value="assets/backgrounds/gta6-bg.webp">gta6-bg.webp</option>
           </select>
         </label>
-        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-6px;">Backgrounds are loaded automatically from <code>assets/backgrounds/</code>. Add or remove image files and update <code>backgrounds.json</code> to refresh the list.</p>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-6px;" data-i18n="desc_bg_auto">Backgrounds load from assets/backgrounds/. Add or remove images and update backgrounds.json to refresh the list.</p>
+      </div>
+      <div class="panel">
+        <div class="panel-header">
+          <div class="panel-title"><i class="fa-solid fa-eye-dropper"></i> <span data-i18n="panel_palette">GTA VI Palette Overrides</span></div>
+        <label><span data-i18n="lbl_palette">Palette</span>
+          <select id="cfg-palette">
+            <option value="game" selected data-i18n="opt_palette_game">VI Game</option>
+            <option value="marketing" data-i18n="opt_palette_marketing">VI Marketing</option>
+          </select>
+        </label>
+          <button class="btn btn-dark" id="btn-reset-colors" style="padding: 5px 10px; font-size: 0.72rem;"><i class="fa-solid fa-rotate-left"></i> <span data-i18n="btn_reset">Reset</span></button>
+        </div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_prim_pink">Primary Pink</span> <div class="color-picker-group"><input type="color" id="picker-cPink" value="#f4acc4"><input type="text" id="cfg-cPink" value="#f4acc4"></div></label>
+          <label><span data-i18n="lbl_prim_teal">Primary Teal</span> <div class="color-picker-group"><input type="color" id="picker-cTeal" value="#53d8bf"><input type="text" id="cfg-cTeal" value="#53d8bf"></div></label>
+        </div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_prim_purple">Primary Purple</span> <div class="color-picker-group"><input type="color" id="picker-cPurple" value="#a688ff"><input type="text" id="cfg-cPurple" value="#a688ff"></div></label>
+          <label><span data-i18n="lbl_prim_yellow">Primary Yellow</span> <div class="color-picker-group"><input type="color" id="picker-cYellow" value="#fede9a"><input type="text" id="cfg-cYellow" value="#fede9a"></div></label>
+        </div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_stroke_color">Icon / Text Stroke</span> <div class="color-picker-group"><input type="color" id="picker-cStroke" value="#171a21"><input type="text" id="cfg-cStroke" value="#171a21"></div></label>
+          <label><span data-i18n="lbl_border_color">Card Outer Border</span> <div class="color-picker-group"><input type="color" id="picker-cBorder" value="#0b2328"><input type="text" id="cfg-cBorder" value="#0b2328"></div></label>
+        </div>
+        <label><span data-i18n="lbl_bg_fill_color">Card Base Fill</span> <div class="color-picker-group"><input type="color" id="picker-cBg" value="#303030"><input type="text" id="cfg-cBg" value="#303030"></div></label>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-face-smile"></i> <span data-i18n="panel_member_emotes">YouTube Member Emotes</span></div>
+        <div id="emote-status" class="status-log" data-i18n="emote_status_disconnected">Connect Streamer.bot on the General tab to load or save member emotes.</div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_emote_family">Family Prefix</span>
+            <input type="text" id="emote-family" data-i18n-placeholder="ph_emote_family" placeholder="optional, e.g. 2sb">
+          </label>
+          <label><span>&nbsp;</span>
+            <button class="btn btn-dark" id="btn-emote-family" type="button"><span data-i18n="btn_emote_apply_family">Apply to All</span></button>
+          </label>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-dark" id="btn-emote-refresh" type="button"><span data-i18n="btn_emote_refresh">Refresh</span></button>
+          <button class="btn btn-yellow" id="btn-emote-create" type="button"><span data-i18n="btn_emote_create">Create memberEmojiMap</span></button>
+          <button class="btn btn-teal" id="btn-emote-save" type="button"><span data-i18n="btn_emote_save">Save to Streamer.bot</span></button>
+        </div>
+        <div id="emote-list" class="emote-list"></div>
+      </div>
+      <div class="panel">
+        <div class="panel-title" id="emote-form-title"><span data-i18n="emote_form_add">Add New Emote</span></div>
+        <label><span data-i18n="lbl_emote_name">Emote Name</span>
+          <div class="emote-code">
+            <span>:_</span><strong id="emote-family-preview"></strong>
+            <input type="text" id="emote-name" data-i18n-placeholder="ph_emote_name" placeholder="3stars">
+            <span style="padding-right:8px;">:</span>
+          </div>
+        </label>
+        <label><span data-i18n="lbl_emote_url">Image URL</span>
+          <input type="text" id="emote-url" data-i18n-placeholder="ph_emote_url" placeholder="https://yt3.googleusercontent.com/...">
+        </label>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-dark" id="btn-emote-cancel" type="button" style="display:none;" data-i18n="btn_cancel">Cancel</button>
+          <button class="btn btn-teal" id="btn-emote-add" type="button"><span data-i18n="btn_emote_add">Add Emote</span></button>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span data-i18n="btn_emote_import">Import JSON</span></div>
+        <label><span data-i18n="lbl_emote_paste">Paste a memberEmojiMap object</span>
+          <textarea id="emote-json" style="min-height:88px; resize:vertical; font-family:monospace; font-size:0.72rem;" data-i18n-placeholder="ph_emote_json" placeholder='{":_3stars:":"https://..."}'></textarea>
+        </label>
+        <button class="btn btn-purple" id="btn-emote-import" type="button"><span data-i18n="btn_emote_import">Import JSON</span></button>
+        <details class="emote-help" id="emote-action-help">
+          <summary data-i18n="emote_help_summary">Streamer.bot cannot create globals from the browser. Use this action to write memberEmojiMap.</summary>
+          <p style="margin-top:8px;" data-i18n="emote_help_body">In Streamer.bot, create an action named GTA_SetMemberEmojiMap (or keep API_SaveEmotes). Add a C# sub-action and paste this code. The same file is streamerbot/GTA_SetMemberEmojiMap.cs.</p>
+          <button class="btn btn-dark" id="btn-emote-copy-cs" type="button" style="margin-top:8px;" data-i18n="btn_copy_cs">Copy C#</button>
+          <pre id="emote-csharp">using System;
+using Newtonsoft.Json.Linq;
+
+public class CPHInline
+{
+    public bool Execute()
+    {
+        string json = "{}";
+        if (CPH.TryGetArg("emotesJson", out string raw) && !string.IsNullOrWhiteSpace(raw))
+        {
+            json = raw.Trim();
+        }
+
+        try
+        {
+            var token = JToken.Parse(json);
+            if (token == null || token.Type != JTokenType.Object)
+            {
+                json = "{}";
+            }
+            else
+            {
+                json = token.ToString(Newtonsoft.Json.Formatting.None);
+            }
+        }
+        catch
+        {
+            json = "{}";
+        }
+
+        CPH.SetGlobalVar("memberEmojiMap", json, true);
+        return true;
+    }
+}</pre>
+        </details>
       </div>
     </div>
 
@@ -294,17 +473,17 @@
           </label>
         </div>
         <div class="grid-2">
-          <label><span data-i18n="lbl_duration_sec">Duration (sec)</span> <input type="number" id="cfg-duration" value="8" min="3" max="30"></label>
+          <label><span data-i18n="lbl_duration_sec">Duration (sec)</span> <input type="number" id="cfg-duration" value="10" min="3" max="30"></label>
           <label><span data-i18n="lbl_sb_custom_event">SB Custom Event</span> <input type="text" id="cfg-event" value="MemberWalkOn"></label>
         </div>
         <div class="grid-2">
           <label><span data-i18n="lbl_avatar_sb_var">Avatar SB Var</span> <input type="text" id="cfg-vAvatar" value="avatarUrl"></label>
           <label><span data-i18n="lbl_tier_sb_var">Tier SB Var</span> <input type="text" id="cfg-vTier" value="levelName"></label>
         </div>
-        <label><span>Card Background</span>
-          <select id="cfg-walkon-bg">
-            <option value="global">Use Global Background</option>
-            <option value="">None (Solid Fill)</option>
+        <label><span data-i18n="lbl_card_bg">Card Background</span>
+          <select id="cfg-walkon-bg" data-default="assets/backgrounds/Palms.webp">
+            <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
+            <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
           </select>
         </label>
       </div>
@@ -343,7 +522,7 @@
         <!-- HORIZONTAL -->
         <div class="edit-horiz grid-3">
           <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-ax" value="960"></label>
-          <label><span data-i18n="lbl_top_y">Top (Y px)</span> <input type="number" id="cfg-ay" value="100"></label>
+          <label><span data-i18n="lbl_top_y">Top (Y px)</span> <input type="number" id="cfg-ay" value="120"></label>
           <label><span data-i18n="lbl_scale">Scale</span> <input type="number" id="cfg-ascale" value="1" step="0.05"></label>
         </div>
         <div class="edit-horiz toggle-strip" style="margin-top:-4px;">
@@ -365,16 +544,16 @@
         </div>
 
         <div class="grid-2">
-          <label><span data-i18n="lbl_duration_sec">Duration (sec)</span> <input type="number" id="cfg-aDur" value="6" min="3" max="30"></label>
+          <label><span data-i18n="lbl_duration_sec">Duration (sec)</span> <input type="number" id="cfg-aDur" value="10" min="3" max="30"></label>
           <label><span data-i18n="lbl_sb_alert_event">SB Custom Alert Event</span> <input type="text" id="cfg-alertEvent" value="GTA_Alert"></label>
         </div>
-        <label><span>Alerts Header Background</span>
-          <select id="cfg-alert-bg">
-            <option value="global">Use Global Background</option>
-            <option value="">None (Solid Fill)</option>
+        <label><span data-i18n="lbl_alert_bg">Alerts Header Background</span>
+          <select id="cfg-alert-bg" data-default="assets/backgrounds/Palms-Vertical.webp">
+            <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
+            <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
           </select>
         </label>
-        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-4px;">Applies to the top section (avatar + title + name) only.</p>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-4px;" data-i18n="desc_alert_bg">Applies to the top section (avatar + title + name) only.</p>
       </div>
     </div>
 
@@ -389,7 +568,7 @@
         
         <!-- HORIZONTAL -->
         <div class="edit-horiz grid-3">
-          <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-soX" value="1380"></label>
+          <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-soX" value="60"></label>
           <label><span data-i18n="lbl_top_y">Top (Y px)</span> <input type="number" id="cfg-soY" value="80"></label>
           <label><span data-i18n="lbl_scale">Scale</span> <input type="number" id="cfg-soScale" value="1" step="0.05"></label>
         </div>
@@ -418,7 +597,7 @@
           <label><span data-i18n="lbl_toast_anim">Toast Animation</span>
             <select id="cfg-soAnim">
               <option value="so-roll" data-i18n="opt_so_roll">Roll &amp; Pop</option>
-              <option value="so-slide-right" data-i18n="opt_so_slide_right">Slide Right</option>
+              <option value="so-slide-right" selected data-i18n="opt_so_slide_right">Slide Right</option>
               <option value="so-slide-left" data-i18n="opt_so_slide_left">Slide Left</option>
               <option value="so-zoom" data-i18n="opt_so_zoom">Vice Zoom</option>
             </select>
@@ -440,16 +619,16 @@
         </div>
         <div class="grid-2">
           <label><span data-i18n="lbl_header_title">Header Title Text</span> <input type="text" id="cfg-soTitle" data-i18n-placeholder="ph_auto_trans" placeholder="Leave empty for auto-translation"></label>
-          <label><span data-i18n="lbl_duration_sec">Duration (sec)</span> <input type="number" id="cfg-soDur" value="5" min="3" max="30"></label>
+          <label><span data-i18n="lbl_duration_sec">Duration (sec)</span> <input type="number" id="cfg-soDur" value="10" min="3" max="30"></label>
         </div>
         <div class="grid-2">
           <label><span data-i18n="lbl_sb_global_var">SB Global Variable Name</span> <input type="text" id="cfg-soVar" value="viShoutOuts"></label>
           <label><span data-i18n="lbl_sb_event_name">SB Custom Event Name</span> <input type="text" id="cfg-soEvent" value="GTA_Shoutout"></label>
         </div>
-        <label><span>Shoutout Background</span>
-          <select id="cfg-so-bg">
-            <option value="global">Use Global Background</option>
-            <option value="">None (Solid Fill)</option>
+        <label><span data-i18n="lbl_so_bg">Shoutout Background</span>
+          <select id="cfg-so-bg" data-default="assets/backgrounds/Palms-Vertical.webp">
+            <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
+            <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
           </select>
         </label>
       </div>
@@ -533,7 +712,7 @@
           </label>
         </div>
         <div class="toggle-strip">
-          <label class="mini-switch-card"><span data-i18n="lbl_show_avatars">Show Avatars</span><input type="checkbox" class="switch" id="chk-chatAv"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_show_avatars">Show Avatars</span><input type="checkbox" class="switch" id="chk-chatAv" checked></label>
           <label class="mini-switch-card"><span data-i18n="lbl_show_badges">Show Badges</span><input type="checkbox" class="switch" id="chk-chatBadges" checked></label>
           <label class="mini-switch-card"><span data-i18n="lbl_all_caps">ALL CAPS</span><input type="checkbox" class="switch" id="chk-chatUpper"></label>
         </div>
@@ -541,23 +720,23 @@
           <span><i class="fa-solid fa-eye-slash" style="color:var(--gta-pink); margin-right:6px;"></i> <span data-i18n="lbl_transparent_bar">Transparent Bar (Hide Background Strip)</span></span>
           <input type="checkbox" class="switch" id="chk-chatNoBg">
         </label>
-        <label><span>Chat Bar Background</span>
-          <select id="cfg-chat-bg">
-            <option value="global">Use Global Background</option>
-            <option value="">None (Solid Fill)</option>
+        <label><span data-i18n="lbl_chat_bg">Chat Bar Background</span>
+          <select id="cfg-chat-bg" data-default="assets/backgrounds/Ultimate.webp">
+            <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
+            <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
           </select>
         </label>
       </div>
 
       <div class="panel">
-        <div class="panel-title"><i class="fa-solid fa-filter"></i> <span data-i18n="panel_chat_filters">Chat Filters (Commands, Users &amp; Groups)</span></div>
+        <div class="panel-title"><i class="fa-solid fa-filter"></i> <span data-i18n="panel_chat_filters">Chat Filters (Commands &amp; Users)</span></div>
         <label class="inline-toggle-row">
           <span data-i18n="lbl_ignore_cmds">Ignore Commands (Starts with Prefix)</span>
           <input type="checkbox" class="switch" id="chk-chatNoCmd" checked>
         </label>
         <div class="grid-2">
           <label><span data-i18n="lbl_cmd_prefixes">Command Prefixes (Comma-separated)</span>
-            <input type="text" id="cfg-chatPrefixes" value="!, #, /">
+            <input type="text" id="cfg-chatPrefixes" value="!, #, /, $">
           </label>
           <label><span data-i18n="lbl_auto_hide">Auto-Hide Msg After (sec, 0=Never)</span>
             <input type="number" id="cfg-chatHide" value="0" min="0" max="300">
@@ -565,9 +744,6 @@
         </div>
         <label><span data-i18n="lbl_ignore_users">Ignore Users by Name or Channel ID (Comma-separated)</span>
           <input type="text" id="cfg-chatIgUsers" data-i18n-placeholder="ph_ignore_users" placeholder="e.g. Nightbot, StreamElements, UC...">
-        </label>
-        <label><span data-i18n="lbl_ignore_groups">Ignore Groups by groupName (Comma-separated)</span>
-          <input type="text" id="cfg-chatIgGroups" data-i18n-placeholder="ph_ignore_groups" placeholder="e.g. Bots, ExcludedGroup">
         </label>
       </div>
     </div>
@@ -635,35 +811,248 @@
           <span data-i18n="lbl_show_badge_pill">Show Header Badge Pill</span>
           <input type="checkbox" class="switch" id="chk-qaShowBadge" checked>
         </label>
-        <label><span>Q&A Background</span>
-          <select id="cfg-qa-bg">
-            <option value="global">Use Global Background</option>
-            <option value="">None (Solid Fill)</option>
+        <label><span data-i18n="lbl_qa_bg">Q&A Background</span>
+          <select id="cfg-qa-bg" data-default="assets/backgrounds/Palms.webp">
+            <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
+            <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
           </select>
         </label>
       </div>
     </div>
 
+
+    <!-- TAB: FIRST 5 -->
+    <div id="tab-first5" class="tab-content">
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-users"></i> <span data-i18n="panel_f5_pos">First 5 Position & Timing</span></div>
+        <div class="layout-switcher">
+          <button class="layout-btn active" data-target="horiz"><i class="fa-solid fa-tv"></i> <span data-i18n="btn_layout_horiz">Horizontal Layout</span></button>
+          <button class="layout-btn" data-target="vert"><i class="fa-solid fa-mobile-screen"></i> <span data-i18n="btn_layout_vert">Vertical Layout</span></button>
+        </div>
+        <div class="edit-horiz grid-3">
+          <label><span data-i18n="lbl_f5_group_x">Group Left (px)</span> <input type="number" id="cfg-f5GroupX" value="0"></label>
+          <label><span data-i18n="lbl_f5_group_y">Group Top (px)</span> <input type="number" id="cfg-f5GroupY" value="20"></label>
+          <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-f5X" value="0"></label>
+          <label><span data-i18n="lbl_top_y">Top (Y px)</span> <input type="number" id="cfg-f5Y" value="0"></label>
+          <label><span data-i18n="lbl_f5_width">Container Width (px)</span> <input type="number" id="cfg-f5Width" value="1920" min="200" max="1920"></label>
+          <label><span data-i18n="lbl_f5_height">Container Height (px)</span> <input type="number" id="cfg-f5Height" value="1080" min="80" max="1080"></label>
+          <label><span data-i18n="lbl_f5_size">Avatar Size (px)</span> <input type="number" id="cfg-f5Size" value="80" min="40" max="200"></label>
+          <label><span data-i18n="lbl_f5_gap">Gap (px)</span> <input type="number" id="cfg-f5Gap" value="30" min="0" max="60"></label>
+        </div>
+        <div class="edit-vert grid-3">
+          <label><span data-i18n="lbl_f5_group_x">Group Left (px)</span> <input type="number" id="cfg-v_f5GroupX" value="0"></label>
+          <label><span data-i18n="lbl_f5_group_y">Group Top (px)</span> <input type="number" id="cfg-v_f5GroupY" value="0"></label>
+          <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-v_f5X" value="540"></label>
+          <label><span data-i18n="lbl_top_y">Top (Y px)</span> <input type="number" id="cfg-v_f5Y" value="80"></label>
+          <label><span data-i18n="lbl_f5_width">Container Width (px)</span> <input type="number" id="cfg-v_f5Width" value="1080" min="200" max="1080"></label>
+          <label><span data-i18n="lbl_f5_height">Container Height (px)</span> <input type="number" id="cfg-v_f5Height" value="200" min="80" max="1920"></label>
+          <label><span data-i18n="lbl_f5_size">Avatar Size (px)</span> <input type="number" id="cfg-v_f5Size" value="80" min="40" max="200"></label>
+          <label><span data-i18n="lbl_f5_gap">Gap (px)</span> <input type="number" id="cfg-v_f5Gap" value="12" min="0" max="60"></label>
+        </div>
+        <div class="toggle-strip edit-horiz">
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_align_h">Center Container H</span><input type="checkbox" class="switch" id="chk-f5AlignH" checked></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_align_v">Center Container V</span><input type="checkbox" class="switch" id="chk-f5AlignV"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_group_center_h">Center Group H</span><input type="checkbox" class="switch" id="chk-f5GroupCenterH" checked></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_group_center_v">Center Group V</span><input type="checkbox" class="switch" id="chk-f5GroupCenterV"></label>
+        </div>
+        <div class="toggle-strip edit-vert">
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_align_h">Center Container H</span><input type="checkbox" class="switch" id="chk-v_f5AlignH"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_align_v">Center Container V</span><input type="checkbox" class="switch" id="chk-v_f5AlignV"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_group_center_h">Center Group H</span><input type="checkbox" class="switch" id="chk-v_f5GroupCenterH" checked></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_group_center_v">Center Group V</span><input type="checkbox" class="switch" id="chk-v_f5GroupCenterV"></label>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-wand-magic-sparkles"></i> <span data-i18n="panel_f5_appear">First 5 Appearance</span></div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_f5_in_dir">Animate In Direction</span>
+            <select id="cfg-f5InDir">
+              <option value="left" data-i18n="opt_f5_left">Left</option>
+              <option value="right" selected data-i18n="opt_f5_right">Right</option>
+              <option value="top" data-i18n="opt_f5_top">Top</option>
+              <option value="bottom" data-i18n="opt_f5_bottom">Bottom</option>
+              <option value="random" data-i18n="opt_f5_random">Random</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_f5_in_style">Animate In Style</span>
+            <select id="cfg-f5InStyle">
+              <option value="slide" data-i18n="opt_f5_slide">Slide</option>
+              <option value="roll" selected data-i18n="opt_f5_roll">Roll</option>
+              <option value="zoom" data-i18n="opt_f5_zoom">Zoom / Pop</option>
+              <option value="fade" data-i18n="opt_f5_fade">Fade</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_f5_shape">Shape</span>
+            <select id="cfg-f5Shape">
+              <option value="circle" data-i18n="opt_f5_circle">Circle</option>
+              <option value="rounded" selected data-i18n="opt_f5_rounded">Rounded Square</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_f5_align">Avatar Alignment</span>
+            <select id="cfg-f5Align">
+              <option value="center" selected data-i18n="opt_f5_center">Center</option>
+              <option value="left" data-i18n="opt_f5_left">Left</option>
+              <option value="right" data-i18n="opt_f5_right">Right</option>
+            </select>
+          </label>
+        </div>
+
+        <div class="grid-2">
+          <label><span data-i18n="lbl_f5_end_delay">End Delay (ms after 5th)</span> <input type="number" id="cfg-f5EndDelay" value="60000" min="0" max="120000"></label>
+          <label><span data-i18n="lbl_f5_out_dir">Animate Out Direction</span>
+            <select id="cfg-f5OutDir">
+              <option value="left" selected data-i18n="opt_f5_left">Left</option>
+              <option value="right" data-i18n="opt_f5_right">Right</option>
+              <option value="top" data-i18n="opt_f5_top">Top</option>
+              <option value="bottom" data-i18n="opt_f5_bottom">Bottom</option>
+              <option value="random" data-i18n="opt_f5_random">Random</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_f5_out_style">Animate Out Style</span>
+            <select id="cfg-f5OutStyle">
+              <option value="slide" data-i18n="opt_f5_slide">Slide</option>
+              <option value="roll" data-i18n="opt_f5_roll">Roll</option>
+              <option value="zoom" data-i18n="opt_f5_zoom">Zoom / Pop</option>
+              <option value="fade" selected data-i18n="opt_f5_fade">Fade</option>
+            </select>
+          </label>
+          <label class="mini-switch-card"><span data-i18n="lbl_f5_sfx">Play SFX</span><input type="checkbox" class="switch" id="chk-f5Sfx" checked></label>
+          <label><span data-i18n="lbl_f5_sfx_vol">SFX Volume</span> <input type="range" id="cfg-f5SfxVol" min="0" max="100" value="57"></label>
+        </div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_f5_color_1">Avatar 1 Color</span>
+            <select id="cfg-f5Color1"><option value="teal" selected data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select>
+          </label>
+          <label><span data-i18n="lbl_f5_color_2">Avatar 2 Color</span>
+            <select id="cfg-f5Color2"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" selected data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select>
+          </label>
+          <label><span data-i18n="lbl_f5_color_3">Avatar 3 Color</span>
+            <select id="cfg-f5Color3"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" selected data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select>
+          </label>
+          <label><span data-i18n="lbl_f5_color_4">Avatar 4 Color</span>
+            <select id="cfg-f5Color4"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" selected data-i18n="opt_yellow">YELLOW</option></select>
+          </label>
+          <label><span data-i18n="lbl_f5_color_5">Avatar 5 Color</span>
+            <select id="cfg-f5Color5"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" selected data-i18n="opt_yellow">YELLOW</option></select>
+          </label>
+          <label><span data-i18n="lbl_f5_event">SB Event Name</span> <input type="text" id="cfg-f5Event" value="GTA_First5"></label>
+        </div>
+      </div>
+    </div>
+
     <!-- TAB 7: COLORS -->
-    <div id="tab-colors" class="tab-content">
+    
+    <div id="tab-goals" class="tab-content">
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-chart-simple"></i> <span data-i18n="panel_goals_pos">Goal Bars Position</span></div>
+        <div class="layout-switcher">
+          <button class="layout-btn active" data-target="horiz"><i class="fa-solid fa-tv"></i> <span data-i18n="btn_layout_horiz">Horizontal Layout</span></button>
+          <button class="layout-btn" data-target="vert"><i class="fa-solid fa-mobile-screen"></i> <span data-i18n="btn_layout_vert">Vertical Layout</span></button>
+        </div>
+        <div class="edit-horiz grid-3">
+          <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-goalsX" value="1466"></label>
+          <label><span data-i18n="lbl_top_y">Top (Y px)</span> <input type="number" id="cfg-goalsY" value="243"></label>
+          <label><span data-i18n="lbl_scale">Scale</span> <input type="number" id="cfg-goalsScale" value="1" step="0.05"></label>
+        </div>
+        <div class="edit-vert grid-3">
+          <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-v_goalsX" value="60"></label>
+          <label><span data-i18n="lbl_top_y">Top (Y px)</span> <input type="number" id="cfg-v_goalsY" value="60"></label>
+          <label><span data-i18n="lbl_scale">Scale</span> <input type="number" id="cfg-v_goalsScale" value="1" step="0.05"></label>
+        </div>
+        <div class="toggle-strip edit-horiz">
+          <label class="mini-switch-card"><span data-i18n="lbl_center_h">Center H</span><input type="checkbox" class="switch" id="chk-goalsAlignH"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_center_v">Center V</span><input type="checkbox" class="switch" id="chk-goalsAlignV"></label>
+        </div>
+        <div class="toggle-strip edit-vert">
+          <label class="mini-switch-card"><span data-i18n="lbl_center_h">Center H</span><input type="checkbox" class="switch" id="chk-v_goalsAlignH"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_center_v">Center V</span><input type="checkbox" class="switch" id="chk-v_goalsAlignV"></label>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-sliders"></i> <span data-i18n="panel_goals_display">Display Settings</span></div>
+        <div class="grid-3">
+          <label><span data-i18n="lbl_goals_mode">Display Mode</span>
+            <select id="cfg-goalsMode">
+              <option value="inline" data-i18n="opt_goals_inline">Inline Group</option>
+              <option value="ticker" selected data-i18n="opt_goals_ticker">Ticker</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_accent_color">Accent Color</span>
+            <select id="cfg-goalsColor">
+              <option value="teal" selected data-i18n="opt_teal">TEAL</option>
+              <option value="pink" data-i18n="opt_pink">PINK</option>
+              <option value="purple" data-i18n="opt_purple">PURPLE</option>
+              <option value="yellow" data-i18n="opt_yellow">YELLOW</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_goals_bg">Background</span>
+            <select id="cfg-goals-bg" data-default="assets/backgrounds/Palms.webp">
+              <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
+              <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid-3" id="goals-ticker-settings">
+          <label><span data-i18n="lbl_goals_show_dur">Show Duration (sec)</span> <input type="number" id="cfg-goalsShowDur" value="10" min="1" max="60"></label>
+          <label><span data-i18n="lbl_goals_gap_dur">Gap Duration (sec)</span> <input type="number" id="cfg-goalsGapDur" value="1" min="0" max="30"></label>
+          <label><span data-i18n="lbl_goals_repeat_delay">Repeat Delay (sec)</span> <input type="number" id="cfg-goalsRepeatDelay" value="30" min="0" max="120"></label>
+        </div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_goals_anim_in">Show Animation</span>
+            <select id="cfg-goalsAnimIn">
+              <option value="slide-up" data-i18n="opt_slide_up">Slide Up</option>
+              <option value="fade" data-i18n="opt_fade">Fade</option>
+              <option value="zoom" selected data-i18n="opt_zoom">Zoom</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_goals_anim_out">Hide Animation</span>
+            <select id="cfg-goalsAnimOut">
+              <option value="slide-down" selected data-i18n="opt_slide_down">Slide Down</option>
+              <option value="fade" data-i18n="opt_fade">Fade</option>
+              <option value="zoom" data-i18n="opt_zoom">Zoom</option>
+            </select>
+          </label>
+        </div>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-4px;" data-i18n="desc_goals_ticker">In ticker mode these move the whole goal card on and off screen. The card stays hidden through the gap and the repeat delay.</p>
+        <div class="toggle-strip">
+          <label class="mini-switch-card"><span data-i18n="chk_goals_likes">Likes</span><input type="checkbox" class="switch" id="chk-goalsLikes" checked></label>
+          <label class="mini-switch-card"><span data-i18n="chk_goals_members">Memberships</span><input type="checkbox" class="switch" id="chk-goalsMembers" checked></label>
+          <label class="mini-switch-card"><span data-i18n="chk_goals_jewels">Jewels</span><input type="checkbox" class="switch" id="chk-goalsJewels" checked></label>
+          <label class="mini-switch-card"><span data-i18n="chk_goals_subs">Subscribers</span><input type="checkbox" class="switch" id="chk-goalsSubs" checked></label>
+          <label class="mini-switch-card"><span data-i18n="chk_goals_gifts">Member Gifts</span><input type="checkbox" class="switch" id="chk-goalsGifts" checked></label>
+          <label class="mini-switch-card"><span data-i18n="chk_goals_supers">Super Chats/Stickers</span><input type="checkbox" class="switch" id="chk-goalsSupers" checked></label>
+        </div>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-gear"></i> <span data-i18n="panel_goals_vars">Goal Variables</span></div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_goals_likes_title">Likes Title</span> <input type="text" id="cfg-goalsLikesTitle" value="Likes"></label>
+          <label><span data-i18n="lbl_goals_likes_count">Likes Count Var</span> <input type="text" id="cfg-goalsLikesCount" value="likesCount"></label>
+          <label><span data-i18n="lbl_goals_likes_goal">Likes Goal Var</span> <input type="text" id="cfg-goalsLikesGoal" value="LikesGoal"></label>
+          <label><span data-i18n="lbl_goals_members_title">Members Title</span> <input type="text" id="cfg-goalsMembersTitle" value="Memberships"></label>
+          <label><span data-i18n="lbl_goals_members_count">Members Count Var</span> <input type="text" id="cfg-goalsMembersCount" value="memberCount"></label>
+          <label><span data-i18n="lbl_goals_members_goal">Members Goal Var</span> <input type="text" id="cfg-goalsMembersGoal" value="memberGoal"></label>
+          <label><span data-i18n="lbl_goals_jewels_title">Jewels Title</span> <input type="text" id="cfg-goalsJewelsTitle" value="Jewels"></label>
+          <label><span data-i18n="lbl_goals_jewels_count">Jewels Count Var</span> <input type="text" id="cfg-goalsJewelsCount" value="jewelsCount"></label>
+          <label><span data-i18n="lbl_goals_jewels_goal">Jewels Goal Var</span> <input type="text" id="cfg-goalsJewelsGoal" value="JewelsGoal"></label>
+          <label><span data-i18n="lbl_goals_subs_title">Subs Title</span> <input type="text" id="cfg-goalsSubsTitle" value="Subscribers"></label>
+          <label><span data-i18n="lbl_goals_subs_count">Subs Count Var</span> <input type="text" id="cfg-goalsSubsCount" value="liveSubCount"></label>
+          <label><span data-i18n="lbl_goals_subs_goal">Subs Goal Var</span> <input type="text" id="cfg-goalsSubsGoal" value="liveSubGoal"></label>
+          <label><span data-i18n="lbl_goals_gifts_title">Member Gifts Title</span> <input type="text" id="cfg-goalsGiftsTitle" value="Membership Gifts"></label>
+          <label><span data-i18n="lbl_goals_gifts_count">Member Gifts Count Var</span> <input type="text" id="cfg-goalsGiftsCount" value="membershipGiftsCount"></label>
+          <label><span data-i18n="lbl_goals_gifts_goal">Member Gifts Goal Var</span> <input type="text" id="cfg-goalsGiftsGoal" value="membershipGiftsGoal"></label>
+          <label><span data-i18n="lbl_goals_supers_title">Super Chats/Stickers Title</span> <input type="text" id="cfg-goalsSupersTitle" value="Super Chats/Stickers"></label>
+          <label><span data-i18n="lbl_goals_supers_count">Super Chats/Stickers Count Var</span> <input type="text" id="cfg-goalsSupersCount" value="superCount"></label>
+          <label><span data-i18n="lbl_goals_supers_goal">Super Chats/Stickers Goal Var</span> <input type="text" id="cfg-goalsSupersGoal" value="superGoal"></label>
+        </div>
+      </div>
       <div class="panel">
         <div class="panel-header">
-          <div class="panel-title"><i class="fa-solid fa-eye-dropper"></i> <span data-i18n="panel_palette">GTA VI Palette Overrides</span></div>
-          <button class="btn btn-dark" id="btn-reset-colors" style="padding: 5px 10px; font-size: 0.72rem;"><i class="fa-solid fa-rotate-left"></i> <span data-i18n="btn_reset">Reset</span></button>
+          <div class="panel-title"><i class="fa-solid fa-plus"></i> <span data-i18n="panel_custom_goals">Custom Goals</span></div>
+          <button type="button" class="btn btn-teal" id="btn-add-custom-goal" style="padding:5px 10px; font-size:0.72rem;"><i class="fa-solid fa-plus"></i> <span data-i18n="btn_add_goal">Add Goal</span></button>
         </div>
-        <div class="grid-2">
-          <label><span data-i18n="lbl_prim_pink">Primary Pink</span> <div class="color-picker-group"><input type="color" id="picker-cPink" value="#f4acc4"><input type="text" id="cfg-cPink" value="#f4acc4"></div></label>
-          <label><span data-i18n="lbl_prim_teal">Primary Teal</span> <div class="color-picker-group"><input type="color" id="picker-cTeal" value="#53d8bf"><input type="text" id="cfg-cTeal" value="#53d8bf"></div></label>
-        </div>
-        <div class="grid-2">
-          <label><span data-i18n="lbl_prim_purple">Primary Purple</span> <div class="color-picker-group"><input type="color" id="picker-cPurple" value="#a688ff"><input type="text" id="cfg-cPurple" value="#a688ff"></div></label>
-          <label><span data-i18n="lbl_prim_yellow">Primary Yellow</span> <div class="color-picker-group"><input type="color" id="picker-cYellow" value="#fede9a"><input type="text" id="cfg-cYellow" value="#fede9a"></div></label>
-        </div>
-        <div class="grid-2">
-          <label><span data-i18n="lbl_stroke_color">Icon / Text Stroke</span> <div class="color-picker-group"><input type="color" id="picker-cStroke" value="#171a21"><input type="text" id="cfg-cStroke" value="#171a21"></div></label>
-          <label><span data-i18n="lbl_border_color">Card Outer Border</span> <div class="color-picker-group"><input type="color" id="picker-cBorder" value="#0b2328"><input type="text" id="cfg-cBorder" value="#0b2328"></div></label>
-        </div>
-        <label><span data-i18n="lbl_bg_fill_color">Card Base Fill</span> <div class="color-picker-group"><input type="color" id="picker-cBg" value="#303030"><input type="text" id="cfg-cBg" value="#303030"></div></label>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-6px;" data-i18n="desc_custom_goals">Each custom goal reads a count global and a goal global from Streamer.bot, the same way the built-in bars do.</p>
+        <div id="custom-goals-list" style="display:flex; flex-direction:column; gap:8px;"></div>
       </div>
     </div>
 
@@ -679,6 +1068,8 @@
         <div class="grid-2" style="margin-bottom: 6px;">
           <button class="btn btn-yellow" id="btn-sim-chat"><i class="fa-solid fa-comments"></i> <span data-i18n="btn_sim_chat">Send Test Chat</span></button>
           <button class="btn btn-teal" id="btn-sim-qa"><i class="fa-solid fa-circle-question"></i> <span data-i18n="btn_sim_qa">Test Q&amp;A</span></button>
+          <button class="btn btn-pink" id="btn-sim-first5"><i class="fa-solid fa-users"></i> <span data-i18n="btn_sim_first5">Test First 5</span></button>
+          <button class="btn btn-purple" id="btn-sim-goals"><i class="fa-solid fa-chart-simple"></i> <span data-i18n="btn_sim_goals">Test Goal Bars</span></button>
         </div>
         <div class="grid-2">
           <label><span data-i18n="lbl_sim_alert_type">Alert Type to Simulate</span>
@@ -729,6 +1120,8 @@
         <label class="mod-chk-label"><input type="checkbox" id="mod-shoutout" class="mod-chk" checked> <span data-i18n="mod_3_shoutout">3. Shoutout</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-chat" class="mod-chk" checked> <span data-i18n="mod_4_chat">4. Chat Bar</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-qa" class="mod-chk" checked> <span data-i18n="mod_5_qa">5. Q&amp;A Toast</span></label>
+        <label class="mod-chk-label"><input type="checkbox" id="mod-first5" class="mod-chk" checked> <span data-i18n="mod_6_first5">6. First 5</span></label>
+        <label class="mod-chk-label"><input type="checkbox" id="mod-goals" class="mod-chk" checked> <span data-i18n="mod_7_goals">7. Goal Bars</span></label>
 
         <div class="config-io-group">
           <input type="file" id="import-config-file" accept=".json,application/json" style="display:none;">
@@ -811,7 +1204,7 @@
         document.querySelectorAll('.layout-btn[data-target="'+target+'"]').forEach(b => b.classList.add('active'));
         
         document.querySelectorAll('.edit-horiz').forEach(el => el.style.display = target === 'horiz' ? '' : 'none');
-        document.querySelectorAll('.edit-vert').forEach(el => el.style.display = target === 'vert' ? '' : 'none');
+        document.querySelectorAll('.edit-vert').forEach(el => el.style.display = target === 'vert' ? 'grid' : 'none');
       });
     });
     // Trigger initial state
@@ -825,6 +1218,31 @@
       wrapHoriz.style.display = (mode === 'dual' || mode === 'horiz') ? 'block' : 'none';
       wrapVert.style.display = (mode === 'dual' || mode === 'vert') ? 'block' : 'none';
       fitPreviewCanvas();
+    }
+
+    function initPanelCollapse() {
+      let saved = {};
+      try { saved = JSON.parse(localStorage.getItem('gta-panel-collapsed') || '{}'); } catch (e) { saved = {}; }
+      document.querySelectorAll('.panel').forEach((panel, idx) => {
+        const title = panel.querySelector(':scope > .panel-title, :scope > .panel-header .panel-title');
+        if (!title || title.dataset.collapseBound) return;
+        title.dataset.collapseBound = '1';
+        const keyEl = title.querySelector('[data-i18n]');
+        const key = (keyEl && keyEl.getAttribute('data-i18n')) || title.id || ('panel-' + idx);
+        const chev = document.createElement('i');
+        chev.className = 'fa-solid fa-chevron-down panel-chevron';
+        chev.setAttribute('aria-hidden', 'true');
+        title.appendChild(chev);
+        if (saved[key]) panel.classList.add('collapsed');
+        const hit = panel.querySelector(':scope > .panel-header') || title;
+        hit.addEventListener('click', (e) => {
+          if (e.target.closest('button, input, select, textarea, a')) return;
+          if (e.target.closest('label') && !e.target.closest('.panel-title')) return;
+          panel.classList.toggle('collapsed');
+          saved[key] = panel.classList.contains('collapsed');
+          try { localStorage.setItem('gta-panel-collapsed', JSON.stringify(saved)); } catch (err) {}
+        });
+      });
     }
 
     function fitPreviewCanvas() {
@@ -960,6 +1378,12 @@
     bindAlignGroup(document.getElementById('chk-v_soAlignH'), document.getElementById('chk-v_soAlignV'), document.getElementById('chk-v_soAlignScreen'), document.getElementById('cfg-v_soX'), document.getElementById('cfg-v_soY'));
     bindAlignGroup(document.getElementById('chk-v_chatAlignH'), document.getElementById('chk-v_chatAlignV'), document.getElementById('chk-v_chatAlignScreen'), document.getElementById('cfg-v_chatX'), document.getElementById('cfg-v_chatY'));
     bindAlignGroup(document.getElementById('chk-v_qaAlignH'), document.getElementById('chk-v_qaAlignV'), document.getElementById('chk-v_qaAlignScreen'), document.getElementById('cfg-v_qaX'), document.getElementById('cfg-v_qaY'));
+    bindAlignGroup(document.getElementById('chk-f5AlignH'), document.getElementById('chk-f5AlignV'), null, document.getElementById('cfg-f5X'), document.getElementById('cfg-f5Y'));
+    bindAlignGroup(document.getElementById('chk-v_f5AlignH'), document.getElementById('chk-v_f5AlignV'), null, document.getElementById('cfg-v_f5X'), document.getElementById('cfg-v_f5Y'));
+    bindAlignGroup(document.getElementById('chk-f5GroupCenterH'), document.getElementById('chk-f5GroupCenterV'), null, document.getElementById('cfg-f5GroupX'), document.getElementById('cfg-f5GroupY'));
+    bindAlignGroup(document.getElementById('chk-v_f5GroupCenterH'), document.getElementById('chk-v_f5GroupCenterV'), null, document.getElementById('cfg-v_f5GroupX'), document.getElementById('cfg-v_f5GroupY'));
+    bindAlignGroup(document.getElementById('chk-goalsAlignH'), document.getElementById('chk-goalsAlignV'), null, document.getElementById('cfg-goalsX'), document.getElementById('cfg-goalsY'));
+    bindAlignGroup(document.getElementById('chk-v_goalsAlignH'), document.getElementById('chk-v_goalsAlignV'), null, document.getElementById('cfg-v_goalsX'), document.getElementById('cfg-v_goalsY'));
 
     // Sync Drag / Resize from Preview Iframe
     window.addEventListener('message', (msg) => {
@@ -1028,6 +1452,36 @@
         if (document.getElementById(`cfg-${pfx}qaX`)) document.getElementById(`cfg-${pfx}qaX`).disabled = Boolean(d.qaAlignH);
         if (document.getElementById(`cfg-${pfx}qaY`)) document.getElementById(`cfg-${pfx}qaY`).disabled = Boolean(d.qaAlignV);
         updateGeneratedUrlOnly();
+      } else if (d.type === 'GOALS_MANIPULATED') {
+        if (document.getElementById(`cfg-${pfx}goalsX`)) document.getElementById(`cfg-${pfx}goalsX`).value = d.goalsX;
+        if (document.getElementById(`cfg-${pfx}goalsY`)) document.getElementById(`cfg-${pfx}goalsY`).value = d.goalsY;
+        if (document.getElementById(`cfg-${pfx}goalsScale`)) document.getElementById(`cfg-${pfx}goalsScale`).value = d.goalsScale;
+        const gH = document.getElementById(`chk-${pfx}goalsAlignH`);
+        const gV = document.getElementById(`chk-${pfx}goalsAlignV`);
+        if (gH) gH.checked = Boolean(d.goalsAlignH);
+        if (gV) gV.checked = Boolean(d.goalsAlignV);
+        if (document.getElementById(`cfg-${pfx}goalsX`)) document.getElementById(`cfg-${pfx}goalsX`).disabled = Boolean(d.goalsAlignH);
+        if (document.getElementById(`cfg-${pfx}goalsY`)) document.getElementById(`cfg-${pfx}goalsY`).disabled = Boolean(d.goalsAlignV);
+        updateGeneratedUrlOnly();
+      } else if (d.type === 'FIRST5_MANIPULATED') {
+        if (document.getElementById(`cfg-${pfx}f5X`)) document.getElementById(`cfg-${pfx}f5X`).value = d.f5X;
+        if (document.getElementById(`cfg-${pfx}f5Y`)) document.getElementById(`cfg-${pfx}f5Y`).value = d.f5Y;
+        if (document.getElementById(`cfg-${pfx}f5Size`)) document.getElementById(`cfg-${pfx}f5Size`).value = d.f5Size;
+        if (document.getElementById(`cfg-${pfx}f5GroupX`)) document.getElementById(`cfg-${pfx}f5GroupX`).value = d.f5GroupX;
+        if (document.getElementById(`cfg-${pfx}f5GroupY`)) document.getElementById(`cfg-${pfx}f5GroupY`).value = d.f5GroupY;
+        const aH = document.getElementById(`chk-${pfx}f5AlignH`);
+        const aV = document.getElementById(`chk-${pfx}f5AlignV`);
+        const cH = document.getElementById(`chk-${pfx}f5GroupCenterH`);
+        const cV = document.getElementById(`chk-${pfx}f5GroupCenterV`);
+        if (aH) aH.checked = Boolean(d.f5AlignH);
+        if (aV) aV.checked = Boolean(d.f5AlignV);
+        if (cH) cH.checked = Boolean(d.f5GroupCenterH);
+        if (cV) cV.checked = Boolean(d.f5GroupCenterV);
+        if (document.getElementById(`cfg-${pfx}f5X`)) document.getElementById(`cfg-${pfx}f5X`).disabled = Boolean(d.f5AlignH);
+        if (document.getElementById(`cfg-${pfx}f5Y`)) document.getElementById(`cfg-${pfx}f5Y`).disabled = Boolean(d.f5AlignV);
+        if (document.getElementById(`cfg-${pfx}f5GroupX`)) document.getElementById(`cfg-${pfx}f5GroupX`).disabled = Boolean(d.f5GroupCenterH);
+        if (document.getElementById(`cfg-${pfx}f5GroupY`)) document.getElementById(`cfg-${pfx}f5GroupY`).disabled = Boolean(d.f5GroupCenterV);
+        updateGeneratedUrlOnly();
       }
     });
 
@@ -1054,6 +1508,19 @@
     "tab_shoutout": "Shoutout",
     "tab_chat": "Chat",
     "tab_qa": "Q&A",
+    "tab_first5": "First 5",
+    "tab_goals": "Goals",
+    "mod_7_goals": "7. Goal Bars",
+    "panel_goals_pos": "Goal Bars Position",
+    "panel_goals_display": "Display Settings",
+    "panel_goals_vars": "Goal Variables",
+    "lbl_goals_mode": "Display Mode",
+    "opt_goals_inline": "Inline Group",
+    "opt_goals_ticker": "Ticker",
+    "lbl_palette": "Palette",
+    "opt_palette_game": "VI Game",
+    "opt_palette_marketing": "VI Marketing",
+    "mod_6_first5": "6. First 5",
     "tab_colors": "Colors",
     "tab_test": "Test",
     "panel_sb_conn": "Streamer.bot Connection",
@@ -1159,7 +1626,7 @@
     "lbl_show_badges": "Show Badges",
     "lbl_all_caps": "ALL CAPS",
     "lbl_transparent_bar": "Transparent Bar (Hide Background Strip)",
-    "panel_chat_filters": "Chat Filters (Commands, Users & Groups)",
+    "panel_chat_filters": "Chat Filters (Commands & Users)",
     "lbl_ignore_cmds": "Ignore Commands (Starts with Prefix)",
     "lbl_cmd_prefixes": "Command Prefixes (Comma-separated)",
     "lbl_auto_hide": "Auto-Hide Msg After (sec, 0=Never)",
@@ -1228,79 +1695,264 @@
     "btn_imported": "Imported!",
     "btn_export": "Export",
     "btn_exported": "Exported!",
-    "err_import_invalid": "Invalid settings file."
+    "err_import_invalid": "Invalid settings file.",
+    "panel_f5_pos": "First 5 Position & Timing",
+    "panel_f5_appear": "First 5 Appearance",
+    "lbl_f5_width": "Container Width (px)",
+    "lbl_f5_gap": "Gap (px)",
+    "lbl_f5_align_h": "Center Horizontally",
+    "lbl_f5_align_v": "Center Vertically",
+    "lbl_f5_anim": "Animation",
+    "lbl_f5_shape": "Shape",
+    "lbl_f5_align": "Avatar Alignment",
+    "lbl_f5_exit": "Exit Direction",
+    "lbl_f5_end_delay": "End Delay (ms after 5th)",
+    "lbl_f5_sfx": "Play SFX",
+    "lbl_f5_sfx_vol": "SFX Volume",
+    "lbl_f5_height": "Container Height (px)",
+    "lbl_f5_in_dir": "Animate In Direction",
+    "lbl_f5_in_style": "Animate In Style",
+    "lbl_f5_out_dir": "Animate Out Direction",
+    "lbl_f5_out_style": "Animate Out Style",
+    "opt_f5_top": "Top",
+    "opt_f5_bottom": "Bottom",
+    "opt_f5_random": "Random",
+    "opt_f5_slide": "Slide",
+    "opt_f5_roll": "Roll",
+    "opt_f5_fade": "Fade",
+    "opt_f5_center": "Center",
+    "opt_f5_left": "Left",
+    "opt_f5_right": "Right",
+    "opt_f5_exit_left": "Exit Left",
+    "opt_f5_exit_right": "Exit Right",
+    "opt_f5_exit_up": "Exit Up",
+    "opt_f5_roll_left": "Roll from Left",
+    "opt_f5_roll_right": "Roll from Right",
+    "opt_f5_drop_top": "Drop from Top",
+    "opt_f5_zoom": "Zoom / Pop",
+    "opt_f5_circle": "Circle",
+    "opt_f5_rounded": "Rounded Square",
+    "lbl_f5_group_x": "Group Left (px)",
+    "lbl_f5_group_y": "Group Top (px)",
+    "lbl_f5_group_center_h": "Center Group H",
+    "lbl_f5_group_center_v": "Center Group V",
+    "lbl_f5_size": "Avatar Size (px)",
+    "lbl_goals_bg": "Background",
+    "lbl_goals_show_dur": "Show Duration (sec)",
+    "lbl_goals_gap_dur": "Gap Duration (sec)",
+    "lbl_goals_repeat_delay": "Repeat Delay (sec)",
+    "lbl_goals_anim_in": "Show Animation",
+    "lbl_goals_anim_out": "Hide Animation",
+    "btn_sim_first5": "Test First 5",
+    "btn_sim_goals": "Test Goal Bars",
+    "tab_emotes": "Emotes",
+    "panel_member_emotes": "YouTube Member Emotes",
+    "lbl_emote_family": "Family Prefix",
+    "btn_emote_apply_family": "Apply to All",
+    "btn_emote_refresh": "Refresh",
+    "btn_emote_create": "Create memberEmojiMap",
+    "btn_emote_save": "Save to Streamer.bot",
+    "btn_emote_add": "Add Emote",
+    "btn_emote_update": "Update",
+    "btn_emote_edit": "Edit",
+    "btn_emote_del": "Del",
+    "btn_emote_import": "Import JSON",
+    "lbl_emote_name": "Emote Name",
+    "lbl_emote_url": "Image URL",
+    "emote_form_add": "Add New Emote",
+    "emote_form_edit": "Editing Emote",
+    "emote_empty": "No member emotes yet.",
+    "emote_need_both": "Enter an emote name and an image URL.",
+    "emote_need_url": "Image URL must start with http:// or https://.",
+    "emote_bad_json": "That JSON is not a memberEmojiMap object.",
+    "emote_status_disconnected": "Connect Streamer.bot on the General tab to load or save member emotes.",
+    "emote_status_missing": "memberEmojiMap was not found. Create it, or import your list and save.",
+    "emote_status_ready": "memberEmojiMap is set ({n} emotes).",
+    "emote_status_saved": "Saved memberEmojiMap to Streamer.bot.",
+    "emote_status_no_action": "No save action found. Create an action named GTA_SetMemberEmojiMap (or API_SaveEmotes) and paste the code below.",
+    "emote_status_error": "Could not save memberEmojiMap.",
+    "tab_settings": "Settings",
+    "panel_sb_import": "Streamer.bot Import",
+    "desc_sb_import": "Import all required Actions, Queues, Triggers, and Global Variable setup in one click.",
+    "btn_sb_107": "Streamer.bot 1.0.7 Stable",
+    "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
+    "desc_sb_import_ver": "Choose the button that matches your Streamer.bot version. 1.0.7 imports do not work on 1.1.0 Alpha and vice versa.",
+    "opt_bg_none_only": "None (Solid Fill Only)",
+    "desc_bg_auto": "Backgrounds load from assets/backgrounds/. Add or remove images and update backgrounds.json to refresh the list.",
+    "opt_bg_global": "Use Global Background",
+    "opt_bg_none": "None (Solid Fill)",
+    "lbl_card_bg": "Card Background",
+    "lbl_alert_bg": "Alerts Header Background",
+    "desc_alert_bg": "Applies to the top section (avatar + title + name) only.",
+    "lbl_so_bg": "Shoutout Background",
+    "lbl_chat_bg": "Chat Bar Background",
+    "lbl_qa_bg": "Q&A Background",
+    "lbl_f5_color_1": "Avatar 1 Color",
+    "lbl_f5_color_2": "Avatar 2 Color",
+    "lbl_f5_color_3": "Avatar 3 Color",
+    "lbl_f5_color_4": "Avatar 4 Color",
+    "lbl_f5_color_5": "Avatar 5 Color",
+    "lbl_f5_event": "SB Event Name",
+    "opt_slide_up": "Slide Up",
+    "opt_slide_down": "Slide Down",
+    "opt_fade": "Fade",
+    "opt_zoom": "Zoom",
+    "desc_goals_ticker": "In ticker mode these move the whole goal card on and off screen. The card stays hidden through the gap and the repeat delay.",
+    "chk_goals_likes": "Likes",
+    "chk_goals_members": "Memberships",
+    "chk_goals_jewels": "Jewels",
+    "chk_goals_subs": "Subscribers",
+    "chk_goals_gifts": "Member Gifts",
+    "chk_goals_supers": "Super Chats/Stickers",
+    "lbl_goals_likes_title": "Likes Title",
+    "lbl_goals_likes_count": "Likes Count Var",
+    "lbl_goals_likes_goal": "Likes Goal Var",
+    "lbl_goals_members_title": "Members Title",
+    "lbl_goals_members_count": "Members Count Var",
+    "lbl_goals_members_goal": "Members Goal Var",
+    "lbl_goals_jewels_title": "Jewels Title",
+    "lbl_goals_jewels_count": "Jewels Count Var",
+    "lbl_goals_jewels_goal": "Jewels Goal Var",
+    "lbl_goals_subs_title": "Subs Title",
+    "lbl_goals_subs_count": "Subs Count Var",
+    "lbl_goals_subs_goal": "Subs Goal Var",
+    "lbl_goals_gifts_title": "Member Gifts Title",
+    "lbl_goals_gifts_count": "Member Gifts Count Var",
+    "lbl_goals_gifts_goal": "Member Gifts Goal Var",
+    "lbl_goals_supers_title": "Super Chats/Stickers Title",
+    "lbl_goals_supers_count": "Super Chats/Stickers Count Var",
+    "lbl_goals_supers_goal": "Super Chats/Stickers Goal Var",
+    "panel_custom_goals": "Custom Goals",
+    "btn_add_goal": "Add Goal",
+    "desc_custom_goals": "Each custom goal reads a count global and a goal global from Streamer.bot, the same way the built-in bars do.",
+    "custom_goals_empty": "No custom goals yet.",
+    "custom_goal_label": "Custom {n}",
+    "custom_goal_default": "Custom Goal",
+    "lbl_show": "Show",
+    "lbl_goal_title": "Title",
+    "lbl_count_var": "Count Var",
+    "lbl_goal_var": "Goal Var",
+    "ph_custom_goal": "Custom Goal",
+    "ph_count_var": "myCount",
+    "ph_goal_var": "myGoal",
+    "ph_emote_family": "optional, e.g. 2sb",
+    "ph_emote_name": "3stars",
+    "ph_emote_url": "https://yt3.googleusercontent.com/...",
+    "ph_emote_json": "{\":_3stars:\":\"https://...\"}",
+    "btn_cancel": "Cancel",
+    "lbl_emote_paste": "Paste a memberEmojiMap object",
+    "emote_help_summary": "Streamer.bot cannot create globals from the browser. Use this action to write memberEmojiMap.",
+    "emote_help_body": "In Streamer.bot, create an action named GTA_SetMemberEmojiMap (or keep API_SaveEmotes). Add a C# sub-action and paste this code. The same file is streamerbot/GTA_SetMemberEmojiMap.cs.",
+    "btn_copy_cs": "Copy C#",
+    "emote_copied_cs": "C# copied.",
+    "emote_copy_failed": "Could not copy. Select the code and copy it manually.",
+    "sb_import_title": "Streamer.bot Import",
+    "sb_setup_instructions": "Setup Instructions",
+    "sb_step_1": "In Streamer.bot, click the Import button (top-left), paste the code below, then click Import.",
+    "sb_step_2": "Find the action [GTA_Initialize Globals] in the Actions list, right-click, and choose Test. This creates viShoutOuts and viChatHighlight.",
+    "sb_step_3": "Go to Servers, then WebSocket Server, and enable it. Use the same Host, Port, and Password as the General tab.",
+    "sb_step_4": "(Optional) Open Auto Import Youtube members (File Watcher) and set the folder for your YouTube members CSV.",
+    "sb_step_5": "Copy a browser-source URL from this page into OBS Studio.",
+    "sb_step_6": "Test everything with the buttons on the Test tab.",
+    "sb_import_note": "Note: The global variable names on the Shoutout and Q&A tabs must match the actions (viShoutOuts / viChatHighlight).",
+    "btn_copy_import": "Copy Import Code",
+    "btn_download_txt": "Download .txt",
+    "status_copied": "Copied!",
+    "status_copy_failed": "Copy failed",
+    "sb_loading": "Loading import code...",
+    "sb_load_failed": "Could not load import code from {file}. Serve the site (do not open the HTML file directly) and keep the streamerbot folder next to setup.html.",
+    "panel_livesub": "Live Subscriber Count",
+    "desc_livesub": "YouTube Studio does not send the live subscriber total through chat. A Tampermonkey script reads the number on screen and sends it to Streamer.bot. Pick the browser you will leave open.",
+    "btn_livesub_help": "Instructions",
+    "btn_livesub_code": "Userscript",
+    "livesub_step_1": "Install the Tampermonkey extension in the browser you selected.",
+    "livesub_step_2": "Create a new Tampermonkey script, replace the template with the code from the Userscript view, and save it. It runs on studio.youtube.com.",
+    "livesub_step_3": "In Streamer.bot, turn on the two actions for this browser and turn off the other pair. The import already includes them.",
+    "livesub_step_4": "Launch runs when Streamer.bot opens and opens YouTube Studio. Close runs when the YouTube broadcast ends and closes that window.",
+    "livesub_step_5": "Leave that Studio window open and not minimized. The count does not update if Streamer.bot is closed, or if the window is closed or minimized.",
+    "livesub_step_6": "The script calls the action Update Sub Count with liveSubCount on ws://127.0.0.1:8080/. Use the same port as this page. It does not send a WebSocket password.",
+    "livesub_on": "Turn these on",
+    "livesub_off": "Turn these off",
+    "livesub_keep": "Leave this enabled:",
+    "livesub_file": "Script file: {file}",
+    "livesub_copied": "Script copied.",
+    "livesub_copy_failed": "Could not copy the script.",
+    "livesub_loading": "Loading script...",
+    "livesub_load_failed": "Could not load {file}. Run the site with npm run dev. Opening the HTML file directly will not load it."
   },
   "pt-br": {
     "tenure": "Tempo",
-    "joined": "Membro",
+    "joined": "Entrou",
     "loyalty": "Lealdade",
     "months": " Meses",
     "shoutout": "DESTAQUE",
-    "qa": "PERGUNTAS",
+    "qa": "DESTAQUE DE PERGUNTA",
     "status_disconnected": "Desconectado",
     "status_connected": "SB Conectado",
-    "res_720": "Tela 720p",
-    "res_1080": "Tela 1080p",
-    "res_1440": "Tela 1440p",
-    "res_2160": "Tela 2160p (4K)",
+    "res_720": "Canvas 720p",
+    "res_1080": "Canvas 1080p",
+    "res_1440": "Canvas 1440p",
+    "res_2160": "Canvas 2160p (4K)",
     "tab_general": "Geral",
-    "tab_card": "Card",
+    "tab_card": "Cartão",
     "tab_alerts": "Alertas",
     "tab_shoutout": "Destaque",
     "tab_chat": "Chat",
-    "tab_qa": "P&R",
+    "tab_qa": "Perguntas",
+    "tab_first5": "First 5",
+    "mod_6_first5": "6. Primeiros 5",
     "tab_colors": "Cores",
     "tab_test": "Teste",
-    "panel_sb_conn": "Conexão com Streamer.bot",
+    "panel_sb_conn": "Conexão Streamer.bot",
     "lbl_ws_host": "IP / Host do WebSocket",
     "lbl_ws_port": "Porta",
     "lbl_ws_pass": "Senha do WebSocket",
-    "ph_ws_pass": "Deixe em branco se não houver senha",
-    "btn_connect_sb": "Conectar ao SB",
+    "ph_ws_pass": "Deixe em branco se não houver autenticação",
+    "btn_connect_sb": "Conectar SB",
     "panel_typo": "Tipografia Global e Textura Compartilhada",
-    "lbl_font_heading": "Fonte de Título",
-    "lbl_font_body": "Fonte de Texto",
+    "lbl_font_heading": "Fonte do Título",
+    "lbl_font_body": "Fonte do Corpo",
     "lbl_bg_url": "URL / Caminho da Textura de Fundo",
     "btn_layout_horiz": "Layout Horizontal",
     "btn_layout_vert": "Layout Vertical",
     "lbl_left_x": "Esquerda (X px)",
     "lbl_bottom_y": "Inferior (Y px)",
-    "lbl_top_y": "Topo (Y px)",
+    "lbl_top_y": "Superior (Y px)",
     "lbl_scale": "Escala",
-    "lbl_center_h": "Centro H",
-    "lbl_center_v": "Centro V",
+    "lbl_center_h": "Centralizar H",
+    "lbl_center_v": "Centralizar V",
     "lbl_screen_center": "Centro da Tela",
     "lbl_duration_sec": "Duração (seg)",
-    "lbl_solid_fill": "Cor Sólida (Sem Imagem de Fundo)",
+    "lbl_solid_fill": "Preenchimento Sólido (Sem Imagem)",
     "opt_teal": "VERDE-ÁGUA",
     "opt_pink": "ROSA",
     "opt_purple": "ROXO",
     "opt_yellow": "AMARELO",
-    "panel_card_layout": "Layout Base do Card",
+    "panel_card_layout": "Layout Base do Cartão",
     "lbl_show_avatar": "Mostrar Avatar",
     "lbl_show_user": "Mostrar Usuário",
     "lbl_show_tier": "Mostrar Nível",
-    "lbl_card_anim": "Transição do Card",
-    "opt_anim_slide_left": "Deslizar (Esquerda)",
-    "opt_anim_slide_right": "Deslizar (Direita)",
-    "opt_anim_slide_up": "Subir (Inferior)",
-    "opt_anim_zoom": "Zoom Vice Pop",
+    "lbl_card_anim": "Transição do Cartão",
+    "opt_anim_slide_left": "Entrar (Esquerda)",
+    "opt_anim_slide_right": "Entrar (Direita)",
+    "opt_anim_slide_up": "Subir (De Baixo)",
+    "opt_anim_zoom": "Zoom Vice",
     "lbl_avatar_anim": "Animação do Avatar",
     "opt_av_flip": "Giro de Moeda 3D",
     "opt_av_spin": "Giro 360°",
-    "opt_av_pop": "Pulo Elástico",
+    "opt_av_pop": "Salto Elástico",
     "lbl_sb_custom_event": "Evento Personalizado SB",
     "lbl_avatar_sb_var": "Var SB do Avatar",
     "lbl_tier_sb_var": "Var SB do Nível",
-    "panel_card_vars": "Variáveis do Card (Linhas Dinâmicas)",
+    "panel_card_vars": "Variáveis do Cartão (Linhas)",
     "btn_add_row": "+ Adicionar Linha",
     "stat_row_title": "LINHA #",
     "stat_lbl_label": "Rótulo",
     "stat_lbl_sb_var": "Var SB",
     "stat_lbl_suffix": "Sufixo",
     "stat_lbl_icon": "Ícone",
-    "stat_lbl_icolor": "Cor Ícone",
-    "stat_lbl_vcolor": "Cor Valor",
+    "stat_lbl_icolor": "Cor do Ícone",
+    "stat_lbl_vcolor": "Cor do Valor",
     "stat_new_default": "Novo",
     "icon_heart": "Coração",
     "icon_calendar": "Calendário",
@@ -1311,109 +1963,109 @@
     "icon_bolt": "Raio",
     "icon_cash": "Dinheiro",
     "icon_star": "Estrela",
-    "panel_yt_events": "Eventos do YouTube e Cores de Destaque",
-    "desc_yt_events": "Escolha uma cor de destaque independente e ative/desative a visibilidade para cada tipo de alerta.",
+    "panel_yt_events": "Eventos do YouTube e Cores",
+    "desc_yt_events": "Escolha a cor de destaque e a visibilidade de cada tipo de alerta.",
     "al_new_sub": "Novo Inscrito",
     "al_new_mem": "Novo Membro",
-    "al_milestone": "Marco de Membro",
-    "al_gift_sent": "Presente de Membro Enviado",
-    "al_gift_rec": "Presente de Membro Recebido",
+    "al_milestone": "Marco de Assinatura",
+    "al_gift_sent": "Presente de Membership Enviado",
+    "al_gift_rec": "Recebeu Presente",
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Joias Enviadas",
     "panel_alerts_pos": "Posição e Tempo dos Alertas",
-    "lbl_sb_alert_event": "Evento de Alerta Personalizado SB",
-    "panel_so_pos": "Posição e Tempo do Destaque",
-    "panel_so_aesthetics": "Estética do Destaque e Gatilho SB",
+    "lbl_sb_alert_event": "Evento de Alerta SB",
+    "panel_so_pos": "Posição e Tempo do Shoutout",
+    "panel_so_aesthetics": "Visual do Shoutout e Gatilho SB",
     "lbl_toast_anim": "Animação do Toast",
-    "opt_so_roll": "Rolar e Pular",
-    "opt_so_slide_right": "Deslizar Direita",
-    "opt_so_slide_left": "Deslizar Esquerda",
+    "opt_so_roll": "Girar e Saltar",
+    "opt_so_slide_right": "Deslizar à Direita",
+    "opt_so_slide_left": "Deslizar à Esquerda",
     "opt_so_zoom": "Zoom Vice",
     "lbl_avatar_side": "Lado do Avatar",
     "opt_side_right": "Lado Direito",
     "opt_side_left": "Lado Esquerdo",
     "lbl_accent_color": "Cor de Destaque",
-    "lbl_header_title": "Texto do Cabeçalho",
+    "lbl_header_title": "Texto do Título",
     "ph_auto_trans": "Deixe vazio para tradução automática",
     "lbl_sb_global_var": "Nome da Variável Global SB",
-    "lbl_sb_event_name": "Nome do Evento Personalizado SB",
-    "panel_chat_pos": "Posição e Dimensões do Chat Horizontal",
+    "lbl_sb_event_name": "Nome do Evento SB",
+    "panel_chat_pos": "Posição e Tamanho do Chat",
     "lbl_bar_width": "Largura da Barra",
-    "lbl_font_size": "Tam. da Fonte (px)",
-    "lbl_max_msgs": "Máx. de Mensagens",
-    "panel_chat_colors": "Cores dos Cargos e Fundo da Barra",
+    "lbl_font_size": "Tamanho da Fonte (px)",
+    "lbl_max_msgs": "Máximo de Mensagens",
+    "panel_chat_colors": "Cores dos Papéis e Fundo",
     "lbl_mem_color": "Cor do Membro (Padrão Verde-água)",
     "lbl_mod_color": "Cor do Moderador (Padrão Roxo)",
     "lbl_view_color": "Cor do Espectador (Padrão Amarelo)",
-    "lbl_msg_color": "Cor do Texto da Mensagem",
-    "lbl_bar_fill": "Cor de Fundo",
-    "lbl_bar_opacity": "Opacidade (%)",
+    "lbl_msg_color": "Cor do Texto",
+    "lbl_bar_fill": "Cor de Preenchimento",
+    "lbl_bar_opacity": "Opacidade da Barra (%)",
     "lbl_top_border_color": "Cor da Borda Superior",
     "lbl_show_avatars": "Mostrar Avatares",
-    "lbl_show_badges": "Mostrar Emblemas",
-    "lbl_all_caps": " MAIÚSCULAS",
-    "lbl_transparent_bar": "Barra Transparente (Ocultar Faixa de Fundo)",
-    "panel_chat_filters": "Filtros de Chat (Comandos, Usuários e Grupos)",
+    "lbl_show_badges": "Mostrar Insígnias",
+    "lbl_all_caps": "MAIÚSCULAS",
+    "lbl_transparent_bar": "Barra Transparente (Ocultar Fundo)",
+    "panel_chat_filters": "Filtros do Chat (Comandos e Usuários)",
     "lbl_ignore_cmds": "Ignorar Comandos (Começa com Prefixo)",
-    "lbl_cmd_prefixes": "Prefixos de Comando (Sep. por vírgula)",
-    "lbl_auto_hide": "Ocultar Msg Após (seg, 0=Nunca)",
-    "lbl_ignore_users": "Ignorar Usuários por Nome ou ID do Canal (Sep. por vírgula)",
-    "ph_ignore_users": "ex: Nightbot, StreamElements, UC...",
-    "lbl_ignore_groups": "Ignorar Grupos por groupName (Sep. por vírgula)",
-    "ph_ignore_groups": "ex: Bots, GrupoExcluido",
-    "panel_qa_pos": "Posição e Tempo do P&R",
-    "panel_qa_aesthetics": "Estética do P&R e Gatilho SB",
+    "lbl_cmd_prefixes": "Prefixos de Comando (vírgula)",
+    "lbl_auto_hide": "Ocultar Mensagem Após (seg, 0=Nunca)",
+    "lbl_ignore_users": "Ignorar Usuários por Nome ou ID (vírgula)",
+    "ph_ignore_users": "ex. Nightbot, StreamElements, UC...",
+    "lbl_ignore_groups": "Ignorar Grupos por groupName (vírgula)",
+    "ph_ignore_groups": "ex. Bots, GrupoExcluido",
+    "panel_qa_pos": "Posição e Tempo do Q&A",
+    "panel_qa_aesthetics": "Visual do Q&A e Gatilho SB",
     "lbl_entrance_anim": "Animação de Entrada",
-    "lbl_header_badge_text": "Texto do Emblema Superior",
-    "lbl_show_badge_pill": "Mostrar Emblema no Cabeçalho",
+    "lbl_header_badge_text": "Texto do Selo",
+    "lbl_show_badge_pill": "Mostrar Selo do Cabeçalho",
     "panel_palette": "Substituições da Paleta GTA VI",
     "btn_reset": "Redefinir",
     "lbl_prim_pink": "Rosa Primário",
-    "lbl_prim_teal": "Verde-água Primário",
+    "lbl_prim_teal": "Verde-azulado Primário",
     "lbl_prim_purple": "Roxo Primário",
     "lbl_prim_yellow": "Amarelo Primário",
     "lbl_stroke_color": "Contorno de Ícone / Texto",
-    "lbl_border_color": "Borda Externa do Card",
-    "lbl_bg_fill_color": "Preenchimento Base do Card",
-    "panel_simulators": "Simuladores dos 5 Módulos",
-    "btn_sim_walkon": "Card",
+    "lbl_border_color": "Borda Externa do Cartão",
+    "lbl_bg_fill_color": "Preenchimento Base do Cartão",
+    "panel_simulators": "Simuladores de 5 Módulos",
+    "btn_sim_walkon": "Entrada",
     "btn_sim_alert": "Alerta",
     "btn_sim_shoutout": "Destaque",
-    "btn_sim_chat": "Enviar Chat Teste",
-    "btn_sim_qa": "Testar P&R",
+    "btn_sim_chat": "Enviar Chat de Teste",
+    "btn_sim_qa": "Testar Pergunta",
     "lbl_sim_alert_type": "Tipo de Alerta para Simular",
-    "lbl_sim_chat_role": "Cargo do Chat para Simular",
-    "opt_role_random": "Cargo Aleatório",
+    "lbl_sim_chat_role": "Papel do Chat a Simular",
+    "opt_role_random": "Papel Aleatório",
     "opt_role_member": "Membro (Verde-água)",
     "opt_role_mod": "Moderador (Roxo)",
     "opt_role_viewer": "Espectador (Amarelo)",
-    "panel_live_test": "Teste de Usuário Real no SB (Card, Destaque e P&R)",
-    "lbl_chan_or_user": "ID do Canal ou Nome de Usuário",
-    "ph_chan_or_user": "ex: UCVu2Tib4ZyK3FzwnCjPBHGw ou Nome",
-    "lbl_sample_qa_msg": "Mensagem de Exemplo P&R",
-    "lbl_sb_lookup_action": "Ação de Busca no SB",
-    "btn_test_card": "Testar Card",
-    "btn_test_so": "Testar Destaque",
-    "btn_test_qa": "Testar P&R",
+    "panel_live_test": "Teste ao Vivo SB (Cartão, SO e Q&A)",
+    "lbl_chan_or_user": "ID do Canal ou Nome",
+    "ph_chan_or_user": "ex. UC... ou Nome de usuário",
+    "lbl_sample_qa_msg": "Mensagem de Exemplo do Q&A",
+    "lbl_sb_lookup_action": "Ação de Consulta SB",
+    "btn_test_card": "Testar Cartão",
+    "btn_test_so": "Testar SO",
+    "btn_test_qa": "Testar Q&A",
     "status_ready": "Pronto...",
-    "status_enter_user": "Digite um ID do Canal ou Nome de Usuário primeiro.",
-    "status_not_connected": "Não conectado ao Streamer.bot!",
-    "status_querying": "Consultando SB para \"{user}\"...",
-    "status_action_not_found": "Ação \"{action}\" não encontrada no SB.",
-    "status_error_query": "Erro ao consultar o SB.",
+    "status_enter_user": "Digite um nome de usuário",
+    "status_not_connected": "Não conectado ao Streamer.bot",
+    "status_querying": "Consultando {user}...",
+    "status_action_not_found": "Ação {action} não encontrada",
+    "status_error_query": "Erro ao consultar",
     "status_loaded_vars": "Variáveis reais do SB carregadas para {user}!",
     "lbl_modules_gen": "Módulos para Gerar:",
-    "mod_1_walkon": "1. Card de Entrada",
+    "mod_1_walkon": "1. Cartão de Entrada",
     "mod_2_alerts": "2. Caixa de Alertas",
     "mod_3_shoutout": "3. Destaque",
     "mod_4_chat": "4. Barra de Chat",
-    "mod_5_qa": "5. Toast de P&R",
+    "mod_5_qa": "5. Toast de Pergunta",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copiar",
     "btn_copied": "Copiado",
-    "lbl_pin_preview": "Fixar Visível (Modo de Ajuste) — Arraste qualquer módulo para mover • Arraste o canto para redimensionar",
+    "lbl_pin_preview": "Fixar Visível (Modo de Configuração) — Arraste qualquer módulo para mover • Arraste a alça do canto para escalar",
     "btn_view_dual": "Prévia Dupla",
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
@@ -1423,7 +2075,201 @@
     "btn_imported": "Importado!",
     "btn_export": "Exportar",
     "btn_exported": "Exportado!",
-    "err_import_invalid": "Arquivo de configurações inválido."
+    "err_import_invalid": "Arquivo de configuração inválido.",
+    "panel_f5_pos": "Primeiros 5 Posição e Tempo",
+    "panel_f5_appear": "Primeiros 5 Aparência",
+    "lbl_f5_width": "Largura do Contêiner (px)",
+    "lbl_f5_gap": "Espaço (px)",
+    "lbl_f5_align_h": "Centralizar Horizontalmente",
+    "lbl_f5_align_v": "Centralizar Verticalmente",
+    "lbl_f5_anim": "Animação",
+    "lbl_f5_shape": "Forma",
+    "lbl_f5_align": "Alinhamento dos Avatares",
+    "lbl_f5_exit": "Direção de Saída",
+    "lbl_f5_end_delay": "Atraso Final (ms após o 5º)",
+    "lbl_f5_sfx": "Reproduzir SFX",
+    "lbl_f5_sfx_vol": "Volume do SFX",
+    "opt_f5_center": "Centro",
+    "opt_f5_left": "Esquerda",
+    "opt_f5_right": "Direita",
+    "opt_f5_exit_left": "Sair à Esquerda",
+    "opt_f5_exit_right": "Sair à Direita",
+    "opt_f5_exit_up": "Sair para Cima",
+    "opt_f5_roll_left": "Rolar da Esquerda",
+    "opt_f5_roll_right": "Rolar da Direita",
+    "opt_f5_drop_top": "Cair de Cima",
+    "opt_f5_zoom": "Zoom / Salto",
+    "opt_f5_circle": "Círculo",
+    "opt_f5_rounded": "Quadrado Arredondado",
+    "tab_goals": "Metas",
+    "mod_7_goals": "7. Barras de Metas",
+    "panel_goals_pos": "Posição das Barras de Metas",
+    "panel_goals_display": "Exibição",
+    "panel_goals_vars": "Variáveis das Metas",
+    "lbl_goals_mode": "Modo de Exibição",
+    "opt_goals_inline": "Grupo em Linha",
+    "opt_goals_ticker": "Rotativo",
+    "lbl_palette": "Paleta",
+    "opt_palette_game": "VI Game",
+    "opt_palette_marketing": "VI Marketing",
+    "lbl_f5_height": "Altura do Contêiner (px)",
+    "lbl_f5_in_dir": "Direção de Entrada",
+    "lbl_f5_in_style": "Estilo de Entrada",
+    "lbl_f5_out_dir": "Direção de Saída",
+    "lbl_f5_out_style": "Estilo de Saída",
+    "opt_f5_top": "Cima",
+    "opt_f5_bottom": "Baixo",
+    "opt_f5_random": "Aleatório",
+    "opt_f5_slide": "Deslizar",
+    "opt_f5_roll": "Rolar",
+    "opt_f5_fade": "Esmaecer",
+    "lbl_f5_group_x": "Grupo Esquerda (px)",
+    "lbl_f5_group_y": "Grupo Topo (px)",
+    "lbl_f5_group_center_h": "Centralizar Grupo H",
+    "lbl_f5_group_center_v": "Centralizar Grupo V",
+    "lbl_f5_size": "Tamanho do Avatar (px)",
+    "lbl_goals_bg": "Fundo",
+    "lbl_goals_show_dur": "Duração em Tela (seg)",
+    "lbl_goals_gap_dur": "Intervalo (seg)",
+    "lbl_goals_repeat_delay": "Atraso de Repetição (seg)",
+    "lbl_goals_anim_in": "Animação de Entrada",
+    "lbl_goals_anim_out": "Animação de Saída",
+    "btn_sim_first5": "Testar First 5",
+    "btn_sim_goals": "Testar Metas",
+    "tab_emotes": "Emotes",
+    "panel_member_emotes": "Emojis de Membro do YouTube",
+    "lbl_emote_family": "Prefixo da Família",
+    "btn_emote_apply_family": "Aplicar a Todos",
+    "btn_emote_refresh": "Atualizar",
+    "btn_emote_create": "Criar memberEmojiMap",
+    "btn_emote_save": "Salvar no Streamer.bot",
+    "btn_emote_add": "Adicionar Emote",
+    "btn_emote_update": "Atualizar",
+    "btn_emote_edit": "Editar",
+    "btn_emote_del": "Excluir",
+    "btn_emote_import": "Importar JSON",
+    "lbl_emote_name": "Nome do Emote",
+    "lbl_emote_url": "URL da Imagem",
+    "emote_form_add": "Adicionar Emote",
+    "emote_form_edit": "Editando Emote",
+    "emote_empty": "Nenhum emoji de membro ainda.",
+    "emote_need_both": "Informe o nome e a URL da imagem.",
+    "emote_need_url": "A URL deve começar com http:// ou https://.",
+    "emote_bad_json": "Esse JSON não é um objeto memberEmojiMap.",
+    "emote_status_disconnected": "Conecte o Streamer.bot na aba Geral para carregar ou salvar os emotes.",
+    "emote_status_missing": "memberEmojiMap não foi encontrado. Crie o global ou importe a lista e salve.",
+    "emote_status_ready": "memberEmojiMap definido ({n} emotes).",
+    "emote_status_saved": "memberEmojiMap salvo no Streamer.bot.",
+    "emote_status_no_action": "Nenhuma ação de salvamento. Crie a ação GTA_SetMemberEmojiMap (ou API_SaveEmotes) e cole o código abaixo.",
+    "emote_status_error": "Não foi possível salvar memberEmojiMap.",
+    "tab_settings": "Ajustes",
+    "panel_sb_import": "Importar Streamer.bot",
+    "desc_sb_import": "Importe ações, filas, gatilhos e as variáveis globais necessárias em um clique.",
+    "btn_sb_107": "Streamer.bot 1.0.7 Estável",
+    "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
+    "desc_sb_import_ver": "Escolha o botão da sua versão do Streamer.bot. A importação 1.0.7 não funciona na 1.1.0 Alpha, e o contrário também.",
+    "opt_bg_none_only": "Nenhum (Só Preenchimento)",
+    "desc_bg_auto": "Os fundos vêm de assets/backgrounds/. Adicione ou remova imagens e atualize backgrounds.json para recarregar a lista.",
+    "opt_bg_global": "Usar Fundo Global",
+    "opt_bg_none": "Nenhum (Preenchimento)",
+    "lbl_card_bg": "Fundo do Cartão",
+    "lbl_alert_bg": "Fundo do Cabeçalho dos Alertas",
+    "desc_alert_bg": "Vale só para a parte de cima (avatar + título + nome).",
+    "lbl_so_bg": "Fundo do Shoutout",
+    "lbl_chat_bg": "Fundo da Barra de Chat",
+    "lbl_qa_bg": "Fundo do Q&A",
+    "lbl_f5_color_1": "Cor do Avatar 1",
+    "lbl_f5_color_2": "Cor do Avatar 2",
+    "lbl_f5_color_3": "Cor do Avatar 3",
+    "lbl_f5_color_4": "Cor do Avatar 4",
+    "lbl_f5_color_5": "Cor do Avatar 5",
+    "lbl_f5_event": "Nome do Evento SB",
+    "opt_slide_up": "Deslizar para Cima",
+    "opt_slide_down": "Deslizar para Baixo",
+    "opt_fade": "Esmaecer",
+    "opt_zoom": "Zoom",
+    "desc_goals_ticker": "No modo rotativo, isso move o cartão inteiro para dentro e para fora da tela. Ele fica oculto durante a pausa e a espera da repetição.",
+    "chk_goals_likes": "Curtidas",
+    "chk_goals_members": "Memberships",
+    "chk_goals_jewels": "Joias",
+    "chk_goals_subs": "Inscritos",
+    "chk_goals_gifts": "Presentes",
+    "chk_goals_supers": "Super Chats/Stickers",
+    "lbl_goals_likes_title": "Título das Curtidas",
+    "lbl_goals_likes_count": "Var de Contagem (Curtidas)",
+    "lbl_goals_likes_goal": "Var da Meta (Curtidas)",
+    "lbl_goals_members_title": "Título dos Membros",
+    "lbl_goals_members_count": "Var de Contagem (Membros)",
+    "lbl_goals_members_goal": "Var da Meta (Membros)",
+    "lbl_goals_jewels_title": "Título das Joias",
+    "lbl_goals_jewels_count": "Var de Contagem (Joias)",
+    "lbl_goals_jewels_goal": "Var da Meta (Joias)",
+    "lbl_goals_subs_title": "Título dos Inscritos",
+    "lbl_goals_subs_count": "Var de Contagem (Inscritos)",
+    "lbl_goals_subs_goal": "Var da Meta (Inscritos)",
+    "lbl_goals_gifts_title": "Título dos Presentes",
+    "lbl_goals_gifts_count": "Var de Contagem (Presentes)",
+    "lbl_goals_gifts_goal": "Var da Meta (Presentes)",
+    "lbl_goals_supers_title": "Título dos Super Chats/Stickers",
+    "lbl_goals_supers_count": "Var de Contagem (Super Chats/Stickers)",
+    "lbl_goals_supers_goal": "Var da Meta (Super Chats/Stickers)",
+    "panel_custom_goals": "Metas Personalizadas",
+    "btn_add_goal": "Adicionar Meta",
+    "desc_custom_goals": "Cada meta personalizada lê um global de contagem e um global de meta no Streamer.bot, como as barras prontas.",
+    "custom_goals_empty": "Nenhuma meta personalizada ainda.",
+    "custom_goal_label": "Personalizada {n}",
+    "custom_goal_default": "Meta Personalizada",
+    "lbl_show": "Mostrar",
+    "lbl_goal_title": "Título",
+    "lbl_count_var": "Var de Contagem",
+    "lbl_goal_var": "Var da Meta",
+    "ph_custom_goal": "Meta Personalizada",
+    "ph_count_var": "minhaContagem",
+    "ph_goal_var": "minhaMeta",
+    "ph_emote_family": "opcional, ex. 2sb",
+    "ph_emote_name": "3stars",
+    "ph_emote_url": "https://yt3.googleusercontent.com/...",
+    "ph_emote_json": "{\":_3stars:\":\"https://...\"}",
+    "btn_cancel": "Cancelar",
+    "lbl_emote_paste": "Cole um objeto memberEmojiMap",
+    "emote_help_summary": "O Streamer.bot não cria globals pelo navegador. Use esta ação para gravar memberEmojiMap.",
+    "emote_help_body": "No Streamer.bot, crie uma ação chamada GTA_SetMemberEmojiMap (ou mantenha API_SaveEmotes). Adicione uma sub-ação C# e cole este código. O arquivo é streamerbot/GTA_SetMemberEmojiMap.cs.",
+    "btn_copy_cs": "Copiar C#",
+    "emote_copied_cs": "C# copiado.",
+    "emote_copy_failed": "Não foi possível copiar. Selecione o código e copie manualmente.",
+    "sb_import_title": "Importar Streamer.bot",
+    "sb_setup_instructions": "Instruções",
+    "sb_step_1": "No Streamer.bot, clique em Import (canto superior esquerdo), cole o código abaixo e clique em Import.",
+    "sb_step_2": "Ache a ação [GTA_Initialize Globals] na lista, clique com o botão direito e escolha Test. Isso cria viShoutOuts e viChatHighlight.",
+    "sb_step_3": "Vá em Servers e depois WebSocket Server e ative. Use o mesmo Host, Porta e Senha da aba Geral.",
+    "sb_step_4": "(Opcional) Abra Auto Import Youtube members (File Watcher) e defina a pasta do CSV de membros do YouTube.",
+    "sb_step_5": "Copie uma URL de browser source desta página para o OBS Studio.",
+    "sb_step_6": "Teste tudo com os botões da aba Test.",
+    "sb_import_note": "Nota: os nomes das variáveis globais nas abas Shoutout e Q&A precisam bater com as ações (viShoutOuts / viChatHighlight).",
+    "btn_copy_import": "Copiar Código",
+    "btn_download_txt": "Baixar .txt",
+    "status_copied": "Copiado!",
+    "status_copy_failed": "Falha ao copiar",
+    "sb_loading": "Carregando código de importação...",
+    "sb_load_failed": "Não foi possível carregar o código de {file}. Sirva o site (não abra o HTML direto) e mantenha a pasta streamerbot ao lado de setup.html.",
+    "panel_livesub": "Inscritos ao Vivo",
+    "desc_livesub": "O YouTube Studio não envia o total de inscritos ao vivo pelo chat. Um script do Tampermonkey lê o número na tela e envia ao Streamer.bot. Escolha o navegador que vai ficar aberto.",
+    "btn_livesub_help": "Instruções",
+    "btn_livesub_code": "Script",
+    "livesub_step_1": "Instale a extensão Tampermonkey no navegador escolhido.",
+    "livesub_step_2": "Crie um script novo no Tampermonkey, troque o modelo pelo código da vista Script e salve. Ele roda em studio.youtube.com.",
+    "livesub_step_3": "No Streamer.bot, ligue as duas ações deste navegador e desligue o outro par. A importação já inclui essas ações.",
+    "livesub_step_4": "Launch abre o YouTube Studio quando o Streamer.bot inicia. Close fecha essa janela quando a transmissão do YouTube termina.",
+    "livesub_step_5": "Deixe a janela do Studio aberta e não minimizada. A contagem não atualiza se o Streamer.bot estiver fechado, ou se a janela estiver fechada ou minimizada.",
+    "livesub_step_6": "O script chama a ação Update Sub Count com liveSubCount em ws://127.0.0.1:8080/. Use a mesma porta desta página. Ele não envia senha do WebSocket.",
+    "livesub_on": "Ligar estas",
+    "livesub_off": "Desligar estas",
+    "livesub_keep": "Deixe esta ligada:",
+    "livesub_file": "Arquivo do script: {file}",
+    "livesub_copied": "Script copiado.",
+    "livesub_copy_failed": "Não foi possível copiar o script.",
+    "livesub_loading": "Carregando script...",
+    "livesub_load_failed": "Não foi possível carregar {file}. Rode o site com npm run dev. Abrir o HTML direto não carrega o arquivo."
   },
   "es": {
     "tenure": "Antigüedad",
@@ -1446,6 +2292,8 @@
     "tab_qa": "P&R",
     "tab_colors": "Colores",
     "tab_test": "Prueba",
+    "tab_first5": "First 5",
+    "mod_6_first5": "6. Primeros 5",
     "panel_sb_conn": "Conexión con Streamer.bot",
     "lbl_ws_host": "IP / Host de WebSocket",
     "lbl_ws_port": "Puerto",
@@ -1549,7 +2397,7 @@
     "lbl_show_badges": "Mostrar Insignias",
     "lbl_all_caps": "MAYÚSCULAS",
     "lbl_transparent_bar": "Barra Transparente (Ocultar Franja de Fondo)",
-    "panel_chat_filters": "Filtros de Chat (Comandos, Usuarios y Grupos)",
+    "panel_chat_filters": "Filtros de Chat (Comandos y Usuarios)",
     "lbl_ignore_cmds": "Ignorar Comandos (Empieza con Prefijo)",
     "lbl_cmd_prefixes": "Prefijos de Comandos (Sep. por comas)",
     "lbl_auto_hide": "Ocultar Msj Tras (seg, 0=Nunca)",
@@ -1618,7 +2466,201 @@
     "btn_imported": "¡Importado!",
     "btn_export": "Exportar",
     "btn_exported": "¡Exportado!",
-    "err_import_invalid": "Archivo de configuración no válido."
+    "err_import_invalid": "Archivo de configuración no válido.",
+    "panel_f5_pos": "Primeros 5 Posición y Tiempo",
+    "panel_f5_appear": "Primeros 5 Apariencia",
+    "lbl_f5_width": "Ancho del Contenedor (px)",
+    "lbl_f5_gap": "Espacio (px)",
+    "lbl_f5_align_h": "Centrar Horizontalmente",
+    "lbl_f5_align_v": "Centrar Verticalmente",
+    "lbl_f5_anim": "Animación",
+    "lbl_f5_shape": "Forma",
+    "lbl_f5_align": "Alineación de Avatares",
+    "lbl_f5_exit": "Dirección de Salida",
+    "lbl_f5_end_delay": "Retraso Final (ms después del 5º)",
+    "lbl_f5_sfx": "Reproducir SFX",
+    "lbl_f5_sfx_vol": "Volumen del SFX",
+    "opt_f5_center": "Centro",
+    "opt_f5_left": "Izquierda",
+    "opt_f5_right": "Derecha",
+    "opt_f5_exit_left": "Salir a la Izquierda",
+    "opt_f5_exit_right": "Salir a la Derecha",
+    "opt_f5_exit_up": "Salir hacia Arriba",
+    "opt_f5_roll_left": "Rodar desde la Izquierda",
+    "opt_f5_roll_right": "Rodar desde la Derecha",
+    "opt_f5_drop_top": "Caer desde Arriba",
+    "opt_f5_zoom": "Zoom / Pop",
+    "opt_f5_circle": "Círculo",
+    "opt_f5_rounded": "Cuadrado Redondeado",
+    "tab_goals": "Metas",
+    "mod_7_goals": "7. Barras de Metas",
+    "panel_goals_pos": "Posición de las Barras",
+    "panel_goals_display": "Visualización",
+    "panel_goals_vars": "Variables de Metas",
+    "lbl_goals_mode": "Modo de Visualización",
+    "opt_goals_inline": "Grupo en Línea",
+    "opt_goals_ticker": "Ticker",
+    "lbl_palette": "Paleta",
+    "opt_palette_game": "VI Game",
+    "opt_palette_marketing": "VI Marketing",
+    "lbl_f5_height": "Alto del Contenedor (px)",
+    "lbl_f5_in_dir": "Dirección de Entrada",
+    "lbl_f5_in_style": "Estilo de Entrada",
+    "lbl_f5_out_dir": "Dirección de Salida",
+    "lbl_f5_out_style": "Estilo de Salida",
+    "opt_f5_top": "Arriba",
+    "opt_f5_bottom": "Abajo",
+    "opt_f5_random": "Aleatorio",
+    "opt_f5_slide": "Deslizar",
+    "opt_f5_roll": "Rodar",
+    "opt_f5_fade": "Fundido",
+    "lbl_f5_group_x": "Grupo Izquierda (px)",
+    "lbl_f5_group_y": "Grupo Arriba (px)",
+    "lbl_f5_group_center_h": "Centrar Grupo H",
+    "lbl_f5_group_center_v": "Centrar Grupo V",
+    "lbl_f5_size": "Tamaño del Avatar (px)",
+    "lbl_goals_bg": "Fondo",
+    "lbl_goals_show_dur": "Duración en Pantalla (seg)",
+    "lbl_goals_gap_dur": "Intervalo (seg)",
+    "lbl_goals_repeat_delay": "Retraso de Repetición (seg)",
+    "lbl_goals_anim_in": "Animación de Entrada",
+    "lbl_goals_anim_out": "Animación de Salida",
+    "btn_sim_first5": "Probar First 5",
+    "btn_sim_goals": "Probar Metas",
+    "tab_emotes": "Emotes",
+    "panel_member_emotes": "Emojis de Miembro de YouTube",
+    "lbl_emote_family": "Prefijo de Familia",
+    "btn_emote_apply_family": "Aplicar a Todos",
+    "btn_emote_refresh": "Actualizar",
+    "btn_emote_create": "Crear memberEmojiMap",
+    "btn_emote_save": "Guardar en Streamer.bot",
+    "btn_emote_add": "Añadir Emote",
+    "btn_emote_update": "Actualizar",
+    "btn_emote_edit": "Editar",
+    "btn_emote_del": "Eliminar",
+    "btn_emote_import": "Importar JSON",
+    "lbl_emote_name": "Nombre del Emote",
+    "lbl_emote_url": "URL de la Imagen",
+    "emote_form_add": "Añadir Emote",
+    "emote_form_edit": "Editando Emote",
+    "emote_empty": "Aún no hay emotes de miembro.",
+    "emote_need_both": "Escribe el nombre y la URL de la imagen.",
+    "emote_need_url": "La URL debe empezar por http:// o https://.",
+    "emote_bad_json": "Ese JSON no es un objeto memberEmojiMap.",
+    "emote_status_disconnected": "Conecta Streamer.bot en la pestaña General para cargar o guardar emotes.",
+    "emote_status_missing": "No se encontró memberEmojiMap. Créalo, o importa la lista y guarda.",
+    "emote_status_ready": "memberEmojiMap definido ({n} emotes).",
+    "emote_status_saved": "memberEmojiMap guardado en Streamer.bot.",
+    "emote_status_no_action": "No hay una acción para guardar. Crea GTA_SetMemberEmojiMap (o API_SaveEmotes) y pega el código de abajo.",
+    "emote_status_error": "No se pudo guardar memberEmojiMap.",
+    "tab_settings": "Ajustes",
+    "panel_sb_import": "Importar Streamer.bot",
+    "desc_sb_import": "Importa las acciones, colas, disparadores y variables globales necesarias en un clic.",
+    "btn_sb_107": "Streamer.bot 1.0.7 Estable",
+    "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
+    "desc_sb_import_ver": "Elige el botón de tu versión de Streamer.bot. La importación 1.0.7 no funciona en 1.1.0 Alpha, y al revés tampoco.",
+    "opt_bg_none_only": "Ninguno (Solo Relleno)",
+    "desc_bg_auto": "Los fondos salen de assets/backgrounds/. Añade o quita imágenes y actualiza backgrounds.json para recargar la lista.",
+    "opt_bg_global": "Usar Fondo Global",
+    "opt_bg_none": "Ninguno (Relleno Sólido)",
+    "lbl_card_bg": "Fondo de la Tarjeta",
+    "lbl_alert_bg": "Fondo del Encabezado de Alertas",
+    "desc_alert_bg": "Solo aplica a la parte superior (avatar + título + nombre).",
+    "lbl_so_bg": "Fondo del Shoutout",
+    "lbl_chat_bg": "Fondo de la Barra de Chat",
+    "lbl_qa_bg": "Fondo de Q&A",
+    "lbl_f5_color_1": "Color del Avatar 1",
+    "lbl_f5_color_2": "Color del Avatar 2",
+    "lbl_f5_color_3": "Color del Avatar 3",
+    "lbl_f5_color_4": "Color del Avatar 4",
+    "lbl_f5_color_5": "Color del Avatar 5",
+    "lbl_f5_event": "Nombre del Evento SB",
+    "opt_slide_up": "Deslizar Arriba",
+    "opt_slide_down": "Deslizar Abajo",
+    "opt_fade": "Fundido",
+    "opt_zoom": "Zoom",
+    "desc_goals_ticker": "En modo ticker, esto mueve toda la tarjeta dentro y fuera de la pantalla. Sigue oculta durante la pausa y la espera de repetición.",
+    "chk_goals_likes": "Me gusta",
+    "chk_goals_members": "Membresías",
+    "chk_goals_jewels": "Joyas",
+    "chk_goals_subs": "Suscriptores",
+    "chk_goals_gifts": "Regalos",
+    "chk_goals_supers": "Super Chats/Stickers",
+    "lbl_goals_likes_title": "Título de Me gusta",
+    "lbl_goals_likes_count": "Var de Conteo (Me gusta)",
+    "lbl_goals_likes_goal": "Var de Meta (Me gusta)",
+    "lbl_goals_members_title": "Título de Miembros",
+    "lbl_goals_members_count": "Var de Conteo (Miembros)",
+    "lbl_goals_members_goal": "Var de Meta (Miembros)",
+    "lbl_goals_jewels_title": "Título de Joyas",
+    "lbl_goals_jewels_count": "Var de Conteo (Joyas)",
+    "lbl_goals_jewels_goal": "Var de Meta (Joyas)",
+    "lbl_goals_subs_title": "Título de Suscriptores",
+    "lbl_goals_subs_count": "Var de Conteo (Suscriptores)",
+    "lbl_goals_subs_goal": "Var de Meta (Suscriptores)",
+    "lbl_goals_gifts_title": "Título de Regalos",
+    "lbl_goals_gifts_count": "Var de Conteo (Regalos)",
+    "lbl_goals_gifts_goal": "Var de Meta (Regalos)",
+    "lbl_goals_supers_title": "Título de Super Chats/Stickers",
+    "lbl_goals_supers_count": "Var de Conteo (Super Chats/Stickers)",
+    "lbl_goals_supers_goal": "Var de Meta (Super Chats/Stickers)",
+    "panel_custom_goals": "Metas Personalizadas",
+    "btn_add_goal": "Añadir Meta",
+    "desc_custom_goals": "Cada meta personalizada lee un global de conteo y un global de meta en Streamer.bot, igual que las barras incluidas.",
+    "custom_goals_empty": "Aún no hay metas personalizadas.",
+    "custom_goal_label": "Personalizada {n}",
+    "custom_goal_default": "Meta Personalizada",
+    "lbl_show": "Mostrar",
+    "lbl_goal_title": "Título",
+    "lbl_count_var": "Var de Conteo",
+    "lbl_goal_var": "Var de Meta",
+    "ph_custom_goal": "Meta Personalizada",
+    "ph_count_var": "miConteo",
+    "ph_goal_var": "miMeta",
+    "ph_emote_family": "opcional, ej. 2sb",
+    "ph_emote_name": "3stars",
+    "ph_emote_url": "https://yt3.googleusercontent.com/...",
+    "ph_emote_json": "{\":_3stars:\":\"https://...\"}",
+    "btn_cancel": "Cancelar",
+    "lbl_emote_paste": "Pega un objeto memberEmojiMap",
+    "emote_help_summary": "Streamer.bot no puede crear globals desde el navegador. Usa esta acción para escribir memberEmojiMap.",
+    "emote_help_body": "En Streamer.bot, crea una acción llamada GTA_SetMemberEmojiMap (o conserva API_SaveEmotes). Añade una sub-acción C# y pega este código. El archivo es streamerbot/GTA_SetMemberEmojiMap.cs.",
+    "btn_copy_cs": "Copiar C#",
+    "emote_copied_cs": "C# copiado.",
+    "emote_copy_failed": "No se pudo copiar. Selecciona el código y cópialo a mano.",
+    "sb_import_title": "Importar Streamer.bot",
+    "sb_setup_instructions": "Instrucciones",
+    "sb_step_1": "En Streamer.bot, pulsa Import (arriba a la izquierda), pega el código de abajo y pulsa Import.",
+    "sb_step_2": "Busca la acción [GTA_Initialize Globals], clic derecho y Test. Eso crea viShoutOuts y viChatHighlight.",
+    "sb_step_3": "Ve a Servers y luego WebSocket Server y actívalo. Usa el mismo Host, Puerto y Contraseña de la pestaña General.",
+    "sb_step_4": "(Opcional) Abre Auto Import Youtube members (File Watcher) y define la carpeta del CSV de miembros de YouTube.",
+    "sb_step_5": "Copia una URL de browser source de esta página a OBS Studio.",
+    "sb_step_6": "Prueba todo con los botones de la pestaña Test.",
+    "sb_import_note": "Nota: los nombres de las variables globales en Shoutout y Q&A deben coincidir con las acciones (viShoutOuts / viChatHighlight).",
+    "btn_copy_import": "Copiar Código",
+    "btn_download_txt": "Descargar .txt",
+    "status_copied": "¡Copiado!",
+    "status_copy_failed": "Error al copiar",
+    "sb_loading": "Cargando código de importación...",
+    "sb_load_failed": "No se pudo cargar el código de {file}. Sirve el sitio (no abras el HTML directo) y deja la carpeta streamerbot junto a setup.html.",
+    "panel_livesub": "Suscriptores en Vivo",
+    "desc_livesub": "YouTube Studio no envía el total de suscriptores en vivo por el chat. Un script de Tampermonkey lee el número en pantalla y lo manda a Streamer.bot. Elige el navegador que dejarás abierto.",
+    "btn_livesub_help": "Instrucciones",
+    "btn_livesub_code": "Script",
+    "livesub_step_1": "Instala la extensión Tampermonkey en el navegador que elegiste.",
+    "livesub_step_2": "Crea un script nuevo en Tampermonkey, sustituye la plantilla por el código de la vista Script y guárdalo. Se ejecuta en studio.youtube.com.",
+    "livesub_step_3": "En Streamer.bot, activa las dos acciones de este navegador y desactiva el otro par. La importación ya las incluye.",
+    "livesub_step_4": "Launch abre YouTube Studio cuando Streamer.bot arranca. Close cierra esa ventana cuando termina la transmisión de YouTube.",
+    "livesub_step_5": "Deja la ventana de Studio abierta y sin minimizar. El conteo no se actualiza si Streamer.bot está cerrado, o si la ventana está cerrada o minimizada.",
+    "livesub_step_6": "El script llama a la acción Update Sub Count con liveSubCount en ws://127.0.0.1:8080/. Usa el mismo puerto de esta página. No envía contraseña de WebSocket.",
+    "livesub_on": "Activa estas",
+    "livesub_off": "Desactiva estas",
+    "livesub_keep": "Deja esta activa:",
+    "livesub_file": "Archivo del script: {file}",
+    "livesub_copied": "Script copiado.",
+    "livesub_copy_failed": "No se pudo copiar el script.",
+    "livesub_loading": "Cargando script...",
+    "livesub_load_failed": "No se pudo cargar {file}. Sirve el sitio con npm run dev. Abrir el HTML directo no carga el archivo."
   },
   "fr": {
     "tenure": "Ancienneté",
@@ -1641,6 +2683,19 @@
     "tab_qa": "Q&R",
     "tab_colors": "Couleurs",
     "tab_test": "Test",
+    "tab_first5": "First 5",
+    "tab_goals": "Objectifs",
+    "mod_7_goals": "7. Barres d'Objectifs",
+    "panel_goals_pos": "Position des Barres",
+    "panel_goals_display": "Affichage",
+    "panel_goals_vars": "Variables des Objectifs",
+    "lbl_goals_mode": "Mode d'Affichage",
+    "opt_goals_inline": "Groupe en Ligne",
+    "opt_goals_ticker": "Ticker",
+    "lbl_palette": "Palette",
+    "opt_palette_game": "VI Game",
+    "opt_palette_marketing": "VI Marketing",
+    "mod_6_first5": "6. First 5",
     "panel_sb_conn": "Connexion Streamer.bot",
     "lbl_ws_host": "IP / Hôte WebSocket",
     "lbl_ws_port": "Port",
@@ -1744,7 +2799,7 @@
     "lbl_show_badges": "Afficher Badges",
     "lbl_all_caps": "MAJUSCULES",
     "lbl_transparent_bar": "Barre Transparente (Masquer le Fond)",
-    "panel_chat_filters": "Filtres du Chat (Commandes, Utilisateurs et Groupes)",
+    "panel_chat_filters": "Filtres du Chat (Commandes et Utilisateurs)",
     "lbl_ignore_cmds": "Ignorer Commandes (Commence par Préfixe)",
     "lbl_cmd_prefixes": "Préfixes de Commande (Sép. par virgule)",
     "lbl_auto_hide": "Masquer Msg Après (sec, 0=Jamais)",
@@ -1813,7 +2868,190 @@
     "btn_imported": "Importé !",
     "btn_export": "Exporter",
     "btn_exported": "Exporté !",
-    "err_import_invalid": "Fichier de configuration invalide."
+    "err_import_invalid": "Fichier de configuration invalide.",
+    "panel_f5_pos": "First 5 Position et Timing",
+    "panel_f5_appear": "First 5 Apparence",
+    "lbl_f5_width": "Largeur du Conteneur (px)",
+    "lbl_f5_gap": "Espace (px)",
+    "lbl_f5_align_h": "Centrer Horizontalement",
+    "lbl_f5_align_v": "Centrer Verticalement",
+    "lbl_f5_anim": "Animation",
+    "lbl_f5_shape": "Forme",
+    "lbl_f5_align": "Alignement des Avatars",
+    "lbl_f5_exit": "Direction de Sortie",
+    "lbl_f5_end_delay": "Délai Final (ms après le 5e)",
+    "lbl_f5_sfx": "Jouer SFX",
+    "lbl_f5_sfx_vol": "Volume SFX",
+    "opt_f5_center": "Centre",
+    "opt_f5_left": "Gauche",
+    "opt_f5_right": "Droite",
+    "opt_f5_exit_left": "Sortir à Gauche",
+    "opt_f5_exit_right": "Sortir à Droite",
+    "opt_f5_exit_up": "Sortir vers le Haut",
+    "opt_f5_roll_left": "Rouler de la Gauche",
+    "opt_f5_roll_right": "Rouler de la Droite",
+    "opt_f5_drop_top": "Tomber du Haut",
+    "opt_f5_zoom": "Zoom / Pop",
+    "opt_f5_circle": "Cercle",
+    "opt_f5_rounded": "Carré Arrondi",
+    "lbl_f5_height": "Hauteur du Conteneur (px)",
+    "lbl_f5_in_dir": "Direction d'Entrée",
+    "lbl_f5_in_style": "Style d'Entrée",
+    "lbl_f5_out_dir": "Direction de Sortie",
+    "lbl_f5_out_style": "Style de Sortie",
+    "opt_f5_top": "Haut",
+    "opt_f5_bottom": "Bas",
+    "opt_f5_random": "Aléatoire",
+    "opt_f5_slide": "Glisser",
+    "opt_f5_roll": "Rouler",
+    "opt_f5_fade": "Fondu",
+    "lbl_f5_group_x": "Groupe Gauche (px)",
+    "lbl_f5_group_y": "Groupe Haut (px)",
+    "lbl_f5_group_center_h": "Centrer le Groupe H",
+    "lbl_f5_group_center_v": "Centrer le Groupe V",
+    "lbl_f5_size": "Taille de l'Avatar (px)",
+    "lbl_goals_bg": "Fond",
+    "lbl_goals_show_dur": "Durée d'Affichage (sec)",
+    "lbl_goals_gap_dur": "Intervalle (sec)",
+    "lbl_goals_repeat_delay": "Délai de Répétition (sec)",
+    "lbl_goals_anim_in": "Animation d'Entrée",
+    "lbl_goals_anim_out": "Animation de Sortie",
+    "btn_sim_first5": "Tester First 5",
+    "btn_sim_goals": "Tester les Objectifs",
+    "tab_emotes": "Emotes",
+    "panel_member_emotes": "Emojis Membre YouTube",
+    "lbl_emote_family": "Préfixe de Famille",
+    "btn_emote_apply_family": "Appliquer à Tous",
+    "btn_emote_refresh": "Actualiser",
+    "btn_emote_create": "Créer memberEmojiMap",
+    "btn_emote_save": "Enregistrer dans Streamer.bot",
+    "btn_emote_add": "Ajouter un Emote",
+    "btn_emote_update": "Mettre à jour",
+    "btn_emote_edit": "Modifier",
+    "btn_emote_del": "Suppr",
+    "btn_emote_import": "Importer JSON",
+    "lbl_emote_name": "Nom de l'Emote",
+    "lbl_emote_url": "URL de l'Image",
+    "emote_form_add": "Ajouter un Emote",
+    "emote_form_edit": "Modification de l'Emote",
+    "emote_empty": "Aucun emoji membre pour le moment.",
+    "emote_need_both": "Indiquez le nom et l'URL de l'image.",
+    "emote_need_url": "L'URL doit commencer par http:// ou https://.",
+    "emote_bad_json": "Ce JSON n'est pas un objet memberEmojiMap.",
+    "emote_status_disconnected": "Connectez Streamer.bot dans l'onglet Général pour charger ou enregistrer les emotes.",
+    "emote_status_missing": "memberEmojiMap est introuvable. Créez-le, ou importez la liste puis enregistrez.",
+    "emote_status_ready": "memberEmojiMap est défini ({n} emotes).",
+    "emote_status_saved": "memberEmojiMap enregistré dans Streamer.bot.",
+    "emote_status_no_action": "Aucune action d'enregistrement. Créez GTA_SetMemberEmojiMap (ou API_SaveEmotes) et collez le code ci-dessous.",
+    "emote_status_error": "Impossible d'enregistrer memberEmojiMap.",
+    "tab_settings": "Réglages",
+    "panel_sb_import": "Import Streamer.bot",
+    "desc_sb_import": "Importe en un clic les actions, files, déclencheurs et variables globales nécessaires.",
+    "btn_sb_107": "Streamer.bot 1.0.7 Stable",
+    "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
+    "desc_sb_import_ver": "Choisis le bouton de ta version de Streamer.bot. L’import 1.0.7 ne marche pas sur 1.1.0 Alpha, et l’inverse non plus.",
+    "opt_bg_none_only": "Aucun (Remplissage seul)",
+    "desc_bg_auto": "Les fonds viennent de assets/backgrounds/. Ajoute ou retire des images et mets à jour backgrounds.json pour rafraîchir la liste.",
+    "opt_bg_global": "Utiliser le Fond Global",
+    "opt_bg_none": "Aucun (Remplissage)",
+    "lbl_card_bg": "Fond de la Carte",
+    "lbl_alert_bg": "Fond de l’En-tête des Alertes",
+    "desc_alert_bg": "S’applique seulement au haut (avatar + titre + nom).",
+    "lbl_so_bg": "Fond du Shoutout",
+    "lbl_chat_bg": "Fond de la Barre de Chat",
+    "lbl_qa_bg": "Fond du Q&R",
+    "lbl_f5_color_1": "Couleur Avatar 1",
+    "lbl_f5_color_2": "Couleur Avatar 2",
+    "lbl_f5_color_3": "Couleur Avatar 3",
+    "lbl_f5_color_4": "Couleur Avatar 4",
+    "lbl_f5_color_5": "Couleur Avatar 5",
+    "lbl_f5_event": "Nom de l’Événement SB",
+    "opt_slide_up": "Glisser vers le Haut",
+    "opt_slide_down": "Glisser vers le Bas",
+    "opt_fade": "Fondu",
+    "opt_zoom": "Zoom",
+    "desc_goals_ticker": "En mode défilement, cela fait entrer et sortir toute la carte. Elle reste cachée pendant l’intervalle et le délai de répétition.",
+    "chk_goals_likes": "J’aime",
+    "chk_goals_members": "Memberships",
+    "chk_goals_jewels": "Joyaux",
+    "chk_goals_subs": "Abonnés",
+    "chk_goals_gifts": "Cadeaux",
+    "chk_goals_supers": "Super Chats/Stickers",
+    "lbl_goals_likes_title": "Titre des J’aime",
+    "lbl_goals_likes_count": "Var Compteur (J’aime)",
+    "lbl_goals_likes_goal": "Var Objectif (J’aime)",
+    "lbl_goals_members_title": "Titre des Membres",
+    "lbl_goals_members_count": "Var Compteur (Membres)",
+    "lbl_goals_members_goal": "Var Objectif (Membres)",
+    "lbl_goals_jewels_title": "Titre des Joyaux",
+    "lbl_goals_jewels_count": "Var Compteur (Joyaux)",
+    "lbl_goals_jewels_goal": "Var Objectif (Joyaux)",
+    "lbl_goals_subs_title": "Titre des Abonnés",
+    "lbl_goals_subs_count": "Var Compteur (Abonnés)",
+    "lbl_goals_subs_goal": "Var Objectif (Abonnés)",
+    "lbl_goals_gifts_title": "Titre des Cadeaux",
+    "lbl_goals_gifts_count": "Var Compteur (Cadeaux)",
+    "lbl_goals_gifts_goal": "Var Objectif (Cadeaux)",
+    "lbl_goals_supers_title": "Titre des Super Chats/Stickers",
+    "lbl_goals_supers_count": "Var Compteur (Super Chats/Stickers)",
+    "lbl_goals_supers_goal": "Var Objectif (Super Chats/Stickers)",
+    "panel_custom_goals": "Objectifs Perso",
+    "btn_add_goal": "Ajouter un Objectif",
+    "desc_custom_goals": "Chaque objectif perso lit un global de compteur et un global d’objectif dans Streamer.bot, comme les barres intégrées.",
+    "custom_goals_empty": "Aucun objectif perso pour le moment.",
+    "custom_goal_label": "Perso {n}",
+    "custom_goal_default": "Objectif Perso",
+    "lbl_show": "Afficher",
+    "lbl_goal_title": "Titre",
+    "lbl_count_var": "Var Compteur",
+    "lbl_goal_var": "Var Objectif",
+    "ph_custom_goal": "Objectif Perso",
+    "ph_count_var": "monCompteur",
+    "ph_goal_var": "monObjectif",
+    "ph_emote_family": "facultatif, ex. 2sb",
+    "ph_emote_name": "3stars",
+    "ph_emote_url": "https://yt3.googleusercontent.com/...",
+    "ph_emote_json": "{\":_3stars:\":\"https://...\"}",
+    "btn_cancel": "Annuler",
+    "lbl_emote_paste": "Colle un objet memberEmojiMap",
+    "emote_help_summary": "Streamer.bot ne peut pas créer de globals depuis le navigateur. Utilise cette action pour écrire memberEmojiMap.",
+    "emote_help_body": "Dans Streamer.bot, crée une action nommée GTA_SetMemberEmojiMap (ou garde API_SaveEmotes). Ajoute une sous-action C# et colle ce code. Le fichier est streamerbot/GTA_SetMemberEmojiMap.cs.",
+    "btn_copy_cs": "Copier le C#",
+    "emote_copied_cs": "C# copié.",
+    "emote_copy_failed": "Copie impossible. Sélectionne le code et copie-le à la main.",
+    "sb_import_title": "Import Streamer.bot",
+    "sb_setup_instructions": "Instructions",
+    "sb_step_1": "Dans Streamer.bot, clique sur Import (en haut à gauche), colle le code ci-dessous, puis Import.",
+    "sb_step_2": "Trouve l’action [GTA_Initialize Globals], clic droit, Test. Cela crée viShoutOuts et viChatHighlight.",
+    "sb_step_3": "Va dans Servers puis WebSocket Server et active-le. Utilise le même hôte, port et mot de passe que l’onglet Général.",
+    "sb_step_4": "(Facultatif) Ouvre Auto Import Youtube members (File Watcher) et indique le dossier du CSV des membres YouTube.",
+    "sb_step_5": "Copie une URL de source navigateur de cette page dans OBS Studio.",
+    "sb_step_6": "Teste tout avec les boutons de l’onglet Test.",
+    "sb_import_note": "Note : les noms de variables globales des onglets Shoutout et Q&R doivent correspondre aux actions (viShoutOuts / viChatHighlight).",
+    "btn_copy_import": "Copier le Code",
+    "btn_download_txt": "Télécharger .txt",
+    "status_copied": "Copié !",
+    "status_copy_failed": "Échec de la copie",
+    "sb_loading": "Chargement du code d’import...",
+    "sb_load_failed": "Impossible de charger le code de {file}. Sers le site (n’ouvre pas le HTML directement) et garde le dossier streamerbot à côté de setup.html.",
+    "panel_livesub": "Abonnés en Direct",
+    "desc_livesub": "YouTube Studio n’envoie pas le total d’abonnés en direct par le chat. Un script Tampermonkey lit le nombre à l’écran et l’envoie à Streamer.bot. Choisis le navigateur qui restera ouvert.",
+    "btn_livesub_help": "Instructions",
+    "btn_livesub_code": "Script",
+    "livesub_step_1": "Installe l’extension Tampermonkey dans le navigateur choisi.",
+    "livesub_step_2": "Crée un nouveau script Tampermonkey, remplace le modèle par le code de la vue Script, puis enregistre. Il tourne sur studio.youtube.com.",
+    "livesub_step_3": "Dans Streamer.bot, active les deux actions de ce navigateur et désactive l’autre paire. L’import les contient déjà.",
+    "livesub_step_4": "Launch ouvre YouTube Studio quand Streamer.bot démarre. Close ferme cette fenêtre à la fin de la diffusion YouTube.",
+    "livesub_step_5": "Laisse la fenêtre Studio ouverte et non réduite. Le compteur ne se met pas à jour si Streamer.bot est fermé, ou si la fenêtre est fermée ou réduite.",
+    "livesub_step_6": "Le script appelle l’action Update Sub Count avec liveSubCount sur ws://127.0.0.1:8080/. Utilise le même port que cette page. Il n’envoie pas de mot de passe WebSocket.",
+    "livesub_on": "Activer celles-ci",
+    "livesub_off": "Désactiver celles-ci",
+    "livesub_keep": "Laisser celle-ci activée :",
+    "livesub_file": "Fichier du script : {file}",
+    "livesub_copied": "Script copié.",
+    "livesub_copy_failed": "Impossible de copier le script.",
+    "livesub_loading": "Chargement du script...",
+    "livesub_load_failed": "Impossible de charger {file}. Lance le site avec npm run dev. Ouvrir le HTML directement ne charge pas le fichier."
   },
   "de": {
     "tenure": "Dauer",
@@ -1836,6 +3074,19 @@
     "tab_qa": "F&A",
     "tab_colors": "Farben",
     "tab_test": "Test",
+    "tab_first5": "First 5",
+    "tab_goals": "Ziele",
+    "mod_7_goals": "7. Zielbalken",
+    "panel_goals_pos": "Position der Zielbalken",
+    "panel_goals_display": "Anzeige",
+    "panel_goals_vars": "Ziel-Variablen",
+    "lbl_goals_mode": "Anzeigemodus",
+    "opt_goals_inline": "Gruppe in einer Reihe",
+    "opt_goals_ticker": "Ticker",
+    "lbl_palette": "Palette",
+    "opt_palette_game": "VI Game",
+    "opt_palette_marketing": "VI Marketing",
+    "mod_6_first5": "6. First 5",
     "panel_sb_conn": "Streamer.bot-Verbindung",
     "lbl_ws_host": "WebSocket-IP / Host",
     "lbl_ws_port": "Port",
@@ -1939,7 +3190,7 @@
     "lbl_show_badges": "Abzeichen zeigen",
     "lbl_all_caps": "GROSSBUCHSTABEN",
     "lbl_transparent_bar": "Transparente Leiste (Hintergrund ausblenden)",
-    "panel_chat_filters": "Chat-Filter (Befehle, Nutzer & Gruppen)",
+    "panel_chat_filters": "Chat-Filter (Befehle und Nutzer)",
     "lbl_ignore_cmds": "Befehle ignorieren (Beginnt mit Präfix)",
     "lbl_cmd_prefixes": "Befehlspräfixe (Kommagetrennt)",
     "lbl_auto_hide": "Nachricht ausblenden nach (Sek., 0=Nie)",
@@ -2008,9 +3259,193 @@
     "btn_imported": "Importiert!",
     "btn_export": "Exportieren",
     "btn_exported": "Exportiert!",
-    "err_import_invalid": "Ungültige Einstellungsdatei."
+    "err_import_invalid": "Ungültige Einstellungsdatei.",
+    "panel_f5_pos": "First 5 Position und Timing",
+    "panel_f5_appear": "First 5 Erscheinung",
+    "lbl_f5_width": "Container-Breite (px)",
+    "lbl_f5_gap": "Abstand (px)",
+    "lbl_f5_align_h": "Horizontal Zentrieren",
+    "lbl_f5_align_v": "Vertikal Zentrieren",
+    "lbl_f5_anim": "Animation",
+    "lbl_f5_shape": "Form",
+    "lbl_f5_align": "Avatar-Ausrichtung",
+    "lbl_f5_exit": "Ausgangsrichtung",
+    "lbl_f5_end_delay": "Endverzögerung (ms nach dem 5.)",
+    "lbl_f5_sfx": "SFX Abspielen",
+    "lbl_f5_sfx_vol": "SFX-Lautstärke",
+    "opt_f5_center": "Zentriert",
+    "opt_f5_left": "Links",
+    "opt_f5_right": "Rechts",
+    "opt_f5_exit_left": "Nach Links verlassen",
+    "opt_f5_exit_right": "Nach Rechts verlassen",
+    "opt_f5_exit_up": "Nach Oben verlassen",
+    "opt_f5_roll_left": "Von Links Rollen",
+    "opt_f5_roll_right": "Von Rechts Rollen",
+    "opt_f5_drop_top": "Von Oben Fallen",
+    "opt_f5_zoom": "Zoom / Pop",
+    "opt_f5_circle": "Kreis",
+    "opt_f5_rounded": "Abgerundetes Quadrat",
+    "lbl_f5_height": "Container-Höhe (px)",
+    "lbl_f5_in_dir": "Eingangsrichtung",
+    "lbl_f5_in_style": "Eingangsstil",
+    "lbl_f5_out_dir": "Ausgangsrichtung",
+    "lbl_f5_out_style": "Ausgangsstil",
+    "opt_f5_top": "Oben",
+    "opt_f5_bottom": "Unten",
+    "opt_f5_random": "Zufällig",
+    "opt_f5_slide": "Gleiten",
+    "opt_f5_roll": "Rollen",
+    "opt_f5_fade": "Ausblenden",
+    "lbl_f5_group_x": "Gruppe Links (px)",
+    "lbl_f5_group_y": "Gruppe Oben (px)",
+    "lbl_f5_group_center_h": "Gruppe Horizontal Zentrieren",
+    "lbl_f5_group_center_v": "Gruppe Vertikal Zentrieren",
+    "lbl_f5_size": "Avatar-Größe (px)",
+    "lbl_goals_bg": "Hintergrund",
+    "lbl_goals_show_dur": "Anzeigedauer (Sek)",
+    "lbl_goals_gap_dur": "Pause (Sek)",
+    "lbl_goals_repeat_delay": "Wiederholungsverzögerung (Sek)",
+    "lbl_goals_anim_in": "Einblend-Animation",
+    "lbl_goals_anim_out": "Ausblend-Animation",
+    "btn_sim_first5": "First 5 testen",
+    "btn_sim_goals": "Zielbalken testen",
+    "tab_emotes": "Emotes",
+    "panel_member_emotes": "YouTube-Mitglieds-Emojis",
+    "lbl_emote_family": "Familien-Präfix",
+    "btn_emote_apply_family": "Auf Alle Anwenden",
+    "btn_emote_refresh": "Aktualisieren",
+    "btn_emote_create": "memberEmojiMap anlegen",
+    "btn_emote_save": "In Streamer.bot speichern",
+    "btn_emote_add": "Emote hinzufügen",
+    "btn_emote_update": "Aktualisieren",
+    "btn_emote_edit": "Bearbeiten",
+    "btn_emote_del": "Löschen",
+    "btn_emote_import": "JSON importieren",
+    "lbl_emote_name": "Emote-Name",
+    "lbl_emote_url": "Bild-URL",
+    "emote_form_add": "Emote hinzufügen",
+    "emote_form_edit": "Emote bearbeiten",
+    "emote_empty": "Noch keine Mitglieds-Emojis.",
+    "emote_need_both": "Name und Bild-URL angeben.",
+    "emote_need_url": "Die URL muss mit http:// oder https:// beginnen.",
+    "emote_bad_json": "Dieses JSON ist kein memberEmojiMap-Objekt.",
+    "emote_status_disconnected": "Verbinde Streamer.bot im Tab Allgemein, um Mitglieds-Emojis zu laden oder zu speichern.",
+    "emote_status_missing": "memberEmojiMap wurde nicht gefunden. Lege es an oder importiere die Liste und speichere.",
+    "emote_status_ready": "memberEmojiMap ist gesetzt ({n} Emotes).",
+    "emote_status_saved": "memberEmojiMap in Streamer.bot gespeichert.",
+    "emote_status_no_action": "Keine Speicher-Aktion gefunden. Lege GTA_SetMemberEmojiMap (oder API_SaveEmotes) an und füge den Code unten ein.",
+    "emote_status_error": "memberEmojiMap konnte nicht gespeichert werden.",
+    "tab_settings": "Einstellungen",
+    "panel_sb_import": "Streamer.bot-Import",
+    "desc_sb_import": "Importiert alle nötigen Aktionen, Warteschlangen, Trigger und globalen Variablen mit einem Klick.",
+    "btn_sb_107": "Streamer.bot 1.0.7 Stabil",
+    "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
+    "desc_sb_import_ver": "Wähle den Button deiner Streamer.bot-Version. Ein 1.0.7-Import läuft nicht auf 1.1.0 Alpha, und umgekehrt auch nicht.",
+    "opt_bg_none_only": "Keins (Nur Füllung)",
+    "desc_bg_auto": "Hintergründe kommen aus assets/backgrounds/. Bilder hinzufügen oder entfernen und backgrounds.json aktualisieren, um die Liste neu zu laden.",
+    "opt_bg_global": "Globalen Hintergrund nutzen",
+    "opt_bg_none": "Keiner (Füllung)",
+    "lbl_card_bg": "Karten-Hintergrund",
+    "lbl_alert_bg": "Hintergrund der Alert-Kopfzeile",
+    "desc_alert_bg": "Gilt nur für den oberen Teil (Avatar + Titel + Name).",
+    "lbl_so_bg": "Shoutout-Hintergrund",
+    "lbl_chat_bg": "Chat-Leisten-Hintergrund",
+    "lbl_qa_bg": "Q&A-Hintergrund",
+    "lbl_f5_color_1": "Avatar-1-Farbe",
+    "lbl_f5_color_2": "Avatar-2-Farbe",
+    "lbl_f5_color_3": "Avatar-3-Farbe",
+    "lbl_f5_color_4": "Avatar-4-Farbe",
+    "lbl_f5_color_5": "Avatar-5-Farbe",
+    "lbl_f5_event": "SB-Eventname",
+    "opt_slide_up": "Nach oben schieben",
+    "opt_slide_down": "Nach unten schieben",
+    "opt_fade": "Überblenden",
+    "opt_zoom": "Zoom",
+    "desc_goals_ticker": "Im Ticker-Modus bewegen diese Animationen die ganze Karte auf den Bildschirm und wieder herunter. Während Pause und Wiederholung bleibt sie verborgen.",
+    "chk_goals_likes": "Likes",
+    "chk_goals_members": "Mitgliedschaften",
+    "chk_goals_jewels": "Juwelen",
+    "chk_goals_subs": "Abonnenten",
+    "chk_goals_gifts": "Geschenke",
+    "chk_goals_supers": "Super Chats/Stickers",
+    "lbl_goals_likes_title": "Likes-Titel",
+    "lbl_goals_likes_count": "Likes-Zählvariable",
+    "lbl_goals_likes_goal": "Likes-Zielvariable",
+    "lbl_goals_members_title": "Mitglieder-Titel",
+    "lbl_goals_members_count": "Mitglieder-Zählvariable",
+    "lbl_goals_members_goal": "Mitglieder-Zielvariable",
+    "lbl_goals_jewels_title": "Juwelen-Titel",
+    "lbl_goals_jewels_count": "Juwelen-Zählvariable",
+    "lbl_goals_jewels_goal": "Juwelen-Zielvariable",
+    "lbl_goals_subs_title": "Abo-Titel",
+    "lbl_goals_subs_count": "Abo-Zählvariable",
+    "lbl_goals_subs_goal": "Abo-Zielvariable",
+    "lbl_goals_gifts_title": "Geschenke-Titel",
+    "lbl_goals_gifts_count": "Geschenke-Zählvariable",
+    "lbl_goals_gifts_goal": "Geschenke-Zielvariable",
+    "lbl_goals_supers_title": "Super-Chats/Sticker-Titel",
+    "lbl_goals_supers_count": "Super-Chats/Sticker-Zählvariable",
+    "lbl_goals_supers_goal": "Super-Chats/Sticker-Zielvariable",
+    "panel_custom_goals": "Eigene Ziele",
+    "btn_add_goal": "Ziel hinzufügen",
+    "desc_custom_goals": "Jedes eigene Ziel liest eine Zähl- und eine Ziel-Variable aus Streamer.bot, genau wie die eingebauten Balken.",
+    "custom_goals_empty": "Noch keine eigenen Ziele.",
+    "custom_goal_label": "Eigenes {n}",
+    "custom_goal_default": "Eigenes Ziel",
+    "lbl_show": "Zeigen",
+    "lbl_goal_title": "Titel",
+    "lbl_count_var": "Zählvariable",
+    "lbl_goal_var": "Zielvariable",
+    "ph_custom_goal": "Eigenes Ziel",
+    "ph_count_var": "meinZaehler",
+    "ph_goal_var": "meinZiel",
+    "ph_emote_family": "optional, z.B. 2sb",
+    "ph_emote_name": "3stars",
+    "ph_emote_url": "https://yt3.googleusercontent.com/...",
+    "ph_emote_json": "{\":_3stars:\":\"https://...\"}",
+    "btn_cancel": "Abbrechen",
+    "lbl_emote_paste": "memberEmojiMap-Objekt einfügen",
+    "emote_help_summary": "Streamer.bot kann Globals nicht aus dem Browser anlegen. Diese Aktion schreibt memberEmojiMap.",
+    "emote_help_body": "Lege in Streamer.bot eine Aktion namens GTA_SetMemberEmojiMap an (oder behalte API_SaveEmotes). Füge eine C#-Unteraktion ein und füge diesen Code ein. Dieselbe Datei liegt unter streamerbot/GTA_SetMemberEmojiMap.cs.",
+    "btn_copy_cs": "C# kopieren",
+    "emote_copied_cs": "C# kopiert.",
+    "emote_copy_failed": "Kopieren fehlgeschlagen. Markiere den Code und kopiere ihn von Hand.",
+    "sb_import_title": "Streamer.bot-Import",
+    "sb_setup_instructions": "Anleitung",
+    "sb_step_1": "In Streamer.bot auf Import klicken (oben links), den Code unten einfügen und Import wählen.",
+    "sb_step_2": "Die Aktion [GTA_Initialize Globals] suchen, Rechtsklick, Test. Das legt viShoutOuts und viChatHighlight an.",
+    "sb_step_3": "Unter Servers den WebSocket Server einschalten. Host, Port und Passwort wie im Tab Allgemein verwenden.",
+    "sb_step_4": "(Optional) Auto Import Youtube members (File Watcher) öffnen und den Ordner der YouTube-Mitglieder-CSV setzen.",
+    "sb_step_5": "Eine Browserquellen-URL von dieser Seite in OBS Studio einfügen.",
+    "sb_step_6": "Alles über die Buttons im Tab Test prüfen.",
+    "sb_import_note": "Hinweis: Die globalen Variablennamen in Shoutout und Q&A müssen zu den Aktionen passen (viShoutOuts / viChatHighlight).",
+    "btn_copy_import": "Importcode kopieren",
+    "btn_download_txt": ".txt herunterladen",
+    "status_copied": "Kopiert!",
+    "status_copy_failed": "Kopieren fehlgeschlagen",
+    "sb_loading": "Importcode wird geladen...",
+    "sb_load_failed": "Importcode aus {file} konnte nicht geladen werden. Die Seite über einen Server öffnen (nicht die HTML-Datei direkt) und den Ordner streamerbot neben setup.html lassen.",
+    "panel_livesub": "Live-Abonnenten",
+    "desc_livesub": "YouTube Studio schickt die Live-Abonnentenzahl nicht über den Chat. Ein Tampermonkey-Skript liest die Zahl auf dem Bildschirm und sendet sie an Streamer.bot. Wähle den Browser, der offen bleiben soll.",
+    "btn_livesub_help": "Anleitung",
+    "btn_livesub_code": "Skript",
+    "livesub_step_1": "Installiere die Erweiterung Tampermonkey in dem gewählten Browser.",
+    "livesub_step_2": "Lege ein neues Tampermonkey-Skript an, ersetze die Vorlage mit dem Code aus der Skript-Ansicht und speichere. Es läuft auf studio.youtube.com.",
+    "livesub_step_3": "Schalte in Streamer.bot die zwei Aktionen für diesen Browser ein und das andere Paar aus. Der Import enthält sie bereits.",
+    "livesub_step_4": "Launch öffnet YouTube Studio, wenn Streamer.bot startet. Close schließt das Fenster, wenn die YouTube-Übertragung endet.",
+    "livesub_step_5": "Lass das Studio-Fenster offen und nicht minimiert. Die Zahl aktualisiert sich nicht, wenn Streamer.bot geschlossen ist oder das Fenster geschlossen oder minimiert ist.",
+    "livesub_step_6": "Das Skript ruft die Aktion Update Sub Count mit liveSubCount über ws://127.0.0.1:8080/ auf. Derselbe Port wie auf dieser Seite. Es sendet kein WebSocket-Passwort.",
+    "livesub_on": "Diese einschalten",
+    "livesub_off": "Diese ausschalten",
+    "livesub_keep": "Diese eingeschaltet lassen:",
+    "livesub_file": "Skriptdatei: {file}",
+    "livesub_copied": "Skript kopiert.",
+    "livesub_copy_failed": "Skript konnte nicht kopiert werden.",
+    "livesub_loading": "Skript wird geladen...",
+    "livesub_load_failed": "{file} konnte nicht geladen werden. Die Seite mit npm run dev starten. Die HTML-Datei direkt zu öffnen lädt die Datei nicht."
   }
 };
+
     let currentLang = 'en';
 
     function t(key) {
@@ -2023,6 +3458,7 @@
       { label: 'Joined', varName: 'memberSince', suffix: '', icon: 'fa-calendar-check', iconColor: 'teal', valColor: 'pink' },
       { label: 'Loyalty', varName: 'loyaltyLevel', suffix: '', icon: 'fa-eye', iconColor: 'purple', valColor: 'teal' }
     ];
+    let customGoals = [];
 
     const availIcons = [
       { v: 'fa-heart', k: 'icon_heart' },
@@ -2053,6 +3489,9 @@
         if (row.label === oldT.stat_new_default) row.label = newT.stat_new_default;
         if (row.suffix === oldT.months) row.suffix = newT.months;
       });
+      customGoals.forEach(g => {
+        if (g.title === oldT.custom_goal_default) g.title = newT.custom_goal_default;
+      });
 
       currentLang = newLang;
 
@@ -2081,9 +3520,126 @@
       }
 
       renderStatRowEditors();
+      renderCustomGoals();
+      renderLiveSub();
       syncLiveConfig();
     }
     document.getElementById('cfg-lang').addEventListener('change', () => applyLanguageTranslation(false));
+
+    const LIVE_SUB_ACTIONS = {
+      chrome: {
+        file: 'tampermonkey/chrome.js',
+        on: ['LiveSub Chrome Window (launch)', 'LiveSub Chrome Window (Close)'],
+        off: ['LiveSub Firefox Window (launch)', 'LiveSub Firefox Window (Close)']
+      },
+      firefox: {
+        file: 'tampermonkey/firefox.js',
+        on: ['LiveSub Firefox Window (launch)', 'LiveSub Firefox Window (Close)'],
+        off: ['LiveSub Chrome Window (launch)', 'LiveSub Chrome Window (Close)']
+      }
+    };
+    let liveSubBrowser = 'chrome';
+    let liveSubView = 'instructions';
+    const liveSubCodeCache = {};
+
+    function fillLiveSubNames(el, names) {
+      if (!el) return;
+      el.textContent = '';
+      names.forEach(name => {
+        const row = document.createElement('div');
+        const code = document.createElement('code');
+        code.textContent = name;
+        row.appendChild(code);
+        el.appendChild(row);
+      });
+    }
+
+    function renderLiveSub() {
+      const spec = LIVE_SUB_ACTIONS[liveSubBrowser] || LIVE_SUB_ACTIONS.chrome;
+      document.querySelectorAll('#livesub-browser .choice-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.browser === liveSubBrowser);
+      });
+      document.querySelectorAll('#livesub-view .choice-btn').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.view === liveSubView);
+      });
+      const help = document.getElementById('livesub-instructions');
+      const codeWrap = document.getElementById('livesub-code');
+      if (help) help.style.display = liveSubView === 'instructions' ? '' : 'none';
+      if (codeWrap) codeWrap.style.display = liveSubView === 'code' ? '' : 'none';
+      fillLiveSubNames(document.getElementById('livesub-on-list'), spec.on);
+      fillLiveSubNames(document.getElementById('livesub-off-list'), spec.off);
+      const fileEl = document.getElementById('livesub-file');
+      if (fileEl) fileEl.textContent = t('livesub_file').replace('{file}', spec.file);
+      if (liveSubView === 'code') loadLiveSubCode(liveSubBrowser);
+    }
+
+    async function loadLiveSubCode(browser) {
+      const spec = LIVE_SUB_ACTIONS[browser];
+      const ta = document.getElementById('livesub-code-ta');
+      const status = document.getElementById('livesub-code-status');
+      if (!spec || !ta) return;
+      if (liveSubCodeCache[browser]) {
+        ta.value = liveSubCodeCache[browser];
+        return;
+      }
+      ta.value = t('livesub_loading');
+      try {
+        const res = await fetch(spec.file);
+        if (!res.ok) throw new Error('missing');
+        const text = await res.text();
+        liveSubCodeCache[browser] = text;
+        if (liveSubBrowser === browser) ta.value = text;
+      } catch (e) {
+        if (liveSubBrowser === browser) {
+          ta.value = '';
+          if (status) status.textContent = t('livesub_load_failed').replace('{file}', spec.file);
+        }
+      }
+    }
+
+    document.getElementById('livesub-browser')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-browser]');
+      if (!btn) return;
+      liveSubBrowser = btn.dataset.browser;
+      const status = document.getElementById('livesub-code-status');
+      if (status) status.textContent = '';
+      renderLiveSub();
+    });
+    document.getElementById('livesub-view')?.addEventListener('click', (e) => {
+      const btn = e.target.closest('[data-view]');
+      if (!btn) return;
+      liveSubView = btn.dataset.view;
+      const status = document.getElementById('livesub-code-status');
+      if (status) status.textContent = '';
+      renderLiveSub();
+    });
+    document.getElementById('btn-livesub-copy')?.addEventListener('click', async () => {
+      const ta = document.getElementById('livesub-code-ta');
+      const status = document.getElementById('livesub-code-status');
+      if (!ta || !ta.value) return;
+      try {
+        await navigator.clipboard.writeText(ta.value);
+        if (status) status.textContent = t('livesub_copied');
+      } catch (e) {
+        if (status) status.textContent = t('livesub_copy_failed');
+      }
+    });
+
+    // Palette switcher
+    const PALETTES = {
+      game: { cPink: '#f4acc4', cTeal: '#53d8bf', cPurple: '#a688ff', cYellow: '#fede9a', cStroke: '#171a21', cBorder: '#0b2328', cBg: '#303030' },
+      marketing: { cPink: '#f74aa9', cTeal: '#28bad9', cPurple: '#375fcf', cYellow: '#ff9d49', cStroke: '#28bad9', cBorder: '#0b2328', cBg: '#1a1a1a' }
+    };
+    document.getElementById('cfg-palette')?.addEventListener('change', (e) => {
+      const pal = PALETTES[e.target.value] || PALETTES.game;
+      Object.entries(pal).forEach(([key, val]) => {
+        const picker = document.getElementById(`picker-${key}`);
+        const input = document.getElementById(`cfg-${key}`);
+        if (picker) picker.value = val;
+        if (input) input.value = val;
+      });
+      syncLiveConfig();
+    });
 
     function renderStatRowEditors() {
       if (!statsListContainer) return;
@@ -2109,6 +3665,85 @@
     }
     const btnAddStat = document.getElementById('btn-add-stat');
     if (btnAddStat) btnAddStat.addEventListener('click', () => { statRows.push({ label: t('stat_new_default'), varName: 'newVar', suffix: '', icon: 'fa-star', iconColor: 'yellow', valColor: 'yellow' }); renderStatRowEditors(); syncLiveConfig(); });
+
+    function renderCustomGoals() {
+      const box = document.getElementById('custom-goals-list');
+      if (!box) return;
+      box.innerHTML = '';
+      if (!customGoals.length) {
+        const empty = document.createElement('p');
+        empty.style.cssText = 'font-size:0.72rem;color:#8c96a6;';
+        empty.textContent = t('custom_goals_empty');
+        box.appendChild(empty);
+        return;
+      }
+      customGoals.forEach((g, idx) => {
+        const row = document.createElement('div');
+        row.className = 'stat-row-editor';
+        const top = document.createElement('div');
+        top.className = 'stat-row-top';
+        const label = document.createElement('span');
+        label.textContent = t('custom_goal_label').replace('{n}', String(idx + 1));
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'btn-icon-remove';
+        del.innerHTML = '<i class="fa-solid fa-trash-can"></i>';
+        del.addEventListener('click', () => {
+          customGoals.splice(idx, 1);
+          renderCustomGoals();
+          syncLiveConfig();
+        });
+        top.appendChild(label);
+        top.appendChild(del);
+        const grid = document.createElement('div');
+        grid.className = 'grid-2';
+        const field = (caption, key, placeholder) => {
+          const lab = document.createElement('label');
+          const span = document.createElement('span');
+          span.textContent = caption;
+          const input = document.createElement('input');
+          input.type = 'text';
+          input.value = g[key] || '';
+          input.placeholder = placeholder;
+          input.addEventListener('input', () => {
+            customGoals[idx][key] = input.value;
+            syncLiveConfig();
+          });
+          lab.appendChild(span);
+          lab.appendChild(input);
+          return lab;
+        };
+        const showLab = document.createElement('label');
+        showLab.className = 'mini-switch-card';
+        showLab.style.flexDirection = 'row';
+        showLab.style.justifyContent = 'space-between';
+        const showSpan = document.createElement('span');
+        showSpan.textContent = t('lbl_show');
+        const showChk = document.createElement('input');
+        showChk.type = 'checkbox';
+        showChk.className = 'switch';
+        showChk.checked = !(g.on === 0 || g.on === '0' || g.on === false);
+        showChk.addEventListener('change', () => {
+          customGoals[idx].on = showChk.checked ? 1 : 0;
+          syncLiveConfig();
+        });
+        showLab.appendChild(showSpan);
+        showLab.appendChild(showChk);
+        grid.appendChild(field(t('lbl_goal_title'), 'title', t('ph_custom_goal')));
+        grid.appendChild(showLab);
+        grid.appendChild(field(t('lbl_count_var'), 'count', t('ph_count_var')));
+        grid.appendChild(field(t('lbl_goal_var'), 'goal', t('ph_goal_var')));
+        row.appendChild(top);
+        row.appendChild(grid);
+        box.appendChild(row);
+      });
+    }
+    document.getElementById('btn-add-custom-goal')?.addEventListener('click', () => {
+      const n = customGoals.length + 1;
+      customGoals.push({ on: 1, title: t('custom_goal_default'), count: 'customCount' + n, goal: 'customGoal' + n });
+      renderCustomGoals();
+      syncLiveConfig();
+    });
     
     [...Object.keys(DEFAULT_COLORS), ...CHAT_COLOR_KEYS].forEach(k => {
       const picker = document.getElementById(`picker-${k}`);
@@ -2126,7 +3761,7 @@
       'x','y','scale','v_x','v_y','v_scale',
       'duration','cardAnim','avatarAnim',
       'fontHeading','fontBody','bg','walkon-bg','so-bg','qa-bg','alert-bg','chat-bg','vAvatar','vTier',
-      'cPink','cTeal','cPurple','cYellow','cStroke','cBorder','cBg',
+      'cPink','cTeal','cPurple','cYellow','cStroke','cBorder','cBg','palette',
       'alertEvent','ax','ay','ascale','v_ax','v_ay','v_ascale','aDur',
       'ac_sub','ac_mem','ac_ms','ac_gft','ac_grc','ac_sc','ac_stk','ac_jwl',
       'soX','soY','soScale','v_soX','v_soY','v_soScale',
@@ -2134,15 +3769,16 @@
       'chatX','chatY','chatW','chatScale','v_chatX','v_chatY','v_chatW','v_chatScale',
       'chatFS','chatMax','chatHide',
       'cMem','cMod','cView','cMsg','cChatBg','chatBgOp','chatAccent',
-      'chatPrefixes','chatIgUsers','chatIgGroups',
+      'chatPrefixes','chatIgUsers',
       'qaX','qaY','qaScale','v_qaX','v_qaY','v_qaScale',
-      'qaDur','qaAnim','qaColor','qaTitle','qaVar','qaEvent'
+      'qaDur','qaAnim','qaColor','qaTitle','qaVar','qaEvent',
+      'f5X','f5Y','v_f5X','v_f5Y','f5GroupX','f5GroupY','v_f5GroupX','v_f5GroupY','f5Size','v_f5Size','f5InDir','f5InStyle','f5OutDir','f5OutStyle','f5Shape','f5Gap','v_f5Gap','f5Width','v_f5Width','f5Height','v_f5Height','f5Align','f5EndDelay','f5SfxVol','f5Color1','f5Color2','f5Color3','f5Color4','f5Color5','f5Event','goalsX','goalsY','goalsScale','v_goalsX','v_goalsY','v_goalsScale','goalsMode','goalsShowDur','goalsGapDur','goalsRepeatDelay','goalsAnimIn','goalsAnimOut','goalsColor','goals-bg','goalsLikesTitle','goalsLikesCount','goalsLikesGoal','goalsMembersTitle','goalsMembersCount','goalsMembersGoal','goalsJewelsTitle','goalsJewelsCount','goalsJewelsGoal','goalsSubsTitle','goalsSubsCount','goalsSubsGoal','goalsGiftsTitle','goalsGiftsCount','goalsGiftsGoal','goalsSupersTitle','goalsSupersCount','goalsSupersGoal'
     ];
     const checkboxToggles = [
       'al_sub','al_mem','al_ms','al_gft','al_grc','al_sc','al_stk','al_jwl',
       'showAvatar','showUser','showTier',
       'chatAv','chatBadges','chatUpper','chatNoBg','chatNoCmd',
-      'qaShowBadge'
+      'qaShowBadge','f5AlignH','f5AlignV','v_f5AlignH','v_f5AlignV','f5GroupCenterH','f5GroupCenterV','v_f5GroupCenterH','v_f5GroupCenterV','f5Sfx','goalsAlignH','goalsAlignV','v_goalsAlignH','v_goalsAlignV','goalsLikes','goalsMembers','goalsJewels','goalsSubs','goalsGifts','goalsSupers'
     ];
     
     function getSetupState(layoutContext = 'horiz') {
@@ -2203,6 +3839,8 @@
         if(document.getElementById('mod-shoutout') && document.getElementById('mod-shoutout').checked) mods.push('shoutout');
         if(document.getElementById('mod-chat') && document.getElementById('mod-chat').checked) mods.push('chat');
         if(document.getElementById('mod-qa') && document.getElementById('mod-qa').checked) mods.push('qa');
+        if(document.getElementById('mod-first5') && document.getElementById('mod-first5').checked) mods.push('first5');
+        if(document.getElementById('mod-goals') && document.getElementById('mod-goals').checked) mods.push('goals');
         
         if (mSel && mSel.value !== 'all') {
            s.modules = mSel.value; // Single module dropdown logic fallback
@@ -2212,6 +3850,12 @@
       }
       
       s.stats = JSON.stringify(statRows);
+      s.goalsCustom = JSON.stringify(customGoals.map(g => ({
+        on: (g.on === 0 || g.on === '0' || g.on === false) ? 0 : 1,
+        title: g.title || 'Custom',
+        count: g.count || '',
+        goal: g.goal || ''
+      })));
       return s;
     }
 
@@ -2272,7 +3916,7 @@
       const state = getSetupState('horiz');
       const exportPayload = {
         app: 'GTA VI Overlay Hub',
-        version: '0.1.6',
+        version: '0.2.2',
         exportedAt: new Date().toISOString(),
         pinPreview: Boolean(pinCheckbox && pinCheckbox.checked),
         previewMode: currentPreviewMode,
@@ -2288,7 +3932,7 @@
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'gta6-overlay-config-v0.1.7.json';
+      a.download = 'gta6-overlay-config-v0.2.2.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -2404,6 +4048,13 @@
         statRows = s.stats;
       }
 
+      if (s.goalsCustom !== undefined) {
+        try {
+          const parsedGoals = typeof s.goalsCustom === 'string' ? JSON.parse(s.goalsCustom) : s.goalsCustom;
+          if (Array.isArray(parsedGoals)) customGoals = parsedGoals;
+        } catch (e) {}
+      }
+
       // 7. Restore Pin Visible & Preview View Mode
       if (raw.pinPreview !== undefined && pinCheckbox) {
         pinCheckbox.checked = Boolean(raw.pinPreview);
@@ -2461,9 +4112,11 @@
         },
         onConnect: () => { 
           if (sbStatusBadge) { sbStatusBadge.classList.add('connected'); sbStatusBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span data-i18n="status_connected">${t('status_connected')}</span>`; }
+          refreshMemberEmojiFromSB();
         },
         onDisconnect: () => { 
           if (sbStatusBadge) { sbStatusBadge.classList.remove('connected'); sbStatusBadge.innerHTML = `<i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">${t('status_disconnected')}</span>`; }
+          setEmoteStatus('disconnected');
         }
       };
       if (state.password) opts.password = state.password;
@@ -2515,6 +4168,16 @@
         const cur = getSetupState('horiz');
         const varName = payload?.data?.name;
         const newValue = payload?.data?.newValue;
+        if (varName === 'memberEmojiMap' && newValue !== undefined && newValue !== null) {
+          const parsed = parseMemberEmojiValue(newValue);
+          if (!parsed.error) {
+            emoteMap = parsed.map;
+            emoteMapMissing = parsed.missing;
+            renderEmoteList();
+            pushMemberEmojiToFrames();
+            setEmoteStatus(emoteMapMissing ? 'missing' : 'ready');
+          }
+        }
         if (!varName || !newValue) return;
         if (varName === cur.soVar) {
           try {
@@ -2543,6 +4206,8 @@
                 userName: u.name || d.userName || 'YouTube User',
                 userId: u.id || d.userId || '',
                 message: d.message || '',
+                emotes: d.emotes || [],
+                parts: d.parts || [],
                 role: (u.isModerator || u.isOwner) ? 'mod' : ((u.isSponsor || u.isMember) ? 'member' : 'viewer'),
                 avatar: u.profileImageUrl || ''
               }
@@ -2613,11 +4278,30 @@
     }
 
     const btnSimQA = document.getElementById('btn-sim-qa');
+    const btnSimFirst5 = document.getElementById('btn-sim-first5');
     if (btnSimQA) {
       btnSimQA.addEventListener('click', () => {
         const pick = mocks[Math.floor(Math.random() * mocks.length)];
         sendToBoth({ type: 'TRIGGER_QA_TEST', payload: { user: pick.userName.toUpperCase(), msg: pick.msg, avatar: pick.avatarUrl, timestamp: Date.now() } });
       });
+    }
+    if (btnSimFirst5) {
+      btnSimFirst5.addEventListener('click', () => {
+        sendToBoth({ type: 'TRIGGER_FIRST5_TEST' });
+      });
+    }
+    const btnSimGoals = document.getElementById('btn-sim-goals');
+    if (btnSimGoals) {
+      btnSimGoals.addEventListener('click', () => sendToBoth({ type: 'TRIGGER_GOALS_TEST' }));
+    }
+    const goalsModeEl = document.getElementById('cfg-goalsMode');
+    const goalsTickerBox = document.getElementById('goals-ticker-settings');
+    const syncGoalsModeUI = () => {
+      if (goalsTickerBox && goalsModeEl) goalsTickerBox.style.display = goalsModeEl.value === 'ticker' ? '' : 'none';
+    };
+    if (goalsModeEl) {
+      goalsModeEl.addEventListener('change', syncGoalsModeUI);
+      syncGoalsModeUI();
     }
 
     async function querySBUserAndTest(targetModule) {
@@ -2666,6 +4350,295 @@
     const btnTestQaUser = document.getElementById('btn-test-qa-user');
     if (btnTestQaUser) btnTestQaUser.addEventListener('click', () => querySBUserAndTest('qa'));
 
+    let emoteMap = {};
+    let emoteMapMissing = true;
+    let emoteEditingKey = null;
+    let emoteFamily = localStorage.getItem('ytEmoteFamily') || '';
+    const emoteFamilyInput = document.getElementById('emote-family');
+    if (emoteFamilyInput) emoteFamilyInput.value = emoteFamily;
+
+    function parseMemberEmojiValue(raw) {
+      let value = raw;
+      if (value && typeof value === 'object' && !Array.isArray(value) && 'value' in value && ('lastWrite' in value || 'name' in value)) {
+        value = value.value;
+      }
+      if (value === undefined || value === null) return { missing: true, map: {} };
+      if (typeof value === 'string' && value.trim() === '') return { missing: true, map: {} };
+      for (let i = 0; i < 2 && typeof value === 'string'; i++) {
+        try { value = JSON.parse(value); }
+        catch (e) { return { missing: false, map: {}, error: true }; }
+      }
+      if (!value || typeof value !== 'object' || Array.isArray(value)) return { missing: false, map: {} };
+      const map = {};
+      Object.keys(value).forEach((k) => {
+        const url = value[k];
+        if (k && typeof url === 'string' && /^https?:\/\//i.test(url.trim())) map[k] = url.trim();
+      });
+      return { missing: false, map };
+    }
+
+    function setEmoteStatus(kind, extra) {
+      const el = document.getElementById('emote-status');
+      const createBtn = document.getElementById('btn-emote-create');
+      if (!el) return;
+      el.removeAttribute('data-i18n');
+      if (kind === 'disconnected') el.textContent = t('emote_status_disconnected');
+      else if (kind === 'missing') el.textContent = t('emote_status_missing');
+      else if (kind === 'ready') el.textContent = t('emote_status_ready').replace('{n}', String(Object.keys(emoteMap).length));
+      else if (kind === 'saved') el.textContent = t('emote_status_saved');
+      else if (kind === 'no-action') el.textContent = t('emote_status_no_action');
+      else if (kind === 'error') el.textContent = extra || t('emote_status_error');
+      else el.textContent = extra || '';
+      if (createBtn) createBtn.style.display = (emoteMapMissing && sbStatusBadge && sbStatusBadge.classList.contains('connected')) ? '' : 'none';
+    }
+
+    function pushMemberEmojiToFrames() {
+      sendToBoth({ type: 'MEMBER_EMOJI_MAP', map: emoteMap });
+    }
+
+    function emoteStrip(str) {
+      let s = String(str || '').trim();
+      if (s.startsWith(':_')) s = s.slice(2);
+      else if (s.startsWith(':')) s = s.slice(1);
+      if (s.endsWith(':')) s = s.slice(0, -1);
+      return s;
+    }
+
+    function updateEmoteFamilyPreview() {
+      const input = document.getElementById('emote-family');
+      const preview = document.getElementById('emote-family-preview');
+      if (preview) preview.textContent = emoteStrip(input ? input.value : '');
+    }
+
+    function renderEmoteList() {
+      const list = document.getElementById('emote-list');
+      if (!list) return;
+      list.innerHTML = '';
+      const entries = Object.entries(emoteMap);
+      if (!entries.length) {
+        const empty = document.createElement('div');
+        empty.style.cssText = 'padding:8px; color:#8c96a6; font-size:0.75rem;';
+        empty.textContent = t('emote_empty');
+        list.appendChild(empty);
+        return;
+      }
+      entries.forEach(([name, url]) => {
+        const row = document.createElement('div');
+        row.className = 'emote-row';
+        const img = document.createElement('img');
+        img.alt = '';
+        img.src = url;
+        img.addEventListener('error', () => { img.style.opacity = '0.35'; });
+        const code = document.createElement('code');
+        code.textContent = name;
+        code.title = name;
+        const edit = document.createElement('button');
+        edit.type = 'button';
+        edit.className = 'btn btn-dark';
+        edit.textContent = t('btn_emote_edit');
+        edit.addEventListener('click', () => startEmoteEdit(name));
+        const del = document.createElement('button');
+        del.type = 'button';
+        del.className = 'btn btn-pink';
+        del.textContent = t('btn_emote_del');
+        del.addEventListener('click', () => deleteEmote(name));
+        row.appendChild(img);
+        row.appendChild(code);
+        row.appendChild(edit);
+        row.appendChild(del);
+        list.appendChild(row);
+      });
+    }
+
+    function setI18nTarget(el, key) {
+      const target = el.querySelector('[data-i18n]') || el;
+      target.setAttribute('data-i18n', key);
+      target.textContent = t(key);
+    }
+
+    function resetEmoteForm() {
+      emoteEditingKey = null;
+      const name = document.getElementById('emote-name');
+      const url = document.getElementById('emote-url');
+      const title = document.getElementById('emote-form-title');
+      const add = document.getElementById('btn-emote-add');
+      const cancel = document.getElementById('btn-emote-cancel');
+      if (name) name.value = '';
+      if (url) url.value = '';
+      if (title) setI18nTarget(title, 'emote_form_add');
+      if (add) setI18nTarget(add, 'btn_emote_add');
+      if (cancel) cancel.style.display = 'none';
+    }
+
+    function startEmoteEdit(name) {
+      emoteEditingKey = name;
+      let clean = emoteStrip(name);
+      const family = emoteStrip(document.getElementById('emote-family')?.value || '');
+      if (family && clean.startsWith(family)) clean = clean.slice(family.length);
+      const nameEl = document.getElementById('emote-name');
+      const urlEl = document.getElementById('emote-url');
+      if (nameEl) nameEl.value = clean;
+      if (urlEl) urlEl.value = emoteMap[name] || '';
+      const title = document.getElementById('emote-form-title');
+      const add = document.getElementById('btn-emote-add');
+      const cancel = document.getElementById('btn-emote-cancel');
+      if (title) setI18nTarget(title, 'emote_form_edit');
+      if (add) setI18nTarget(add, 'btn_emote_update');
+      if (cancel) cancel.style.display = '';
+    }
+
+    function currentEmoteCode() {
+      const family = emoteStrip(document.getElementById('emote-family')?.value || '');
+      let namePart = emoteStrip(document.getElementById('emote-name')?.value || '');
+      if (family && namePart.startsWith(family)) namePart = namePart.slice(family.length);
+      return ':_' + family + namePart + ':';
+    }
+
+    async function findMemberEmojiAction() {
+      const res = await sbAdminClient.getActions();
+      const actions = (res && res.actions) || [];
+      const want = ['api_saveemotes', 'gta_setmemberemojimap'];
+      return actions.find(a => want.includes(String(a.name || '').toLowerCase())) || null;
+    }
+
+    async function saveMemberEmojiMap() {
+      if (!sbAdminClient || !sbStatusBadge || !sbStatusBadge.classList.contains('connected')) {
+        setEmoteStatus('disconnected');
+        return false;
+      }
+      try {
+        const action = await findMemberEmojiAction();
+        if (!action) {
+          setEmoteStatus('no-action');
+          const help = document.getElementById('emote-action-help');
+          if (help) help.open = true;
+          return false;
+        }
+        await sbAdminClient.doAction(action.id, { emotesJson: JSON.stringify(emoteMap) });
+        emoteMapMissing = false;
+        setEmoteStatus('saved');
+        pushMemberEmojiToFrames();
+        return true;
+      } catch (err) {
+        setEmoteStatus('error', t('emote_status_error'));
+        return false;
+      }
+    }
+
+    async function refreshMemberEmojiFromSB() {
+      if (!sbAdminClient || !sbStatusBadge || !sbStatusBadge.classList.contains('connected')) {
+        setEmoteStatus('disconnected');
+        return;
+      }
+      try {
+        const res = await sbAdminClient.getGlobal('memberEmojiMap', true);
+        const status = res && (res.status || (res.variable && 'ok'));
+        const variable = res && (res.variable || (res.data && res.data.variable));
+        if (!variable || status === 'error') {
+          emoteMapMissing = true;
+        } else {
+          const parsed = parseMemberEmojiValue(variable);
+          if (parsed.error) {
+            setEmoteStatus('error', t('emote_bad_json'));
+            return;
+          }
+          emoteMapMissing = parsed.missing;
+          if (!parsed.missing) emoteMap = parsed.map;
+        }
+      } catch (e) {
+        emoteMapMissing = true;
+      }
+      renderEmoteList();
+      pushMemberEmojiToFrames();
+      setEmoteStatus(emoteMapMissing ? 'missing' : 'ready');
+    }
+
+    function commitEmoteFromForm() {
+      const url = (document.getElementById('emote-url')?.value || '').trim();
+      const namePart = emoteStrip(document.getElementById('emote-name')?.value || '');
+      if (!namePart || !url) {
+        setEmoteStatus('error', t('emote_need_both'));
+        return;
+      }
+      if (!/^https?:\/\//i.test(url)) {
+        setEmoteStatus('error', t('emote_need_url'));
+        return;
+      }
+      const code = currentEmoteCode();
+      if (emoteEditingKey && emoteEditingKey !== code) delete emoteMap[emoteEditingKey];
+      emoteMap[code] = url;
+      emoteFamily = emoteStrip(document.getElementById('emote-family')?.value || '');
+      localStorage.setItem('ytEmoteFamily', emoteFamily);
+      resetEmoteForm();
+      renderEmoteList();
+      pushMemberEmojiToFrames();
+      saveMemberEmojiMap();
+    }
+
+    function deleteEmote(name) {
+      if (!confirm('Delete ' + name + '?')) return;
+      delete emoteMap[name];
+      if (emoteEditingKey === name) resetEmoteForm();
+      renderEmoteList();
+      pushMemberEmojiToFrames();
+      saveMemberEmojiMap();
+    }
+
+    function applyEmoteFamilyToAll() {
+      const next = emoteStrip(document.getElementById('emote-family')?.value || '');
+      if (next === emoteFamily) return;
+      if (!confirm('Rename every emote to use the family prefix "' + next + '"?')) return;
+      const nextMap = {};
+      Object.entries(emoteMap).forEach(([key, url]) => {
+        let clean = emoteStrip(key);
+        if (emoteFamily && clean.startsWith(emoteFamily)) clean = clean.slice(emoteFamily.length);
+        nextMap[':_' + next + clean + ':'] = url;
+      });
+      emoteMap = nextMap;
+      emoteFamily = next;
+      localStorage.setItem('ytEmoteFamily', next);
+      updateEmoteFamilyPreview();
+      renderEmoteList();
+      pushMemberEmojiToFrames();
+      saveMemberEmojiMap();
+    }
+
+    function importEmoteJson() {
+      const raw = document.getElementById('emote-json')?.value || '';
+      const parsed = parseMemberEmojiValue(raw);
+      if (parsed.error || parsed.missing) {
+        setEmoteStatus('error', t('emote_bad_json'));
+        return;
+      }
+      emoteMap = parsed.map;
+      renderEmoteList();
+      pushMemberEmojiToFrames();
+      saveMemberEmojiMap();
+    }
+
+    updateEmoteFamilyPreview();
+    renderEmoteList();
+    setEmoteStatus('disconnected');
+    document.getElementById('emote-family')?.addEventListener('input', updateEmoteFamilyPreview);
+    document.getElementById('btn-emote-family')?.addEventListener('click', applyEmoteFamilyToAll);
+    document.getElementById('btn-emote-refresh')?.addEventListener('click', () => refreshMemberEmojiFromSB());
+    document.getElementById('btn-emote-create')?.addEventListener('click', () => saveMemberEmojiMap());
+    document.getElementById('btn-emote-save')?.addEventListener('click', () => saveMemberEmojiMap());
+    document.getElementById('btn-emote-add')?.addEventListener('click', commitEmoteFromForm);
+    document.getElementById('btn-emote-cancel')?.addEventListener('click', resetEmoteForm);
+    document.getElementById('btn-emote-import')?.addEventListener('click', importEmoteJson);
+    document.getElementById('btn-emote-copy-cs')?.addEventListener('click', async () => {
+      const pre = document.getElementById('emote-csharp');
+      if (!pre) return;
+      try { await navigator.clipboard.writeText(pre.textContent); setEmoteStatus('error', t('emote_copied_cs')); }
+      catch (e) { setEmoteStatus('error', t('emote_copy_failed')); }
+    });
+    window.addEventListener('message', (event) => {
+      const msg = event.data;
+      if (msg && msg.type === 'OVERLAY_READY') pushMemberEmojiToFrames();
+    });
+
+    initPanelCollapse();
     fitPreviewCanvas(); applyLanguageTranslation(true); initialLoadIframe(); connectSetupToSB();
   </script>
 
@@ -2673,24 +4646,24 @@
 <div id="sb-import-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center; padding:20px;">
   <div style="background:#171a21; border:3px solid #0b2328; border-radius:12px; max-width:900px; width:100%; max-height:90vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
     <div style="padding:16px 20px; border-bottom:2px solid #232834; display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;">Streamer.bot Import — GTA VI Widget Hub v0.1.7</div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.2.2</span></div>
       <button id="btn-close-sb-import" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
     </div>
     <div style="padding:20px;">
-      <h3 style="color:#53d8bf; margin:0 0 12px; font-size:1rem;">Setup Instructions</h3>
+      <h3 style="color:#53d8bf; margin:0 0 12px; font-size:1rem;" data-i18n="sb_setup_instructions">Setup Instructions</h3>
       <ol style="font-size:0.85rem; color:#e0e6ed; line-height:1.6; margin-bottom:20px; padding-left:20px;">
-        <li>In Streamer.bot, click the <strong>Import</strong> button (top-left) → paste the code below → click Import.</li>
-        <li>Find the action <strong>[GTA_Initialize Globals]</strong> in the Actions list → right-click → <strong>Test</strong> (this creates the required global variables <code>viShoutOuts</code> and <code>viChatHighlight</code>).</li>
-        <li>Go to <strong>Servers → WebSocket Server</strong> and enable it. Use the same Host / Port / Password shown in the General tab of this page.</li>
-        <li>(Optional) Open the <strong>Auto Import Youtube members (File Watcher)</strong> action and set the folder path for your YouTube members CSV if you want automatic member imports.</li>
-        <li>Use the <strong>Generate URLs</strong> section at the bottom of this setup page and add the Browser Source(s) into OBS Studio.</li>
-        <li>Test everything using the buttons on the <strong>Test</strong> tab.</li>
+        <li data-i18n="sb_step_1">In Streamer.bot, click the Import button (top-left), paste the code below, then click Import.</li>
+        <li data-i18n="sb_step_2">Find the action [GTA_Initialize Globals] in the Actions list, right-click, and choose Test. This creates viShoutOuts and viChatHighlight.</li>
+        <li data-i18n="sb_step_3">Go to Servers, then WebSocket Server, and enable it. Use the same Host, Port, and Password as the General tab.</li>
+        <li data-i18n="sb_step_4">(Optional) Open Auto Import Youtube members (File Watcher) and set the folder for your YouTube members CSV.</li>
+        <li data-i18n="sb_step_5">Copy a browser-source URL from this page into OBS Studio.</li>
+        <li data-i18n="sb_step_6">Test everything with the buttons on the Test tab.</li>
       </ol>
-      <p style="font-size:0.75rem; color:#9aa4b2; margin-bottom:12px;">Note: The global variable names in the Shoutout and Q&A tabs must match the ones set by the actions (<code>viShoutOuts</code> / <code>viChatHighlight</code>).</p>
+      <p style="font-size:0.75rem; color:#9aa4b2; margin-bottom:12px;" data-i18n="sb_import_note">Note: The global variable names on the Shoutout and Q&A tabs must match the actions (viShoutOuts / viChatHighlight).</p>
 
       <div style="display:flex; gap:10px; margin-bottom:8px; align-items:center;">
-        <button class="btn btn-teal" id="btn-copy-import-code"><i class="fa-solid fa-copy"></i> Copy Import Code</button>
-        <button class="btn btn-dark" id="btn-download-import-txt"><i class="fa-solid fa-file-arrow-down"></i> Download .txt</button>
+        <button class="btn btn-teal" id="btn-copy-import-code"><i class="fa-solid fa-copy"></i> <span data-i18n="btn_copy_import">Copy Import Code</span></button>
+        <button class="btn btn-dark" id="btn-download-import-txt"><i class="fa-solid fa-file-arrow-down"></i> <span data-i18n="btn_download_txt">Download .txt</span></button>
         <span id="copy-status" style="font-size:0.75rem; color:#53d8bf; margin-left:8px;"></span>
       </div>
       <textarea id="sb-import-code" readonly style="width:100%; height:280px; background:#0e1015; color:#e0e6ed; border:1px solid #232834; border-radius:6px; padding:12px; font-family:monospace; font-size:0.65rem; resize:vertical;">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</textarea>
@@ -2708,7 +4681,8 @@
       document.getElementById('cfg-so-bg'),
       document.getElementById('cfg-qa-bg'),
       document.getElementById('cfg-alert-bg'),
-      document.getElementById('cfg-chat-bg')
+      document.getElementById('cfg-chat-bg'),
+      document.getElementById('cfg-goals-bg')
     ].filter(Boolean);
 
     if (selects.length === 0) {
@@ -2753,7 +4727,14 @@
         opt.textContent = file;
         sel.appendChild(opt);
       });
+      // Select default if specified
+      const def = sel.dataset.default;
+      if (def) {
+        const match = Array.from(sel.options).find(o => o.value === def);
+        if (match) sel.value = def;
+      }
     });
+    if (typeof initialLoadIframe === 'function') initialLoadIframe();
   }
 
 
@@ -2772,7 +4753,7 @@
     if (!ver) return;
 
     if (label) label.textContent = ver.label;
-    ta.value = 'Loading import code...';
+    ta.value = t('sb_loading');
     modal.style.display = 'flex';
 
     try {
@@ -2780,7 +4761,7 @@
       if (!res.ok) throw new Error('File not found');
       ta.value = await res.text();
     } catch (e) {
-      ta.value = 'Could not load import code from ' + ver.file + '. Make sure the streamerbot folder is present and you are serving the site (not opening the HTML file directly).';
+      ta.value = t('sb_load_failed').replace('{file}', ver.file);
       console.error('[GTA] Failed to load SB import', e);
     }
   }
@@ -2799,10 +4780,10 @@
     const status = document.getElementById('copy-status');
     try {
       await navigator.clipboard.writeText(ta.value);
-      status.textContent = 'Copied!';
+      status.textContent = t('status_copied');
       setTimeout(() => status.textContent = '', 2000);
     } catch (err) {
-      status.textContent = 'Copy failed';
+      status.textContent = t('status_copy_failed');
     }
   });
   document.getElementById('btn-download-import-txt')?.addEventListener('click', () => {
@@ -2810,7 +4791,7 @@
     const blob = new Blob([ta.value], {type: 'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.1.7.txt';
+    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.2.2.txt';
     a.click();
     URL.revokeObjectURL(a.href);
   });

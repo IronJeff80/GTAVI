@@ -1,0 +1,21 @@
+Add a new widget called {Name} to the GTA VI Widget Hub.
+
+Follow the gta-widget-skill checklist exactly. Start from a clean clone of the current production tag. Disregard any previous incomplete attempts.
+
+The closest existing widget to copy is {QA|Shoutout|Chat}.
+
+The widget should {brief description of what it displays and how it is triggered}.
+
+Requirements:
+- Tab button, module checkbox, and tab content with position, scale, alignment, and appearance controls.
+- Container in gta-overlay.html with min-width/min-height so the drag area does not collapse.
+- Translation keys for the tab button, module checkbox, and all new labels added to i18nDict in setup.html. Use data-i18n attributes on all user-facing text.
+- CSS with preview outline, animate-in, and any widget-specific animations.
+- JS config parsing, DOM refs, enable check.
+- recalculate{Name}Coords() called from applyGlobalStyles() and included in updateDomCoords().
+- setupDraggable() with start-position, drag-move, and resize branches.
+- broadcastManipulate() postMessage and matching FIRST5_MANIPULATED (or equivalent) listener in setup.html.
+- LIVE_CONFIG_UPDATE field parsing and placeholder re-render in preview mode.
+- setPreviewPinned() placeholder logic and WebSocket/test event handlers.
+
+Do not invent new patterns. Copy and adapt from the existing widget. Verify every checklist item is present before packaging.

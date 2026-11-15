@@ -1,6 +1,7 @@
 using System;
 using System.Text.RegularExpressions;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 public class CPHInline
 {
@@ -50,13 +51,17 @@ public class CPHInline
             avatar = Regex.Replace(avatar, @"=s\d+-", "=s600-");
         }
 
+        // YouTube emotes and Twemoji only have image URLs on %emotes% / %parts%.
+        // The message text is just the codes (:name:), so the overlay cannot draw them without these.
         var qaData = new
         {
             @event = "GTA_QA",
             user = user.ToUpper(),
             msg = msg,
             avatar = avatar ?? "",
-            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds()
+            timestamp = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds(),
+            emotes = ReadJsonArg("emotes"),
+            parts = ReadJsonArg("parts")
         };
 
         string jsonOutput = JsonConvert.SerializeObject(qaData);
@@ -67,5 +72,26 @@ public class CPHInline
         CPH.LogInfo($"[GTA-QA] Highlighted message from {user}: {jsonOutput}");
 
         return true;
+    }
+
+    // Streamer.bot sometimes hands %emotes% / %parts% over as a JSON string, sometimes as a parsed array.
+    private object ReadJsonArg(string key)
+    {
+        if (!args.ContainsKey(key) || args[key] == null) return new JArray();
+        var raw = args[key];
+        string text = raw as string;
+        if (text == null && raw is JValue jv && jv.Type == JTokenType.String) text = jv.ToString();
+        if (text != null)
+        {
+            text = text.Trim();
+            if (text.Length == 0) return new JArray();
+            if (text.StartsWith("[") || text.StartsWith("{"))
+            {
+                try { return JToken.Parse(text); }
+                catch { return new JArray(); }
+            }
+            return new JArray();
+        }
+        return raw;
     }
 }

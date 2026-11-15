@@ -133,11 +133,38 @@ public class CPHInline
                 break;
         }
 
-        // 4. Broadcast JSON via WebSockets
+        // 4. Member emoji codes live in the message. YouTube emote images only exist on %emotes% / %parts%.
+        if (payload.ContainsKey("message"))
+        {
+            payload["emotes"] = ReadJsonArg("emotes");
+            payload["parts"] = ReadJsonArg("parts");
+        }
+
+        // 5. Broadcast JSON via WebSockets
         string jsonPayload = JsonConvert.SerializeObject(payload);
         CPH.LogInfo($"[GTA-Alert] Broadcasting: {jsonPayload}");
         CPH.WebsocketBroadcastJson(jsonPayload);
 
         return true;
+    }
+
+    private object ReadJsonArg(string key)
+    {
+        if (!args.ContainsKey(key) || args[key] == null) return new JArray();
+        var raw = args[key];
+        string text = raw as string;
+        if (text == null && raw is JValue jv && jv.Type == JTokenType.String) text = jv.ToString();
+        if (text != null)
+        {
+            text = text.Trim();
+            if (text.Length == 0) return new JArray();
+            if (text.StartsWith("[") || text.StartsWith("{"))
+            {
+                try { return JToken.Parse(text); }
+                catch { return new JArray(); }
+            }
+            return new JArray();
+        }
+        return raw;
     }
 }
