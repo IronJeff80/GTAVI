@@ -1,6 +1,6 @@
 /* ==========================================================================
    GTA VI OBS OVERLAYS - CORE ENGINE (js/overlays.js)
-   v0.2.2 - Money goal values and alert message emotes
+   v0.2.3 - Per-alert duration overrides
    ========================================================================== */
 
 const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -84,6 +84,12 @@ function parseGoalsCustom(raw) {
   }));
 }
 
+function readAlertSeconds(raw) {
+  const n = parseInt(raw, 10);
+  if (!Number.isFinite(n) || n <= 0) return 0;
+  return n;
+}
+
 const GTAOverlayConfig = (() => {
   const params = new URLSearchParams(window.location.search);
 
@@ -162,6 +168,16 @@ const GTAOverlayConfig = (() => {
     alertAlignH: (params.get(isVert ? 'v_aAlignH' : 'aAlignH') || '1') !== '0',
     alertAlignV: getBool('aAlignV', 'v_aAlignV', '0'),
     alertDuration: parseInt(params.get('aDur') || '6', 10) * 1000,
+    alertDurations: {
+      sub:          readAlertSeconds(params.get('ad_sub')),
+      member:       readAlertSeconds(params.get('ad_mem')),
+      milestone:    readAlertSeconds(params.get('ad_ms')),
+      gift:         readAlertSeconds(params.get('ad_gft')),
+      giftRec:      readAlertSeconds(params.get('ad_grc')),
+      superchat:    readAlertSeconds(params.get('ad_sc')),
+      supersticker: readAlertSeconds(params.get('ad_stk')),
+      jewels:       readAlertSeconds(params.get('ad_jwl'))
+    },
     alertsConfig: {
       sub:          params.get('al_sub') !== '0',
       member:       params.get('al_mem') !== '0',
@@ -1327,6 +1343,16 @@ class GTAOverlayEngine {
         this.config.alertAlignH = (isVert ? (s.v_aAlignH ?? s.aAlignH) : s.aAlignH) === '1'; 
         this.config.alertAlignV = (isVert ? (s.v_aAlignV ?? s.aAlignV) : s.aAlignV) === '1';
         this.config.alertDuration = parseInt(s.aDur, 10) * 1000;
+        this.config.alertDurations = {
+          sub:          readAlertSeconds(s.ad_sub),
+          member:       readAlertSeconds(s.ad_mem),
+          milestone:    readAlertSeconds(s.ad_ms),
+          gift:         readAlertSeconds(s.ad_gft),
+          giftRec:      readAlertSeconds(s.ad_grc),
+          superchat:    readAlertSeconds(s.ad_sc),
+          supersticker: readAlertSeconds(s.ad_stk),
+          jewels:       readAlertSeconds(s.ad_jwl)
+        };
         this.config.alertsConfig = {
           sub:          s.al_sub !== '0',
           member:       s.al_mem !== '0',
@@ -1553,6 +1579,12 @@ class GTAOverlayEngine {
   // =====================================
   // MODULE 2: ALERTS PLAYBACK
   // =====================================
+  alertHoldMs(type) {
+    const secs = this.config.alertDurations && this.config.alertDurations[type];
+    if (Number.isFinite(secs) && secs > 0) return secs * 1000;
+    return this.config.alertDuration;
+  }
+
   enqueueAlert(data) {
     const t = data.alertType || 'generic';
     if (t !== 'generic' && this.config.alertsConfig[t] === false) return;
@@ -1649,7 +1681,7 @@ class GTAOverlayEngine {
     void this.dom.alertContainer.offsetWidth; 
     this.dom.alertContainer.classList.add('animate-in');
     
-    await this.wait(this.config.alertDuration);
+    await this.wait(this.alertHoldMs(type));
     this.dom.alertContainer.classList.remove('animate-in');
     await this.wait(600);
   }

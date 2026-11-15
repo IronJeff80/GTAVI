@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GTA VI Overlays - Universal Setup v0.2.2</title>
+  <title>GTA VI Overlays - Universal Setup v0.2.3</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -76,10 +76,13 @@
     .mini-switch-card { display: flex; flex-direction: column; align-items: center; gap: 5px; text-align: center; font-size: 0.67rem; font-weight: 700; color: #c0c8d6; cursor: pointer; user-select: none; }
     .inline-toggle-row { display: flex; align-items: center; justify-content: space-between; background: #14171f; padding: 7px 10px; border-radius: 8px; border: 1px solid #282e3d; font-size: 0.73rem; font-weight: 700; color: #d0d7e2; cursor: pointer; margin-bottom: 2px; }
 
-    .alert-config-row { display: grid; grid-template-columns: 1fr 118px 42px; align-items: center; gap: 8px; background: #14171f; padding: 6px 10px; border-radius: 8px; border: 1px solid #282e3d; }
+    .alert-config-row { display: grid; grid-template-columns: minmax(0, 1fr) 104px 70px 42px; align-items: center; gap: 8px; background: #14171f; padding: 6px 10px; border-radius: 8px; border: 1px solid #282e3d; }
     .alert-config-row span { font-size: 0.73rem; font-weight: 700; color: #d0d7e2; }
     .alert-config-row select { padding: 4px 6px; font-size: 0.72rem; font-weight: 700; }
     .alert-config-row .switch-cell { display: flex; justify-content: flex-end; }
+    .alert-dur { display: flex; align-items: center; gap: 3px; }
+    .alert-dur input { width: 48px; padding: 4px 4px; font-size: 0.72rem; text-align: center; }
+    .alert-dur span { font-size: 0.68rem; color: #8c96a6; }
 
     input[type="checkbox"].switch { appearance: none; -webkit-appearance: none; width: 36px; height: 19px; background: #0f1116; border: 1px solid #384152; border-radius: 20px; position: relative; cursor: pointer; flex-shrink: 0; padding: 0; }
     input[type="checkbox"].switch::after { content: ""; width: 13px; height: 13px; background: #8c96a6; border-radius: 50%; position: absolute; top: 2px; left: 2px; transition: transform 0.18s ease, background 0.18s ease; }
@@ -172,7 +175,7 @@
   <aside class="sidebar">
     <div class="brand-header">
       <div class="brand-top">
-        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.2.2</span></div>
+        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.2.3</span></div>
         <div id="sb-status" class="sb-badge"><i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">Disconnected</span></div>
       </div>
       <div class="global-controls">
@@ -500,16 +503,16 @@ public class CPHInline
     <div id="tab-alerts" class="tab-content">
       <div class="panel">
         <div class="panel-title"><i class="fa-brands fa-youtube"></i> <span data-i18n="panel_yt_events">YouTube Events &amp; Accent Colors</span></div>
-        <p style="font-size:0.72rem; color:#9aa4b2;" data-i18n="desc_yt_events">Choose an independent accent color and toggle visibility for each alert type.</p>
+        <p style="font-size:0.72rem; color:#9aa4b2;" data-i18n="desc_yt_events">Choose an accent color and visibility for each alert. Duration 0 uses the global alert time. Any other number of seconds overrides it.</p>
 
-        <div class="alert-config-row"><span data-i18n="al_new_sub">New Subscriber</span><select id="cfg-ac_sub"><option value="teal" data-i18n="opt_teal" selected>TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_sub" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_new_mem">New Member</span><select id="cfg-ac_mem"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple" selected>PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_mem" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_milestone">Membership Milestone</span><select id="cfg-ac_ms"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple" selected>PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_ms" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_gift_sent">Membership Gift Sent</span><select id="cfg-ac_gft"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink" selected>PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_gft" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_gift_rec">Gift Membership Received</span><select id="cfg-ac_grc"><option value="teal" data-i18n="opt_teal" selected>TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_grc" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_superchat">Super Chat</span><select id="cfg-ac_sc"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_sc" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_supersticker">Super Sticker</span><select id="cfg-ac_stk"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_stk" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_jewels">Jewels Gifted</span><select id="cfg-ac_jwl"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_jwl" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_new_sub">New Subscriber</span><select id="cfg-ac_sub"><option value="teal" data-i18n="opt_teal" selected>TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_sub" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_sub" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_new_mem">New Member</span><select id="cfg-ac_mem"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple" selected>PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_mem" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_mem" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_milestone">Membership Milestone</span><select id="cfg-ac_ms"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple" selected>PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_ms" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_ms" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_gift_sent">Membership Gift Sent</span><select id="cfg-ac_gft"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink" selected>PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_gft" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_gft" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_gift_rec">Gift Membership Received</span><select id="cfg-ac_grc"><option value="teal" data-i18n="opt_teal" selected>TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_grc" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_grc" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_superchat">Super Chat</span><select id="cfg-ac_sc"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_sc" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_sc" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_supersticker">Super Sticker</span><select id="cfg-ac_stk"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_stk" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_stk" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_jewels">Jewels Gifted</span><select id="cfg-ac_jwl"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_jwl" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_jwl" checked></div></div>
       </div>
 
       <div class="panel">
@@ -1584,7 +1587,7 @@ public class CPHInline
     "icon_cash": "Cash",
     "icon_star": "Star",
     "panel_yt_events": "YouTube Events & Accent Colors",
-    "desc_yt_events": "Choose an independent accent color and toggle visibility for each alert type.",
+    "desc_yt_events": "Choose an accent color and visibility for each alert. Duration 0 uses the global alert time. Any other number of seconds overrides it.",
     "al_new_sub": "New Subscriber",
     "al_new_mem": "New Member",
     "al_milestone": "Membership Milestone",
@@ -1964,7 +1967,7 @@ public class CPHInline
     "icon_cash": "Dinheiro",
     "icon_star": "Estrela",
     "panel_yt_events": "Eventos do YouTube e Cores",
-    "desc_yt_events": "Escolha a cor de destaque e a visibilidade de cada tipo de alerta.",
+    "desc_yt_events": "Escolha a cor de destaque e a visibilidade de cada alerta. Duração 0 usa o tempo global. Qualquer outro número, em segundos, substitui o global.",
     "al_new_sub": "Novo Inscrito",
     "al_new_mem": "Novo Membro",
     "al_milestone": "Marco de Assinatura",
@@ -2355,7 +2358,7 @@ public class CPHInline
     "icon_cash": "Dinero",
     "icon_star": "Estrella",
     "panel_yt_events": "Eventos de YouTube y Colores de Acento",
-    "desc_yt_events": "Elige un color de acento independiente y activa o desactiva la visibilidad de cada tipo de alerta.",
+    "desc_yt_events": "Elige el color de acento y la visibilidad de cada alerta. Duración 0 usa el tiempo global. Cualquier otro número, en segundos, lo sustituye.",
     "al_new_sub": "Nuevo Suscriptor",
     "al_new_mem": "Nuevo Miembro",
     "al_milestone": "Hito de Membresía",
@@ -2757,7 +2760,7 @@ public class CPHInline
     "icon_cash": "Argent",
     "icon_star": "Étoile",
     "panel_yt_events": "Événements YouTube et Couleurs d'Accent",
-    "desc_yt_events": "Choisissez une couleur d'accent indépendante et activez/désactivez chaque type d'alerte.",
+    "desc_yt_events": "Choisissez la couleur d'accent et la visibilité de chaque alerte. Une durée de 0 utilise le temps global. Tout autre nombre de secondes le remplace.",
     "al_new_sub": "Nouvel Abonné",
     "al_new_mem": "Nouveau Membre",
     "al_milestone": "Jalon d'Adhésion",
@@ -3148,7 +3151,7 @@ public class CPHInline
     "icon_cash": "Geld",
     "icon_star": "Stern",
     "panel_yt_events": "YouTube-Events & Akzentfarben",
-    "desc_yt_events": "Wähle eine eigene Akzentfarbe und schalte die Sichtbarkeit für jeden Alert-Typ um.",
+    "desc_yt_events": "Wähle Akzentfarbe und Sichtbarkeit für jeden Alert. Dauer 0 nutzt die globale Zeit. Jede andere Sekundenzahl überschreibt sie.",
     "al_new_sub": "Neuer Abonnent",
     "al_new_mem": "Neues Mitglied",
     "al_milestone": "Mitgliedschafts-Meilenstein",
@@ -3764,6 +3767,7 @@ public class CPHInline
       'cPink','cTeal','cPurple','cYellow','cStroke','cBorder','cBg','palette',
       'alertEvent','ax','ay','ascale','v_ax','v_ay','v_ascale','aDur',
       'ac_sub','ac_mem','ac_ms','ac_gft','ac_grc','ac_sc','ac_stk','ac_jwl',
+      'ad_sub','ad_mem','ad_ms','ad_gft','ad_grc','ad_sc','ad_stk','ad_jwl',
       'soX','soY','soScale','v_soX','v_soY','v_soScale',
       'soDur','soAnim','soLayout','soColor','soTitle','soVar','soEvent',
       'chatX','chatY','chatW','chatScale','v_chatX','v_chatY','v_chatW','v_chatScale',
@@ -3916,7 +3920,7 @@ public class CPHInline
       const state = getSetupState('horiz');
       const exportPayload = {
         app: 'GTA VI Overlay Hub',
-        version: '0.2.2',
+        version: '0.2.3',
         exportedAt: new Date().toISOString(),
         pinPreview: Boolean(pinCheckbox && pinCheckbox.checked),
         previewMode: currentPreviewMode,
@@ -3932,7 +3936,7 @@ public class CPHInline
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'gta6-overlay-config-v0.2.2.json';
+      a.download = 'gta6-overlay-config-v0.2.3.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -4646,7 +4650,7 @@ public class CPHInline
 <div id="sb-import-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center; padding:20px;">
   <div style="background:#171a21; border:3px solid #0b2328; border-radius:12px; max-width:900px; width:100%; max-height:90vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
     <div style="padding:16px 20px; border-bottom:2px solid #232834; display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.2.2</span></div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.2.3</span></div>
       <button id="btn-close-sb-import" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
     </div>
     <div style="padding:20px;">
@@ -4791,7 +4795,7 @@ public class CPHInline
     const blob = new Blob([ta.value], {type: 'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.2.2.txt';
+    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.2.3.txt';
     a.click();
     URL.revokeObjectURL(a.href);
   });

@@ -1,8 +1,12 @@
-# GTA VI OBS Overlays Suite (v0.2.2)
+# GTA VI OBS Overlays Suite (v0.2.3)
 
 A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
 
 Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.2.3
+
+- Each YouTube alert on the Events & Accent Colors panel has its own duration. `0` uses the global alert time. Any other number of seconds overrides it. All eight default to `0`.
 
 ## What's new in v0.2.2
 
