@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GTA VI Overlays - Universal Setup v0.2.3</title>
+  <title>GTA VI Overlays - Universal Setup v0.2.4</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -175,7 +175,7 @@
   <aside class="sidebar">
     <div class="brand-header">
       <div class="brand-top">
-        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.2.3</span></div>
+        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.2.4</span></div>
         <div id="sb-status" class="sb-badge"><i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">Disconnected</span></div>
       </div>
       <div class="global-controls">
@@ -238,6 +238,14 @@
           </button>
         </div>
         <p style="font-size:0.68rem; color:#8c96a6; margin-top:6px;" data-i18n="desc_sb_import_ver">Choose the button that matches your Streamer.bot version. 1.0.7 imports do not work on 1.1.0 Alpha and vice versa.</p>
+      </div>
+
+      <div class="panel" id="panel-install-video">
+        <div class="panel-title"><i class="fa-brands fa-youtube"></i> <span data-i18n="panel_install_video">Installation Video</span></div>
+        <p style="font-size:0.75rem; color:#9aa4b2;" data-i18n="desc_install_video">A full walkthrough of the install: extract the zip, import Streamer.bot, and add the OBS browser sources.</p>
+        <a class="btn btn-yellow" id="btn-install-video" href="https://www.youtube.com/@2SmokinBarrels" target="_blank" rel="noopener noreferrer" style="width:100%; box-sizing:border-box; text-align:center; text-decoration:none;">
+          <i class="fa-brands fa-youtube"></i> <span data-i18n="btn_install_video">Watch the Install Guide</span>
+        </a>
       </div>
 
       <div class="panel" id="panel-livesub">
@@ -1780,6 +1788,9 @@ public class CPHInline
     "btn_sb_107": "Streamer.bot 1.0.7 Stable",
     "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
     "desc_sb_import_ver": "Choose the button that matches your Streamer.bot version. 1.0.7 imports do not work on 1.1.0 Alpha and vice versa.",
+    "panel_install_video": "Installation Video",
+    "desc_install_video": "A full walkthrough of the install: extract the zip, import Streamer.bot, and add the OBS browser sources.",
+    "btn_install_video": "Watch the Install Guide",
     "opt_bg_none_only": "None (Solid Fill Only)",
     "desc_bg_auto": "Backgrounds load from assets/backgrounds/. Add or remove images and update backgrounds.json to refresh the list.",
     "opt_bg_global": "Use Global Background",
@@ -2171,6 +2182,9 @@ public class CPHInline
     "btn_sb_107": "Streamer.bot 1.0.7 Estável",
     "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
     "desc_sb_import_ver": "Escolha o botão da sua versão do Streamer.bot. A importação 1.0.7 não funciona na 1.1.0 Alpha, e o contrário também.",
+    "panel_install_video": "Vídeo de Instalação",
+    "desc_install_video": "Um passo a passo completo: extrair o zip, importar o Streamer.bot e adicionar as browser sources no OBS.",
+    "btn_install_video": "Assistir ao guia",
     "opt_bg_none_only": "Nenhum (Só Preenchimento)",
     "desc_bg_auto": "Os fundos vêm de assets/backgrounds/. Adicione ou remova imagens e atualize backgrounds.json para recarregar a lista.",
     "opt_bg_global": "Usar Fundo Global",
@@ -2562,6 +2576,9 @@ public class CPHInline
     "btn_sb_107": "Streamer.bot 1.0.7 Estable",
     "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
     "desc_sb_import_ver": "Elige el botón de tu versión de Streamer.bot. La importación 1.0.7 no funciona en 1.1.0 Alpha, y al revés tampoco.",
+    "panel_install_video": "Video de instalación",
+    "desc_install_video": "Una guía completa: extraer el zip, importar Streamer.bot y añadir las browser sources en OBS.",
+    "btn_install_video": "Ver la guía",
     "opt_bg_none_only": "Ninguno (Solo Relleno)",
     "desc_bg_auto": "Los fondos salen de assets/backgrounds/. Añade o quita imágenes y actualiza backgrounds.json para recargar la lista.",
     "opt_bg_global": "Usar Fondo Global",
@@ -2953,6 +2970,9 @@ public class CPHInline
     "btn_sb_107": "Streamer.bot 1.0.7 Stable",
     "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
     "desc_sb_import_ver": "Choisis le bouton de ta version de Streamer.bot. L’import 1.0.7 ne marche pas sur 1.1.0 Alpha, et l’inverse non plus.",
+    "panel_install_video": "Vidéo d'installation",
+    "desc_install_video": "Le pas à pas complet : extraire le zip, importer Streamer.bot et ajouter les browser sources dans OBS.",
+    "btn_install_video": "Voir le guide",
     "opt_bg_none_only": "Aucun (Remplissage seul)",
     "desc_bg_auto": "Les fonds viennent de assets/backgrounds/. Ajoute ou retire des images et mets à jour backgrounds.json pour rafraîchir la liste.",
     "opt_bg_global": "Utiliser le Fond Global",
@@ -3344,6 +3364,9 @@ public class CPHInline
     "btn_sb_107": "Streamer.bot 1.0.7 Stabil",
     "btn_sb_110": "Streamer.bot 1.1.0 Alpha",
     "desc_sb_import_ver": "Wähle den Button deiner Streamer.bot-Version. Ein 1.0.7-Import läuft nicht auf 1.1.0 Alpha, und umgekehrt auch nicht.",
+    "panel_install_video": "Installationsvideo",
+    "desc_install_video": "Die komplette Anleitung: ZIP entpacken, Streamer.bot importieren und die Browser-Quellen in OBS anlegen.",
+    "btn_install_video": "Anleitung ansehen",
     "opt_bg_none_only": "Keins (Nur Füllung)",
     "desc_bg_auto": "Hintergründe kommen aus assets/backgrounds/. Bilder hinzufügen oder entfernen und backgrounds.json aktualisieren, um die Liste neu zu laden.",
     "opt_bg_global": "Globalen Hintergrund nutzen",
@@ -3920,7 +3943,7 @@ public class CPHInline
       const state = getSetupState('horiz');
       const exportPayload = {
         app: 'GTA VI Overlay Hub',
-        version: '0.2.3',
+        version: '0.2.4',
         exportedAt: new Date().toISOString(),
         pinPreview: Boolean(pinCheckbox && pinCheckbox.checked),
         previewMode: currentPreviewMode,
@@ -3936,7 +3959,7 @@ public class CPHInline
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'gta6-overlay-config-v0.2.3.json';
+      a.download = 'gta6-overlay-config-v0.2.4.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -4650,7 +4673,7 @@ public class CPHInline
 <div id="sb-import-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center; padding:20px;">
   <div style="background:#171a21; border:3px solid #0b2328; border-radius:12px; max-width:900px; width:100%; max-height:90vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
     <div style="padding:16px 20px; border-bottom:2px solid #232834; display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.2.3</span></div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.2.4</span></div>
       <button id="btn-close-sb-import" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
     </div>
     <div style="padding:20px;">
@@ -4795,7 +4818,7 @@ public class CPHInline
     const blob = new Blob([ta.value], {type: 'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.2.3.txt';
+    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.2.4.txt';
     a.click();
     URL.revokeObjectURL(a.href);
   });

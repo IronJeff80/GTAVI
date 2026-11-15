@@ -1,6 +1,6 @@
 /* ==========================================================================
    GTA VI OBS OVERLAYS - CORE ENGINE (js/overlays.js)
-   v0.2.3 - Per-alert duration overrides
+   v0.2.4 - Custom goal counts and install video
    ========================================================================== */
 
 const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -1159,11 +1159,8 @@ class GTAOverlayEngine {
       },
       onConnect: async () => {
       try {
-        const res = await this.client.getGlobals(true);
-        if (res && res.variables) {
-          this.updateGoalsFromGlobals(res.variables);
-          if (res.variables.memberEmojiMap) this.applyMemberEmojiMap(res.variables.memberEmojiMap);
-        }
+        await this.refreshGoalGlobals();
+        if (this._globalCache && this._globalCache.memberEmojiMap) this.applyMemberEmojiMap(this._globalCache.memberEmojiMap);
       } catch(e) {}
         console.log(`[GTA-Overlay] Connected to Streamer.bot (${this.config.host}:${this.config.port})`);
       },
@@ -1204,9 +1201,11 @@ class GTAOverlayEngine {
     this.client.on('Misc.GlobalVariableUpdated', (payload) => {
       const gVarName = payload?.data?.name;
       const gNewValue = payload?.data?.newValue;
+      if (gVarName) this.rememberGlobals({ [gVarName]: gNewValue });
       if (gVarName === 'memberEmojiMap') this.applyMemberEmojiMap(gNewValue);
       if (gVarName && this.isGoalVar(gVarName)) {
-        this.goalsData[gVarName] = gNewValue;
+        this.goalsData[gVarName] = this.unwrapGlobal(gNewValue);
+        this._goalsPreviewSeeded = false;
         this.syncGoalsView();
       }
       const varName = payload?.data?.name;
@@ -1515,6 +1514,8 @@ class GTAOverlayEngine {
         try { this.config.stats = JSON.parse(s.stats); } catch (e) {}
         this.renderStatRows(this.lastWalkonData);
         this.applyGlobalStyles();
+        const missingGoals = this.applyGoalGlobalsFromCache();
+        if (missingGoals.length) this.refreshGoalGlobals();
       }
     });
   }
@@ -2327,7 +2328,7 @@ class GTAOverlayEngine {
     showCurrent();
   }
 
-  isGoalVar(name) {
+  goalVarNames() {
     const vars = [
       this.config.goalsLikesCount, this.config.goalsLikesGoal,
       this.config.goalsMembersCount, this.config.goalsMembersGoal,
@@ -2340,7 +2341,67 @@ class GTAOverlayEngine {
       if (g.count) vars.push(g.count);
       if (g.goal) vars.push(g.goal);
     });
-    return vars.includes(name);
+    return vars.filter(Boolean);
+  }
+
+  isGoalVar(name) {
+    return this.goalVarNames().includes(name);
+  }
+
+  rememberGlobals(vars) {
+    const map = this.normalizeGlobals(vars);
+    if (!this._globalCache) this._globalCache = {};
+    Object.keys(map).forEach(k => {
+      const value = this.unwrapGlobal(map[k]);
+      if (value === undefined || value === null || value === '') return;
+      this._globalCache[k] = value;
+    });
+  }
+
+  normalizeGlobals(raw) {
+    if (!raw) return {};
+    if (Array.isArray(raw)) {
+      const out = {};
+      raw.forEach(item => {
+        if (!item || typeof item !== 'object') return;
+        const name = item.name || item.variable || item.key;
+        if (!name) return;
+        out[name] = Object.prototype.hasOwnProperty.call(item, 'value') ? item.value : item;
+      });
+      return out;
+    }
+    return raw;
+  }
+
+  applyGoalGlobalsFromCache() {
+    if (!this.goalsData) this.goalsData = {};
+    const missing = [];
+    let hit = false;
+    this.goalVarNames().forEach(name => {
+      if (!this._globalCache || !Object.prototype.hasOwnProperty.call(this._globalCache, name)) {
+        missing.push(name);
+        return;
+      }
+      this.goalsData[name] = this._globalCache[name];
+      hit = true;
+    });
+    if (hit) {
+      this._goalsPreviewSeeded = false;
+      this.syncGoalsView();
+    }
+    return missing;
+  }
+
+  async refreshGoalGlobals() {
+    if (this.client && typeof this.client.getGlobals === 'function') {
+      const [persisted, temporary] = await Promise.all([
+        this.client.getGlobals(true).catch(() => null),
+        this.client.getGlobals(false).catch(() => null)
+      ]);
+      this.rememberGlobals(persisted && persisted.variables);
+      this.rememberGlobals(temporary && temporary.variables);
+    }
+    this.applyGoalGlobalsFromCache();
   }
 
   unwrapGlobal(entry) {

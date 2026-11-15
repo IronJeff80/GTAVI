@@ -1,8 +1,13 @@
-# GTA VI OBS Overlays Suite (v0.2.3)
+# GTA VI OBS Overlays Suite (v0.2.4)
 
 A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
 
 Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.2.4
+
+- Custom goal counts are read from both persisted and non-persisted Streamer.bot globals. A non-persisted count no longer stays at 0 when the goal variable is persisted.
+- The General tab has an Installation Video link between Streamer.bot Import and Live Subscriber Count.
 
 ## What's new in v0.2.3
 
