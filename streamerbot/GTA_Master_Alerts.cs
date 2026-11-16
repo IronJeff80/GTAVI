@@ -250,6 +250,15 @@ public class CPHInline
             payload["parts"] = ReadJsonArg("parts");
         }
 
+        // Twitch events get their own overlay alert types (and their own Twitch Events rows in the setup page):
+        // Sub -> twSub, ReSub -> twResub, GiftSub -> twGiftSub, GiftBomb -> twGiftBomb, Cheer -> twBits.
+        // Follow and Raid keep their names. The payload fields above are unchanged.
+        if (isTwitch)
+        {
+            string twType;
+            if (TwitchAlertTypes.TryGetValue(alertType, out twType)) payload["alertType"] = twType;
+        }
+
         // 5. Broadcast JSON via WebSockets
         string jsonPayload = JsonConvert.SerializeObject(payload);
         CPH.LogInfo($"[GTA-Alert] Broadcasting: {jsonPayload}");
@@ -257,6 +266,11 @@ public class CPHInline
 
         return true;
     }
+
+    private static readonly Dictionary<string, string> TwitchAlertTypes = new Dictionary<string, string>
+    {
+        { "sub", "twSub" }, { "milestone", "twResub" }, { "giftRec", "twGiftSub" }, { "gift", "twGiftBomb" }, { "jewels", "twBits" }
+    };
 
     private bool IsAnonymous()
     {
