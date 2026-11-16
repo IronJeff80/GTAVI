@@ -56,6 +56,10 @@ Open `setup.html` (or run the local dev server below) to build the OBS browser-s
   - Test runs of First 5 skip the 5-per-stream counter, so testing does not use up the real first chatters. Users in the "No First Words" group are still excluded. Test pictures still take a spot in the overlay's row until it clears after the end delay, or until you refresh the browser source before going live.
 - Twitch chat now shows in the setup preview, not only in OBS.
 - New scripts: `streamerbot/GTA_WalkOnTwitch.cs` (Twitch walk-on card) and `streamerbot/GTA_LookupTwitchUser.cs` (the Test tab uses it when the platform is Twitch). `GTA_Shoutout.cs` resolves Twitch users and replies in Twitch chat.
+- **Channel links and Auto Shoutouts on First Words (Twitch).** `streamerbot/GTA_FirstWordsLink.cs` runs in "[Settings] Save user Vars on First Words":
+  - A channel link the viewer already has saved (`channelLink` user variable, for example a custom link from your channel link command) is kept. Otherwise it saves `https://twitch.tv/<login>`. Older imports saved the broken `https://twitch.tv/%userName%`; that is replaced the next time the viewer chats.
+  - Viewers in the Streamer.bot user group **Auto Shoutouts** get `GTA_Shoutouts` run for them on First Words (chat message, overlay shoutout and the text-to-speech step).
+  - `!so` uses `https://twitch.tv/<name>` when the saved link is missing or broken.
 - Streamer.bot must have your Twitch account connected.
 
 ## What's new in v0.3.1

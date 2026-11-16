@@ -71,6 +71,15 @@ public class CPHInline
                 }
                 catch (Exception ex) { CPH.LogWarn($"[GTA-Shoutout] Twitch lookup failed: {ex.Message}"); }
             }
+
+            // No saved link, or a broken one like "https://twitch.tv/%userName%" (an unresolved variable):
+            // use their Twitch channel. A custom link saved for the user is kept.
+            if (!string.IsNullOrEmpty(storedAvatarUrl) &&
+                (string.IsNullOrWhiteSpace(storedChannelLink) ||
+                 Regex.IsMatch(Regex.Replace(storedChannelLink, @"%[0-9A-Fa-f]{2}", ""), @"%[A-Za-z_][A-Za-z0-9_.]*%")))
+            {
+                storedChannelLink = $"https://twitch.tv/{targetName.ToLower()}";
+            }
         }
 
         // 3. Verify user exists in the database
