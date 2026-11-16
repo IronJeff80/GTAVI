@@ -56,6 +56,13 @@ const server = http.createServer((req, res) => {
   r = await fire(tw({ alertType: 'twGiftSub', triggerName: 'Gift Sub Received', gifterUser: 'TommyV' }));
   assert.equal(r.title, 'Gift Sub Received'); assert.match(r.body, /TommyV/);
 
+  // Payload text is escaped (v0.2.9): an HTML gifter name renders as text, not markup.
+  r = await fire(tw({ alertType: 'twGiftSub', gifterUser: '<img src=x onerror="window.__xss=1">', count: '<b>9</b>' }));
+  assert.match(r.body, /<img src=x/, 'gifter name shown as text');
+  assert.equal(await page.evaluate(() => document.querySelectorAll('#alert-body img').length + (window.__xss || 0)), 0, 'no injected element');
+  r = await fire(tw({ alertType: 'raid', userName: 'R', count: '<i>7</i>' }));
+  assert.match(r.body, /<i>7<\/i> Viewers/, 'raid count escaped');
+
   r = await fire(tw({ alertType: 'twBits', triggerName: 'Bits Cheered', jewelsAmount: 500, message: 'Take my bits!' }));
   assert.match(r.cls, /alert-twBits/); assert.match(r.body, /500 Bits/); assert.doesNotMatch(r.body, /Jewels/);
   assert.match(r.body, /Take my bits!/);

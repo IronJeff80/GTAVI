@@ -1,10 +1,21 @@
-# GTA VI OBS Overlays Suite (v0.2.4)
+# GTA VI OBS Overlays Suite (v0.3.2)
+
+A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
+
+Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.3.2
+
+- On the live site, add a custom background by pasting a direct https image link. OBS loads that link. The link is stored in the overlay URL and in Import/Export.
+- Uploading a file still works only in a local copy running `npm run dev`, because the public site cannot save files.
+
+## What's new in v0.3.1
 
 A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live and Twitch.
 
 Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
 
-## What's new in v0.2.4
+## Twitch support
 
 - **Platform switch (YouTube / Twitch)** at the top of the setup page, next to the language. It adds `platform=youtube` or `platform=twitch` to the overlay URL, and the overlay uses the matching names everywhere. YouTube is the default and looks the same as before.
 
@@ -46,6 +57,58 @@ Open `setup.html` (or run the local dev server below) to build the OBS browser-s
 - Twitch chat now shows in the setup preview, not only in OBS.
 - New scripts: `streamerbot/GTA_WalkOnTwitch.cs` (Twitch walk-on card) and `streamerbot/GTA_LookupTwitchUser.cs` (the Test tab uses it when the platform is Twitch). `GTA_Shoutout.cs` resolves Twitch users and replies in Twitch chat.
 - Streamer.bot must have your Twitch account connected.
+
+## What's new in v0.3.1
+
+- Chat Box avatar, badge, caps, shadow, and role-accent toggles update the preview immediately.
+- Fill opacity steps by 1.
+- Chat Box has a background for the box and a separate background for each message.
+- Role Accent paints a moderator, member, or viewer border on that message.
+- Upload your own backgrounds on the Settings tab. The overlay URL stores `assets/backgrounds/user/…`, and Export / Import carries the image files.
+
+## What's new in v0.3.0
+
+A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
+
+Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.3.0
+
+- Chat Box widget: a stacked chat feed separate from the horizontal chat bar. Themes are Boxes, Bubbles, Lines, and Cards. Also set animation, newest-at top or bottom, left or right, name position, size, colors, background, shadow, and filters.
+- Check **8. Chat Box** under Modules to Generate. It is off until you turn it on, so existing sources stay unchanged.
+
+## What's new in v0.2.9
+
+A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
+
+Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.2.9
+
+- Chat, alert, and goal text is escaped before it is written into the page. A chat message can no longer inject HTML.
+
+## What's new in v0.2.8
+
+- OBS Connection on the General tab: host, port, and WebSocket password, with a connected/disconnected pill next to Streamer.bot.
+- Live tuning goes through that OBS WebSocket into browser sources that use the Live URL. The old same-browser channel could not reach OBS.
+
+## What's new in v0.2.7
+
+- Pin Visible now also shows Walk-On, Alerts, Shoutout, Q&A, First 5, and Goals on live OBS sources (`live=1`). Uncheck it when you are done tuning so those widgets hide again until a real event.
+
+## What's new in v0.2.6
+
+- Frosted Glass is a background choice on the global texture and on every widget background. It uses the card fill color at low opacity with a blur, and no image.
+- Custom color palettes. Name the current colors and click Save Palette. They stay in this browser, ride along in Export, and come back on Import. Delete only removes a saved palette, not VI Game or VI Marketing.
+
+## What's new in v0.2.5
+
+- Live OBS mode. Copy the **Live** URL (adds `&live=1`) into a browser source once. On the General tab, connect to the OBS WebSocket (default port 4455, plus your password). While that connection is up and this page stays open, every change appears in the Live sources immediately. OBS must be 28 or newer so browser sources can receive the event.
+
+## What's new in v0.2.4
+
+- Custom goal counts are read from both persisted and non-persisted Streamer.bot globals. A non-persisted count no longer stays at 0 when the goal variable is persisted.
+- The General tab has an Installation Video link between Streamer.bot Import and Live Subscriber Count.
 
 ## What's new in v0.2.3
 
