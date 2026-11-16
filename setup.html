@@ -1747,6 +1747,7 @@ public class CPHInline
     "qa": "Q&A HIGHLIGHT",
     "status_disconnected": "Disconnected",
     "status_connected": "SB Connected",
+    "status_obs_connected": "OBS Connected",
     "res_720": "720p Canvas",
     "res_1080": "1080p Canvas",
     "res_1440": "1440p Canvas",
@@ -2210,6 +2211,7 @@ public class CPHInline
     "qa": "DESTAQUE DE PERGUNTA",
     "status_disconnected": "Desconectado",
     "status_connected": "SB Conectado",
+    "status_obs_connected": "OBS Conectado",
     "res_720": "Canvas 720p",
     "res_1080": "Canvas 1080p",
     "res_1440": "Canvas 1440p",
@@ -2673,6 +2675,7 @@ public class CPHInline
     "qa": "PREGUNTAS",
     "status_disconnected": "Desconectado",
     "status_connected": "SB Conectado",
+    "status_obs_connected": "OBS Conectado",
     "res_720": "Lienzo 720p",
     "res_1080": "Lienzo 1080p",
     "res_1440": "Lienzo 1440p",
@@ -3136,6 +3139,7 @@ public class CPHInline
     "qa": "Q&R",
     "status_disconnected": "Déconnecté",
     "status_connected": "SB Connecté",
+    "status_obs_connected": "OBS Connecté",
     "res_720": "Canevas 720p",
     "res_1080": "Canevas 1080p",
     "res_1440": "Canevas 1440p",
@@ -3599,6 +3603,7 @@ public class CPHInline
     "qa": "F&A",
     "status_disconnected": "Getrennt",
     "status_connected": "SB Verbunden",
+    "status_obs_connected": "OBS Verbunden",
     "res_720": "720p-Leinwand",
     "res_1080": "1080p-Leinwand",
     "res_1440": "1440p-Leinwand",
@@ -4082,6 +4087,24 @@ public class CPHInline
     ];
     const availColors = ['pink', 'teal', 'purple', 'yellow'];
 
+    function setPillWord(pill, connected, onKey, offKey) {
+      if (!pill) return;
+      pill.classList.toggle('connected', !!connected);
+      const key = connected ? onKey : offKey;
+      pill.title = t(key);
+      const word = pill.querySelector('.sb-word');
+      if (!word) return;
+      word.setAttribute('data-i18n', key);
+      word.textContent = t(key);
+    }
+
+    function refreshConnectionPills() {
+      const sb = document.getElementById('sb-status');
+      const obs = document.getElementById('obs-status');
+      if (sb) setPillWord(sb, sb.classList.contains('connected'), 'status_connected', 'status_disconnected');
+      if (obs) setPillWord(obs, obs.classList.contains('connected'), 'status_obs_connected', 'status_disconnected');
+    }
+
     function applyLanguageTranslation(force = false) {
       const newLang = document.getElementById('cfg-lang')?.value || 'en';
       if (!force && newLang === currentLang) return;
@@ -4120,13 +4143,7 @@ public class CPHInline
         }
       });
 
-      // Keep SB connection badge text in sync with current connection state
-      if (sbStatusBadge) {
-        const isConn = sbStatusBadge.classList.contains('connected');
-        sbStatusBadge.innerHTML = isConn
-          ? `<i class="fa-solid fa-circle-check"></i> <span data-i18n="status_connected">${t('status_connected')}</span>`
-          : `<i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">${t('status_disconnected')}</span>`;
-      }
+      refreshConnectionPills();
 
       renderStatRowEditors();
       renderCustomGoals();
@@ -4867,19 +4884,11 @@ public class CPHInline
           Twitch: ['ChatMessage']
         },
         onConnect: () => { 
-          if (sbStatusBadge) {
-            sbStatusBadge.classList.add('connected');
-            const word = sbStatusBadge.querySelector('.sb-word');
-            if (word) { word.setAttribute('data-i18n', 'status_connected'); word.textContent = t('status_connected'); }
-          }
+          if (sbStatusBadge) setPillWord(sbStatusBadge, true, 'status_connected', 'status_disconnected');
           refreshMemberEmojiFromSB();
         },
         onDisconnect: () => { 
-          if (sbStatusBadge) {
-            sbStatusBadge.classList.remove('connected');
-            const word = sbStatusBadge.querySelector('.sb-word');
-            if (word) { word.setAttribute('data-i18n', 'status_disconnected'); word.textContent = t('status_disconnected'); }
-          }
+          if (sbStatusBadge) setPillWord(sbStatusBadge, false, 'status_connected', 'status_disconnected');
           setEmoteStatus('disconnected');
         }
       };
@@ -5098,9 +5107,9 @@ public class CPHInline
       const log = document.getElementById('obs-status-log');
       if (pill) {
         pill.classList.toggle('connected', mode === 'on');
-        pill.title = mode === 'on' ? t('status_connected') : t('status_disconnected');
+        pill.title = mode === 'on' ? t('status_obs_connected') : t('status_disconnected');
         const word = pill.querySelector('.sb-word');
-        const key = mode === 'on' ? 'status_connected' : 'status_disconnected';
+        const key = mode === 'on' ? 'status_obs_connected' : 'status_disconnected';
         if (word) { word.setAttribute('data-i18n', key); word.textContent = t(key); }
       }
       if (log) {
