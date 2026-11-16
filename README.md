@@ -1,8 +1,55 @@
-# GTA VI OBS Overlays Suite (v0.2.4)
+# GTA VI OBS Overlays Suite (v0.3.1)
 
 A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
 
 Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.3.1
+
+- Chat Box avatar, badge, caps, shadow, and role-accent toggles update the preview immediately.
+- Fill opacity steps by 1.
+- Chat Box has a background for the box and a separate background for each message.
+- Role Accent paints a moderator, member, or viewer border on that message.
+- Upload your own backgrounds on the Settings tab. The overlay URL stores `assets/backgrounds/user/…`, and Export / Import carries the image files.
+
+## What's new in v0.3.0
+
+A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
+
+Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.3.0
+
+- Chat Box widget: a stacked chat feed separate from the horizontal chat bar. Themes are Boxes, Bubbles, Lines, and Cards. Also set animation, newest-at top or bottom, left or right, name position, size, colors, background, shadow, and filters.
+- Check **8. Chat Box** under Modules to Generate. It is off until you turn it on, so existing sources stay unchanged.
+
+## What's new in v0.2.9
+
+A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
+
+Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.2.9
+
+- Chat, alert, and goal text is escaped before it is written into the page. A chat message can no longer inject HTML.
+
+## What's new in v0.2.8
+
+- OBS Connection on the General tab: host, port, and WebSocket password, with a connected/disconnected pill next to Streamer.bot.
+- Live tuning goes through that OBS WebSocket into browser sources that use the Live URL. The old same-browser channel could not reach OBS.
+
+## What's new in v0.2.7
+
+- Pin Visible now also shows Walk-On, Alerts, Shoutout, Q&A, First 5, and Goals on live OBS sources (`live=1`). Uncheck it when you are done tuning so those widgets hide again until a real event.
+
+## What's new in v0.2.6
+
+- Frosted Glass is a background choice on the global texture and on every widget background. It uses the card fill color at low opacity with a blur, and no image.
+- Custom color palettes. Name the current colors and click Save Palette. They stay in this browser, ride along in Export, and come back on Import. Delete only removes a saved palette, not VI Game or VI Marketing.
+
+## What's new in v0.2.5
+
+- Live OBS mode. Copy the **Live** URL (adds `&live=1`) into a browser source once. On the General tab, connect to the OBS WebSocket (default port 4455, plus your password). While that connection is up and this page stays open, every change appears in the Live sources immediately. OBS must be 28 or newer so browser sources can receive the event.
 
 ## What's new in v0.2.4
 

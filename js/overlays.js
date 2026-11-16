@@ -1,6 +1,6 @@
 /* ==========================================================================
    GTA VI OBS OVERLAYS - CORE ENGINE (js/overlays.js)
-   v0.2.4 - Custom goal counts and install video
+   v0.3.1 - Chat box live style updates and uploaded backgrounds
    ========================================================================== */
 
 const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -20,7 +20,7 @@ const i18nDict = {
     newSub: "New Subscriber",
     defaultQaMsg: "Welcome to Leonida! Drop your questions in chat!",
     dragWalkon: "Walk-On Card", dragAlert: "Alert Box", dragShoutout: "Shoutout Toast",
-    dragChat: "Horizontal Chat Bar", dragQA: "Q&A Highlight Toast",
+    dragChat: "Horizontal Chat Bar", dragChatBox: "Chat Box", dragQA: "Q&A Highlight Toast",
     dragFirst5: "First 5", dragGoals: "Goal Bars"
   },
   'pt-br': {
@@ -31,7 +31,7 @@ const i18nDict = {
     newSub: "Novo Inscrito",
     defaultQaMsg: "Bem-vindo a Leonida! Mande suas perguntas no chat!",
     dragWalkon: "Card de Entrada", dragAlert: "Caixa de Alerta", dragShoutout: "Destaque (Shoutout)",
-    dragChat: "Barra de Chat Horizontal", dragQA: "Destaque de P&R",
+    dragChat: "Barra de Chat Horizontal", dragChatBox: "Caixa de Chat", dragQA: "Destaque de P&R",
     dragFirst5: "First 5", dragGoals: "Barras de Metas"
   },
   es: {
@@ -42,7 +42,7 @@ const i18nDict = {
     newSub: "Nuevo Suscriptor",
     defaultQaMsg: "¡Bienvenido a Leonida! ¡Deja tus preguntas en el chat!",
     dragWalkon: "Tarjeta de Entrada", dragAlert: "Caja de Alertas", dragShoutout: "Destacado (Shoutout)",
-    dragChat: "Barra de Chat Horizontal", dragQA: "Destacado de P&R",
+    dragChat: "Barra de Chat Horizontal", dragChatBox: "Caja de Chat", dragQA: "Destacado de P&R",
     dragFirst5: "First 5", dragGoals: "Barras de Metas"
   },
   fr: {
@@ -53,7 +53,7 @@ const i18nDict = {
     newSub: "Nouvel Abonné",
     defaultQaMsg: "Bienvenue à Leonida ! Posez vos questions dans le chat !",
     dragWalkon: "Carte d'Entrée", dragAlert: "Boîte d'Alerte", dragShoutout: "Toast Dédicace",
-    dragChat: "Barre de Chat Horizontale", dragQA: "Toast Q&R",
+    dragChat: "Barre de Chat Horizontale", dragChatBox: "Boîte de Chat", dragQA: "Toast Q&R",
     dragFirst5: "First 5", dragGoals: "Barres d'Objectifs"
   },
   de: {
@@ -64,7 +64,7 @@ const i18nDict = {
     newSub: "Neuer Abonnent",
     defaultQaMsg: "Willkommen in Leonida! Stellt eure Fragen im Chat!",
     dragWalkon: "Walk-On-Karte", dragAlert: "Alert-Box", dragShoutout: "Shoutout-Toast",
-    dragChat: "Horizontale Chatleiste", dragQA: "F&A-Highlight-Toast",
+    dragChat: "Horizontale Chatleiste", dragChatBox: "Chatbox", dragQA: "F&A-Highlight-Toast",
     dragFirst5: "First 5", dragGoals: "Zielbalken"
   }
 };
@@ -109,13 +109,16 @@ const GTAOverlayConfig = (() => {
   }
 
   const modulesParam   = params.get('modules') || 'all';
-  const enableWalkon   = modulesParam === 'all' || modulesParam.includes('walkon');
-  const enableAlerts   = modulesParam === 'all' || modulesParam.includes('alerts');
-  const enableShoutout = modulesParam === 'all' || modulesParam.includes('shoutout');
-  const enableChat     = modulesParam === 'all' || modulesParam.includes('chat');
-  const enableQA       = modulesParam === 'all' || modulesParam.includes('qa');
-  const enableFirst5   = modulesParam === 'all' || modulesParam.includes('first5');
-  const enableGoals    = modulesParam === 'all' || modulesParam.includes('goals');
+  const moduleList = modulesParam.split(',').map(s => s.trim()).filter(Boolean);
+  const hasModule = (name) => modulesParam === 'all' || moduleList.includes(name);
+  const enableWalkon   = hasModule('walkon');
+  const enableAlerts   = hasModule('alerts');
+  const enableShoutout = hasModule('shoutout');
+  const enableChat     = hasModule('chat');
+  const enableChatBox  = hasModule('chatbox');
+  const enableQA       = hasModule('qa');
+  const enableFirst5   = hasModule('first5');
+  const enableGoals    = hasModule('goals');
 
   const layout = params.get('layout') || 'horizontal';
   const isVert = layout === 'vertical';
@@ -130,6 +133,7 @@ const GTAOverlayConfig = (() => {
       alerts:   enableAlerts,
       shoutout: enableShoutout,
       chat:     enableChat,
+      chatbox:  enableChatBox,
       qa:       enableQA,
       first5:   enableFirst5,
       goals:    enableGoals
@@ -239,6 +243,44 @@ const GTAOverlayConfig = (() => {
     chatIgnoreCmds:   params.get('chatNoCmd') !== '0',
     chatCmdPrefixes:  params.get('chatPrefixes') || '!, #, /, $',
     chatIgnoreUsers:  params.get('chatIgUsers') || '',
+
+    cbX: getPos('cbX', 'v_cbX', '40'),
+    cbY: getPos('cbY', 'v_cbY', isVert ? '40' : '80'),
+    cbW: getPos('cbW', 'v_cbW', isVert ? '360' : '420'),
+    cbH: getPos('cbH', 'v_cbH', isVert ? '640' : '480'),
+    cbScale: getPos('cbScale', 'v_cbScale', '1'),
+    cbAlignH: getBool('cbAlignH', 'v_cbAlignH', '0'),
+    cbAlignV: getBool('cbAlignV', 'v_cbAlignV', '0'),
+    cbStyle: params.get('cbStyle') || 'boxes',
+    cbAnim: params.get('cbAnim') || 'slide-up',
+    cbFlow: params.get('cbFlow') || 'bottom',
+    cbSide: params.get('cbSide') || 'left',
+    cbName: params.get('cbName') || 'above',
+    cbFont: parseInt(params.get('cbFS') || '18', 10),
+    cbMax: parseInt(params.get('cbMax') || '8', 10),
+    cbHide: parseInt(params.get('cbHide') || '0', 10),
+    cbGap: parseInt(params.get('cbGap') || '8', 10),
+    cbRadius: parseInt(params.get('cbRadius') || '16', 10),
+    cbPad: parseInt(params.get('cbPad') || '12', 10),
+    cbAvSize: parseInt(params.get('cbAvSize') || '36', 10),
+    cbAvatars: params.get('cbAv') !== '0',
+    cbBadges: params.get('cbBadges') !== '0',
+    cbUpper: params.get('cbUpper') === '1',
+    cbShadow: params.get('cbShadow') !== '0',
+    cbRoleAccent: params.get('cbRoleAccent') === '1',
+    cbNoBg: params.get('cbNoBg') === '1',
+    cbIgnoreCmds: params.get('cbNoCmd') !== '0',
+    cbPrefixes: params.get('cbPrefixes') || '!, #, /, $',
+    cbIgnoreUsers: params.get('cbIgUsers') || '',
+    cbAccent: params.get('cbAccent') || 'teal',
+    cbMember: params.get('cbMem') || '#53d8bf',
+    cbMod: params.get('cbMod') || '#a688ff',
+    cbViewer: params.get('cbView') || '#fede9a',
+    cbMsg: params.get('cbMsg') || '#f0f4f8',
+    cbFill: params.get('cbFill') || '#171a21',
+    cbFillOp: parseInt(params.get('cbFillOp') || '82', 10),
+    cbBg: params.has('cb-bg') ? (params.get('cb-bg') ?? '') : (params.get('cbBg') || 'global'),
+    cbMsgBg: params.has('cb-msg-bg') ? (params.get('cb-msg-bg') ?? '') : (params.get('cbMsgBg') || ''),
 
     // Module 5: Q&A Highlight Toast Config
     qaGlobalVar: params.get('qaVar') || 'viChatHighlight',
@@ -372,6 +414,7 @@ class GTAOverlayEngine {
     this.lastQATs = 0;
 
     this.chatMsgCounter = 0;
+    this.chatboxLog = [];
     
     this.lastWalkonData = {};
     this.lastAlertType = 'sub';
@@ -398,6 +441,9 @@ class GTAOverlayEngine {
       chatContainer:     document.getElementById('chat-container'),
       chatBar:           document.getElementById('chat-bar'),
       chatTrack:         document.getElementById('chat-track'),
+      chatboxContainer:  document.getElementById('chatbox-container'),
+      chatboxFrame:      document.getElementById('chatbox-frame'),
+      chatboxList:       document.getElementById('chatbox-list'),
       qaContainer:       document.getElementById('qa-container'),
       qaBox:             document.getElementById('qa-box'),
       qaAvatar:          document.getElementById('qa-avatar'),
@@ -421,6 +467,7 @@ class GTAOverlayEngine {
     if (this.dom.alertContainer && !this.config.modules.alerts) this.dom.alertContainer.style.display = 'none';
     if (this.dom.shoutoutContainer && !this.config.modules.shoutout) this.dom.shoutoutContainer.style.display = 'none';
     if (this.dom.chatContainer && !this.config.modules.chat) this.dom.chatContainer.style.display = 'none';
+    if (this.dom.chatboxContainer && !this.config.modules.chatbox) this.dom.chatboxContainer.style.display = 'none';
     if (this.dom.qaContainer && !this.config.modules.qa) this.dom.qaContainer.style.display = 'none';
     if (this.dom.first5Container && !this.config.modules.first5) this.dom.first5Container.style.display = 'none';
     if (this.dom.goalsContainer && !this.config.modules.goals) this.dom.goalsContainer.style.display = 'none';
@@ -440,6 +487,9 @@ class GTAOverlayEngine {
       if (this.config.modules.chat && this.dom.chatTrack && this.dom.chatTrack.children.length === 0) {
         this.seedPreviewChatMessages();
       }
+      if (this.config.modules.chatbox && this.dom.chatboxList && this.dom.chatboxList.children.length === 0) {
+        this.seedPreviewChatBox();
+      }
     }
 
     this.initWebSocket();
@@ -451,11 +501,41 @@ class GTAOverlayEngine {
 
 
   resolveBg(override, globalBg, noBgFlag) {
-    // Empty override = solid fill (None)
+    if (override === 'frost') return 'frost';
     if (override === '' || override === 'none') return 'none';
     if (noBgFlag) return 'none';
-    if (override && override !== 'global') return override;
-    return globalBg || 'none';
+    const chosen = (override && override !== 'global') ? override : globalBg;
+    if (chosen === 'frost') return 'frost';
+    if (!chosen) return 'none';
+    return chosen;
+  }
+
+  applySurface(el, cssVar, resolved, paintInline) {
+    const root = document.documentElement;
+    if (el) {
+      el.classList.remove('no-bg-image', 'frost-bg');
+      el.style.backgroundImage = '';
+    }
+    if (resolved === 'frost') {
+      if (el) el.classList.add('frost-bg');
+      root.style.setProperty(cssVar, 'none');
+      return;
+    }
+    if (!resolved || resolved === 'none') {
+      if (el) {
+        el.classList.add('no-bg-image');
+        el.style.backgroundImage = 'none';
+      }
+      root.style.setProperty(cssVar, 'none');
+      return;
+    }
+    const url = `url("${this.resolveAssetUrl(resolved)}")`;
+    root.style.setProperty(cssVar, url);
+    if (el && paintInline) {
+      el.style.backgroundImage = `linear-gradient(160deg, rgba(23, 26, 33, 0.62) 0%, color-mix(in srgb, var(--gta-bg-fill) 82%, transparent) 100%), ${url}`;
+      el.style.backgroundSize = 'cover';
+      el.style.backgroundPosition = 'center';
+    }
   }
 
   resolveAssetUrl(rawPath) {
@@ -573,13 +653,7 @@ class GTAOverlayEngine {
 
 
       const walkonResolved = this.resolveBg(this.config.walkonBg, this.config.bgUrl, this.config.noBg);
-      if (walkonResolved === 'none') {
-        this.dom.walkonCard.classList.add('no-bg-image');
-        root.style.setProperty('--card-bg-image', 'none');
-      } else {
-        this.dom.walkonCard.classList.remove('no-bg-image');
-        root.style.setProperty('--card-bg-image', `url("${this.resolveAssetUrl(walkonResolved)}")`);
-      }
+      this.applySurface(this.dom.walkonCard, '--card-bg-image', walkonResolved, false);
       if (this.dom.walkonContainer) {
         this.dom.walkonContainer.className = `walkon-container ${this.config.cardAnim}` + (wasPinned ? ' animate-in' : '');
       }
@@ -599,13 +673,7 @@ class GTAOverlayEngine {
     if (this.config.modules.shoutout && this.dom.shoutoutWrapper) {
       const wasSoPinned = this.dom.shoutoutContainer && this.dom.shoutoutContainer.classList.contains('animate-in');
       const soResolved = this.resolveBg(this.config.soBg, this.config.bgUrl, this.config.soNoBg);
-      if (soResolved === 'none') {
-        this.dom.shoutoutWrapper.classList.add('no-bg-image');
-        root.style.setProperty('--so-bg-image', 'none');
-      } else {
-        this.dom.shoutoutWrapper.classList.remove('no-bg-image');
-        root.style.setProperty('--so-bg-image', `url("${this.resolveAssetUrl(soResolved)}")`);
-      }
+      this.applySurface(this.dom.shoutoutWrapper, '--so-bg-image', soResolved, false);
       this.dom.shoutoutWrapper.classList.toggle('avatar-left', this.config.soLayout === 'left');
       this.applyShoutoutAccentColor();
       if (this.dom.shoutoutTitle) {
@@ -632,17 +700,38 @@ class GTAOverlayEngine {
       this.recalculateChatCoords(baseW, baseH);
     }
 
+    if (this.config.modules.chatbox && this.dom.chatboxFrame) {
+      const rootStyle = document.documentElement.style;
+      rootStyle.setProperty('--cb-w', `${Math.round(this.config.cbW || 420)}px`);
+      rootStyle.setProperty('--cb-h', `${Math.round(this.config.cbH || 480)}px`);
+      rootStyle.setProperty('--cb-font', `${this.config.cbFont || 18}px`);
+      rootStyle.setProperty('--cb-gap', `${this.config.cbGap || 8}px`);
+      rootStyle.setProperty('--cb-radius', `${this.config.cbRadius || 16}px`);
+      rootStyle.setProperty('--cb-pad', `${this.config.cbPad || 12}px`);
+      rootStyle.setProperty('--cb-av', `${this.config.cbAvSize || 36}px`);
+      rootStyle.setProperty('--cb-member', this.config.cbMember || '#53d8bf');
+      rootStyle.setProperty('--cb-mod', this.config.cbMod || '#a688ff');
+      rootStyle.setProperty('--cb-viewer', this.config.cbViewer || '#fede9a');
+      rootStyle.setProperty('--cb-msg', this.config.cbMsg || '#f0f4f8');
+      rootStyle.setProperty('--cb-fill', this.hexToRgba(this.config.cbFill || '#171a21', this.config.cbFillOp));
+      const cbTokens = this.resolveAccentTokens(this.config.cbAccent || 'teal');
+      rootStyle.setProperty('--cb-accent', cbTokens.accent);
+      this.dom.chatboxFrame.classList.toggle('flow-top', this.config.cbFlow === 'top');
+      this.dom.chatboxFrame.classList.toggle('no-shadow', !this.config.cbShadow);
+      this.dom.chatboxFrame.classList.toggle('no-bg-fill', Boolean(this.config.cbNoBg));
+      const cbResolved = this.resolveBg(this.config.cbBg, this.config.bgUrl, this.config.cbNoBg);
+      this.applySurface(this.dom.chatboxFrame, '--cb-bg-image', cbResolved, false);
+      this.applyChatBoxMessageBg();
+      this.repaintChatBox();
+      this.recalculateChatBoxCoords(baseW, baseH);
+      if (this.config.previewMode && (!this.chatboxLog || this.chatboxLog.length === 0)) this.seedPreviewChatBox();
+    }
+
     // Module 5: Q&A Highlight Toast Styling
     if (this.config.modules.qa && this.dom.qaBox) {
       const wasQAPinned = this.dom.qaContainer && this.dom.qaContainer.classList.contains('animate-in');
       const qaResolved = this.resolveBg(this.config.qaBg, this.config.bgUrl, this.config.qaNoBg);
-      if (qaResolved === 'none') {
-        this.dom.qaBox.classList.add('no-bg-image');
-        root.style.setProperty('--qa-bg-image', 'none');
-      } else {
-        this.dom.qaBox.classList.remove('no-bg-image');
-        root.style.setProperty('--qa-bg-image', `url("${this.resolveAssetUrl(qaResolved)}")`);
-      }
+      this.applySurface(this.dom.qaBox, '--qa-bg-image', qaResolved, false);
       this.applyQAAccentColor();
       if (this.dom.qaBadge) {
         this.dom.qaBadge.style.display = this.config.qaShowBadge ? 'inline-flex' : 'none';
@@ -661,18 +750,7 @@ class GTAOverlayEngine {
     if (this.config.modules.goals) {
       this.applyGoalsAccentColor();
       const goalsResolved = this.resolveBg(this.config.goalsBg, this.config.bgUrl, false);
-      if (this.dom.goalsInner) {
-        if (goalsResolved === 'none' || !goalsResolved) {
-          root.style.setProperty('--goals-bg-image', 'none');
-          this.dom.goalsInner.style.backgroundImage = 'none';
-        } else {
-          const url = `url("${this.resolveAssetUrl(goalsResolved)}")`;
-          root.style.setProperty('--goals-bg-image', url);
-          this.dom.goalsInner.style.backgroundImage = `linear-gradient(160deg, rgba(23, 26, 33, 0.55) 0%, color-mix(in srgb, var(--gta-bg-fill) 78%, transparent) 100%), ${url}`;
-          this.dom.goalsInner.style.backgroundSize = 'cover';
-          this.dom.goalsInner.style.backgroundPosition = 'center';
-        }
-      }
+      this.applySurface(this.dom.goalsInner, '--goals-bg-image', goalsResolved, true);
       this.recalculateGoalsCoords(baseW, baseH);
       this.syncGoalsView();
     }
@@ -681,14 +759,13 @@ class GTAOverlayEngine {
       // Alerts header background - same treatment as Card/Shoutout/Q&A
       if (this.dom.alertBox) {
         const alertResolved = this.resolveBg(this.config.alertBg, this.config.bgUrl, false);
+        this.applySurface(this.dom.alertBox, '--alert-bg-image', alertResolved, false);
         const header = this.dom.alertBox.querySelector('.alert-header');
-        if (alertResolved === 'none' || !alertResolved) {
-          root.style.setProperty('--alert-bg-image', 'none');
-          if (header) header.style.backgroundImage = 'none';
-        } else {
-          const url = `url("${this.resolveAssetUrl(alertResolved)}")`;
-          root.style.setProperty('--alert-bg-image', url);
-          if (header) {
+        if (header) {
+          if (!alertResolved || alertResolved === 'none' || alertResolved === 'frost') {
+            header.style.backgroundImage = 'none';
+          } else {
+            const url = `url("${this.resolveAssetUrl(alertResolved)}")`;
             header.style.backgroundImage = `linear-gradient(160deg, rgba(23, 26, 33, 0.65) 0%, color-mix(in srgb, var(--gta-bg-fill) 92%, transparent) 100%), ${url}`;
             header.style.backgroundSize = 'cover';
             header.style.backgroundPosition = 'center';
@@ -696,20 +773,10 @@ class GTAOverlayEngine {
         }
       }
 
-
-      // Chat bar background - same treatment as Card/Shoutout/Q&A
       if (this.dom.chatBar) {
         const chatResolved = this.resolveBg(this.config.chatBg, this.config.bgUrl, this.config.chatNoBg);
-        if (chatResolved === 'none' || !chatResolved) {
-          root.style.setProperty('--chat-bg-image', 'none');
-          this.dom.chatBar.style.backgroundImage = 'none';
-        } else {
-          const url = `url("${this.resolveAssetUrl(chatResolved)}")`;
-          root.style.setProperty('--chat-bg-image', url);
-          this.dom.chatBar.style.backgroundImage = `linear-gradient(160deg, rgba(23, 26, 33, 0.65) 0%, color-mix(in srgb, var(--gta-bg-fill) 92%, transparent) 100%), ${url}`;
-          this.dom.chatBar.style.backgroundSize = 'cover';
-          this.dom.chatBar.style.backgroundPosition = 'center';
-        }
+        if (chatResolved === 'frost') this.dom.chatBar.classList.remove('no-bg-fill');
+        this.applySurface(this.dom.chatBar, '--chat-bg-image', chatResolved, true);
       }
 
     this.updateLocalizedPreviewText();
@@ -732,6 +799,7 @@ class GTAOverlayEngine {
       alert:    [this.dom.alertContainer,    t.dragAlert],
       shoutout: [this.dom.shoutoutContainer, t.dragShoutout],
       chat:     [this.dom.chatContainer,     t.dragChat],
+      chatbox:  [this.dom.chatboxContainer,  t.dragChatBox],
       qa:       [this.dom.qaContainer,       t.dragQA],
       first5:   [this.dom.first5Container,   t.dragFirst5],
       goals:    [this.dom.goalsContainer,    t.dragGoals]
@@ -795,6 +863,19 @@ class GTAOverlayEngine {
     else this.config.chatY = Math.round(Math.max(0, Math.min(maxY, this.config.chatY)));
   }
 
+  recalculateChatBoxCoords(baseW, baseH) {
+    if (!this.dom.chatboxContainer) return;
+    const scale = this.config.cbScale || 1;
+    const w = this.config.cbW || 420;
+    const h = this.config.cbH || 480;
+    const maxX = Math.max(0, baseW - (w * scale));
+    const maxY = Math.max(0, baseH - (h * scale));
+    if (this.config.cbAlignH) this.config.cbX = Math.round(maxX / 2);
+    else this.config.cbX = Math.round(Math.max(0, Math.min(maxX, this.config.cbX)));
+    if (this.config.cbAlignV) this.config.cbY = Math.round(maxY / 2);
+    else this.config.cbY = Math.round(Math.max(0, Math.min(maxY, this.config.cbY)));
+  }
+
   recalculateQACoords(baseW, baseH) {
     if (!this.dom.qaContainer) return;
     const scale = this.config.qaScale || 1;
@@ -830,6 +911,13 @@ class GTAOverlayEngine {
       root.style.setProperty('--chat-x', `${Math.round(this.config.chatX)}px`);
       root.style.setProperty('--chat-y', `${Math.round(this.config.chatY)}px`);
     }
+    if (this.config.modules.chatbox) {
+      root.style.setProperty('--cb-scale', this.config.cbScale);
+      root.style.setProperty('--cb-x', `${Math.round(this.config.cbX)}px`);
+      root.style.setProperty('--cb-y', `${Math.round(this.config.cbY)}px`);
+      root.style.setProperty('--cb-w', `${Math.round(this.config.cbW)}px`);
+      root.style.setProperty('--cb-h', `${Math.round(this.config.cbH)}px`);
+    }
     if (this.config.modules.qa) {
       root.style.setProperty('--qa-scale', this.config.qaScale);
       root.style.setProperty('--qa-x', `${Math.round(this.config.qaX)}px`);
@@ -861,14 +949,25 @@ class GTAOverlayEngine {
     }
   }
 
-  setPreviewPinned(pinned) {
-    this.config.previewMode = pinned;
-    if (pinned) {
-      document.body.classList.add('preview-interactive');
+  setPreviewPinned(pinned, opts) {
+    const chrome = !(opts && opts.chrome === false);
+    const nextPin = !!pinned;
+    if (this._pinState === nextPin && this._pinChrome === chrome) return;
+    const alreadyShowing = this._pinState === true;
+    this._pinState = nextPin;
+    this._pinChrome = chrome;
+    this.config.previewMode = nextPin;
+    document.body.classList.toggle('preview-interactive', nextPin && chrome);
+    if (nextPin && alreadyShowing) return;
+    if (nextPin) {
       if (this.config.modules.walkon && !this.isWalkonAnimating && this.dom.walkonContainer) this.dom.walkonContainer.classList.add('animate-in');
       if (this.config.modules.alerts && !this.isAlertAnimating && this.dom.alertContainer) this.dom.alertContainer.classList.add('animate-in');
       if (this.config.modules.shoutout && !this.isShoutoutAnimating && this.dom.shoutoutContainer) this.dom.shoutoutContainer.classList.add('animate-in');
       if (this.config.modules.chat && this.dom.chatContainer) this.dom.chatContainer.classList.add('animate-in');
+      if (this.config.modules.chatbox && this.dom.chatboxContainer) {
+        this.dom.chatboxContainer.classList.add('animate-in');
+        this.seedPreviewChatBox();
+      }
       if (this.config.modules.qa && !this.isQAAnimating && this.dom.qaContainer) this.dom.qaContainer.classList.add('animate-in');
       if (this.config.modules.first5 && this.dom.first5Container) this.showFirst5Placeholders();
       if (this.config.modules.goals && this.dom.goalsContainer) {
@@ -883,6 +982,11 @@ class GTAOverlayEngine {
       if (this.config.modules.alerts && !this.isAlertAnimating && this.dom.alertContainer) this.dom.alertContainer.classList.remove('animate-in');
       if (this.config.modules.shoutout && !this.isShoutoutAnimating && this.dom.shoutoutContainer) this.dom.shoutoutContainer.classList.remove('animate-in');
       if (this.config.modules.chat && this.dom.chatContainer) this.dom.chatContainer.classList.remove('animate-in');
+      if (this.config.modules.chatbox && this.dom.chatboxContainer) {
+        this.dom.chatboxContainer.classList.remove('animate-in');
+        if (this.dom.chatboxList) this.dom.chatboxList.innerHTML = '';
+        this.chatboxLog = [];
+      }
       if (this.config.modules.qa && !this.isQAAnimating && this.dom.qaContainer) this.dom.qaContainer.classList.remove('animate-in');
       if (this.config.modules.first5 && this.dom.first5Container) {
         this.dom.first5Container.classList.remove('animate-in');
@@ -921,9 +1025,9 @@ class GTAOverlayEngine {
           <span class="hud-icon icon-${stat.iconColor || 'pink'}">
             <i class="fa-solid ${stat.icon || 'fa-star'}"></i>
           </span>
-          <span>${stat.label}:</span>
+          <span>${this.escapeHtml(stat.label)}:</span>
         </span>
-        <span class="meta-val val-${stat.valColor || 'yellow'}">${displayVal}</span>
+        <span class="meta-val val-${stat.valColor || 'yellow'}">${this.escapeHtml(displayVal)}</span>
       `;
       metaBox.appendChild(row);
     });
@@ -943,7 +1047,7 @@ class GTAOverlayEngine {
     guideH.style.top = (baseH / 2) + 'px';
     document.body.appendChild(guideH);
 
-    ['walkon', 'alert', 'shoutout', 'chat', 'qa', 'first5', 'goals'].forEach((id) => {
+    ['walkon', 'alert', 'shoutout', 'chat', 'chatbox', 'qa', 'first5', 'goals'].forEach((id) => {
       const spec = this.widgetSpec(id);
       if (spec && spec.el) this.setupDraggable(spec.el, id, guideV, guideH, baseW, baseH);
     });
@@ -978,12 +1082,20 @@ class GTAOverlayEngine {
         payload: () => ({ soX: c.soX, soY: c.soY, soScale: c.soScale, soAlignH: c.soAlignH, soAlignV: c.soAlignV })
       },
       chat: {
-        el: this.dom.chatContainer, label: 'Horizontal Chat Bar',
+        el: this.dom.chatContainer, label: (c.t && c.t.dragChat) || 'Horizontal Chat Bar',
         x: 'chatX', y: 'chatY', scale: 'chatScale', alignH: 'chatAlignH', alignV: 'chatAlignV',
         yDir: -1, centerX: false,
         recalc: (w, h) => this.recalculateChatCoords(w, h),
         msg: 'CHAT_MANIPULATED',
         payload: () => ({ chatX: c.chatX, chatY: c.chatY, chatScale: c.chatScale, chatAlignH: c.chatAlignH, chatAlignV: c.chatAlignV })
+      },
+      chatbox: {
+        el: this.dom.chatboxContainer, label: (c.t && c.t.dragChatBox) || 'Chat Box',
+        x: 'cbX', y: 'cbY', scale: 'cbScale', alignH: 'cbAlignH', alignV: 'cbAlignV',
+        yDir: -1, centerX: false,
+        recalc: (w, h) => this.recalculateChatBoxCoords(w, h),
+        msg: 'CHATBOX_MANIPULATED',
+        payload: () => ({ cbX: c.cbX, cbY: c.cbY, cbScale: c.cbScale, cbAlignH: c.cbAlignH, cbAlignV: c.cbAlignV })
       },
       qa: {
         el: this.dom.qaContainer, label: 'Q&A Highlight Toast',
@@ -1189,7 +1301,7 @@ class GTAOverlayEngine {
       } else if (ev === this.config.soEvent) {
         if (this.config.modules.shoutout) this.enqueueShoutout(data);
       } else if (ev === this.config.chatEvent) {
-        if (this.config.modules.chat) this.handleIncomingChatMessage(data);
+        if (this.config.modules.chat || this.config.modules.chatbox) this.handleIncomingChatMessage(data);
       } else if (ev === this.config.qaEvent) {
         if (this.config.modules.qa) this.enqueueQA(data);
       } else if (ev === this.config.f5Event) {
@@ -1229,8 +1341,8 @@ class GTAOverlayEngine {
       }
     });
 
-    // 3. Live YouTube & Twitch Chat Listeners for Horizontal Chat Module
-    if (this.config.modules.chat) {
+    // 3. Live YouTube & Twitch Chat Listeners
+    if (this.config.modules.chat || this.config.modules.chatbox) {
       this.client.on('YouTube.Message', (payload) => {
         const d = payload?.data || payload;
         this.handleYouTubeChatEvent(d);
@@ -1277,8 +1389,12 @@ class GTAOverlayEngine {
         if (this.config.modules.alerts) this.enqueueAlert(msg.payload || {});
       } else if (msg.type === 'TRIGGER_SHOUTOUT_TEST') {
         if (this.config.modules.shoutout) this.enqueueShoutout(msg.payload || {});
-      } else if (msg.type === 'TRIGGER_CHAT_TEST') {
-        if (this.config.modules.chat) this.handleIncomingChatMessage(msg.payload || {});
+      } else if (msg.type === 'TRIGGER_CHAT_TEST' || msg.type === 'TRIGGER_CHATBOX_TEST') {
+        if (msg.type === 'TRIGGER_CHATBOX_TEST') {
+          if (this.config.modules.chatbox) this.appendChatBoxItem(msg.payload || {});
+        } else if (this.config.modules.chat || this.config.modules.chatbox) {
+          this.handleIncomingChatMessage(msg.payload || {});
+        }
       } else if (msg.type === 'TRIGGER_GOALS_TEST') {
         if (this.config.modules.goals) {
           this.goalsData[this.config.goalsLikesCount] = 2400;
@@ -1309,7 +1425,7 @@ class GTAOverlayEngine {
       } else if (msg.type === 'MEMBER_EMOJI_MAP') {
         this.applyMemberEmojiMap(msg.map || {});
       } else if (msg.type === 'SET_PREVIEW_PINNED') {
-        this.setPreviewPinned(Boolean(msg.pinned));
+        this.setPreviewPinned(Boolean(msg.pinned), { chrome: msg.chrome !== false });
       } else if (msg.type === 'LIVE_CONFIG_UPDATE') {
         const s = msg.state;
         const isVert = this.config.layout === 'vertical';
@@ -1411,6 +1527,46 @@ class GTAOverlayEngine {
         this.config.chatIgnoreCmds   = s.chatNoCmd !== '0';
         this.config.chatCmdPrefixes  = s.chatPrefixes || '!, #, /, $';
         this.config.chatIgnoreUsers  = s.chatIgUsers || '';
+
+        this.config.cbX = parseFloat(isVert ? s.v_cbX : s.cbX);
+        if (!Number.isFinite(this.config.cbX)) this.config.cbX = 40;
+        this.config.cbY = parseFloat(isVert ? s.v_cbY : s.cbY);
+        if (!Number.isFinite(this.config.cbY)) this.config.cbY = isVert ? 40 : 80;
+        this.config.cbW = parseFloat(isVert ? s.v_cbW : s.cbW) || (isVert ? 360 : 420);
+        this.config.cbH = parseFloat(isVert ? s.v_cbH : s.cbH) || (isVert ? 640 : 480);
+        this.config.cbScale = parseFloat(isVert ? s.v_cbScale : s.cbScale) || 1;
+        this.config.cbAlignH = (isVert ? (s.v_cbAlignH ?? s.cbAlignH) : s.cbAlignH) === '1';
+        this.config.cbAlignV = (isVert ? (s.v_cbAlignV ?? s.cbAlignV) : s.cbAlignV) === '1';
+        this.config.cbStyle = s.cbStyle || 'boxes';
+        this.config.cbAnim = s.cbAnim || 'slide-up';
+        this.config.cbFlow = s.cbFlow || 'bottom';
+        this.config.cbSide = s.cbSide || 'left';
+        this.config.cbName = s.cbName || 'above';
+        this.config.cbFont = parseInt(s.cbFS || '18', 10);
+        this.config.cbMax = parseInt(s.cbMax || '8', 10);
+        this.config.cbHide = parseInt(s.cbHide || '0', 10);
+        this.config.cbGap = parseInt(s.cbGap || '8', 10);
+        this.config.cbRadius = parseInt(s.cbRadius || '16', 10);
+        this.config.cbPad = parseInt(s.cbPad || '12', 10);
+        this.config.cbAvSize = parseInt(s.cbAvSize || '36', 10);
+        this.config.cbAvatars = s.cbAv !== '0';
+        this.config.cbBadges = s.cbBadges !== '0';
+        this.config.cbUpper = s.cbUpper === '1';
+        this.config.cbShadow = s.cbShadow !== '0';
+        this.config.cbRoleAccent = s.cbRoleAccent === '1';
+        this.config.cbNoBg = s.cbNoBg === '1';
+        this.config.cbIgnoreCmds = s.cbNoCmd !== '0';
+        this.config.cbPrefixes = s.cbPrefixes || '!, #, /, $';
+        this.config.cbIgnoreUsers = s.cbIgUsers || '';
+        this.config.cbAccent = s.cbAccent || 'teal';
+        this.config.cbMember = s.cbMem || '#53d8bf';
+        this.config.cbMod = s.cbMod || '#a688ff';
+        this.config.cbViewer = s.cbView || '#fede9a';
+        this.config.cbMsg = s.cbMsg || '#f0f4f8';
+        this.config.cbFill = s.cbFill || '#171a21';
+        this.config.cbFillOp = parseInt(s.cbFillOp || '82', 10);
+        if (s['cb-bg'] !== undefined) this.config.cbBg = s['cb-bg'];
+        if (s['cb-msg-bg'] !== undefined) this.config.cbMsgBg = s['cb-msg-bg'];
 
         // Q&A Highlight Toast
         this.config.qaTitle     = s.qaTitle || this.config.t.qa;
@@ -1648,23 +1804,25 @@ class GTAOverlayEngine {
 
     const t = this.config.t || i18nDict.en;
     if (type === 'member' && levelName) {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tier}</span><span class="alert-highlight">${levelName}</span></div>`;
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tier}</span><span class="alert-highlight">${this.escapeHtml(levelName)}</span></div>`;
     } else if (type === 'milestone') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tenure}</span><span class="alert-highlight">${months} ${t.months}</span></div>`;
-      if (levelName) bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tier}</span><span class="alert-highlight">${levelName}</span></div>`;
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tenure}</span><span class="alert-highlight">${this.escapeHtml(months)} ${t.months}</span></div>`;
+      if (levelName) bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tier}</span><span class="alert-highlight">${this.escapeHtml(levelName)}</span></div>`;
     } else if (type === 'gift') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.gifted}</span><span class="alert-highlight">${count} ${t.memberships}</span></div>`;
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.gifted}</span><span class="alert-highlight">${this.escapeHtml(count)} ${t.memberships}</span></div>`;
     } else if (type === 'giftRec') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.from}</span><span class="alert-highlight">${gifterUser || t.anonymous}</span></div>`;
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.from}</span><span class="alert-highlight">${this.escapeHtml(gifterUser || t.anonymous)}</span></div>`;
     } else if (type === 'superchat') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.amount}</span><span class="alert-highlight amount">${amount}</span></div>`;
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.amount}</span><span class="alert-highlight amount">${this.escapeHtml(amount)}</span></div>`;
     } else if (type === 'supersticker') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.amount}</span><span class="alert-highlight amount">${amount}</span></div>`;
-      if (stickerUrl) bodyEl.innerHTML += `<div class="alert-media"><img src="${stickerUrl}" /></div>`;
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.amount}</span><span class="alert-highlight amount">${this.escapeHtml(amount)}</span></div>`;
+      const sticker = this.safeImgUrl(stickerUrl);
+      if (sticker) bodyEl.innerHTML += `<div class="alert-media"><img src="${this.escapeHtml(sticker)}" /></div>`;
     } else if (type === 'jewels') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.sent}</span><span class="alert-highlight amount">${jewelsAmount} ${t.jewels}</span></div>`;
-      if (jewelsName) bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.gift}</span><span class="alert-highlight">${jewelsName}</span></div>`;
-      if (jewelsUrl) bodyEl.innerHTML += `<div class="alert-media"><img src="${jewelsUrl}" /></div>`;
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.sent}</span><span class="alert-highlight amount">${this.escapeHtml(jewelsAmount)} ${t.jewels}</span></div>`;
+      if (jewelsName) bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.gift}</span><span class="alert-highlight">${this.escapeHtml(jewelsName)}</span></div>`;
+      const jewels = this.safeImgUrl(jewelsUrl);
+      if (jewels) bodyEl.innerHTML += `<div class="alert-media"><img src="${this.escapeHtml(jewels)}" /></div>`;
     }
 
     if (message) {
@@ -1841,10 +1999,141 @@ class GTAOverlayEngine {
     return false;
   }
 
+  shouldFilterChatBox(item) {
+    const rawMsg = String(item.message || '').trim();
+    if (!rawMsg) return true;
+    if (this.config.cbIgnoreCmds) {
+      const prefixes = (this.config.cbPrefixes || '!, #, /, $').split(',').map(p => p.trim()).filter(Boolean);
+      if (prefixes.some(prefix => rawMsg.startsWith(prefix))) return true;
+    }
+    const ignoredUsers = (this.config.cbIgnoreUsers || '').split(',').map(u => u.trim().toLowerCase()).filter(Boolean);
+    if (ignoredUsers.length) {
+      const name = String(item.userName || '').trim().toLowerCase();
+      const id = String(item.userId || '').trim().toLowerCase();
+      if ((name && ignoredUsers.includes(name)) || (id && ignoredUsers.includes(id))) return true;
+    }
+    return false;
+  }
+
+  chatBoxItemClass() {
+    const style = ['boxes', 'bubbles', 'lines', 'cards'].includes(this.config.cbStyle) ? this.config.cbStyle : 'boxes';
+    const anim = ['fade', 'slide-left', 'slide-right', 'slide-up', 'pop'].includes(this.config.cbAnim) ? this.config.cbAnim : 'slide-up';
+    const side = this.config.cbSide === 'right' ? 'right' : 'left';
+    const name = ['above', 'inline', 'hide'].includes(this.config.cbName) ? this.config.cbName : 'above';
+    return `cb-item look-${style} anim-${anim} side-${side} name-${name}`;
+  }
+
+  seedPreviewChatBox() {
+    if (this.chatboxLog && this.chatboxLog.length) return;
+    [
+      { userName: 'Lucia_Caminos', message: 'Vice City nights hit different!', role: 'member', avatar: DEFAULT_AVATAR_SVG },
+      { userName: 'Jason_Leonida', message: 'Welcome everyone to the stream!', role: 'mod', avatar: DEFAULT_AVATAR_SVG },
+      { userName: 'TommyV_86', message: 'That getaway was clean!!', role: 'viewer', avatar: DEFAULT_AVATAR_SVG }
+    ].forEach(sample => this.appendChatBoxItem(sample, true));
+  }
+
+  applyChatBoxMessageBg() {
+    const frame = this.dom.chatboxFrame;
+    if (!frame) return;
+    frame.classList.remove('msg-frost', 'msg-photo');
+    const resolved = this.resolveBg(this.config.cbMsgBg, this.config.bgUrl, false);
+    if (resolved === 'frost') {
+      frame.classList.add('msg-frost');
+      return;
+    }
+    if (resolved && resolved !== 'none') {
+      frame.classList.add('msg-photo');
+      document.documentElement.style.setProperty('--cb-msg-bg-image', `url("${this.resolveAssetUrl(resolved)}")`);
+      return;
+    }
+    document.documentElement.style.setProperty('--cb-msg-bg-image', 'none');
+  }
+
+  repaintChatBox(opts) {
+    const list = this.dom.chatboxList;
+    if (!list) return;
+    const animateLast = Boolean(opts && opts.animateLast);
+    const items = this.chatboxLog || [];
+    const seq = this.config.cbFlow === 'top' ? items.slice().reverse() : items.slice();
+    list.innerHTML = '';
+    seq.forEach((item, index) => {
+      const isNewest = this.config.cbFlow === 'top' ? index === 0 : index === seq.length - 1;
+      list.appendChild(this.buildChatBoxItem(item, !(animateLast && isNewest)));
+    });
+    if (items.length && this.dom.chatboxContainer) this.dom.chatboxContainer.classList.add('animate-in');
+  }
+
+  buildChatBoxItem(item, quiet) {
+    const el = document.createElement('div');
+    el.className = this.chatBoxItemClass() + (quiet ? ' cb-still' : '');
+    if (item.msgId) el.dataset.msgid = String(item.msgId);
+    if (item.userId) el.dataset.sender = String(item.userId);
+    let name = String(item.userName || 'Viewer').trim();
+    if (this.config.cbUpper) name = name.toUpperCase();
+    const roleClass = item.role === 'mod' ? 'role-mod' : (item.role === 'member' ? 'role-member' : 'role-viewer');
+    if (this.config.cbRoleAccent) {
+      const color = item.role === 'mod' ? this.config.cbMod : (item.role === 'member' ? this.config.cbMember : this.config.cbViewer);
+      el.style.setProperty('--cb-item-accent', color || 'var(--cb-accent)');
+      el.classList.add('role-accent');
+    }
+    const avatarUrl = this.safeImgUrl(item.avatar);
+    const avatar = (this.config.cbAvatars && avatarUrl)
+      ? `<img class="cb-avatar" src="${this.escapeHtml(avatarUrl)}" alt="" />`
+      : '';
+    let badge = '';
+    if (this.config.cbBadges) {
+      if (item.role === 'mod') badge = `<i class="fa-solid fa-wrench cb-badge role-mod"></i>`;
+      else if (item.role === 'member') badge = `<i class="fa-solid fa-crown cb-badge role-member"></i>`;
+    }
+    const msg = this.sanitizeAndFormatChatMessage(String(item.message || '').trim(), item.emotes, item.parts, { uppercase: false });
+    el.innerHTML = `${avatar}<div class="cb-body"><div class="cb-name ${roleClass}">${badge}<span>${this.escapeHtml(name)}</span></div><div class="cb-msg">${msg}</div></div>`;
+    return el;
+  }
+
+  appendChatBoxItem(item, quiet) {
+    if (!this.dom.chatboxList || !item) return;
+    if (!this.chatboxLog) this.chatboxLog = [];
+    this.chatboxLog.push({
+      userName: item.userName,
+      userId: item.userId,
+      message: item.message,
+      role: item.role,
+      emotes: item.emotes,
+      parts: item.parts,
+      avatar: item.avatar,
+      msgId: item.msgId
+    });
+    const max = Math.max(1, this.config.cbMax || 8);
+    while (this.chatboxLog.length > max) this.chatboxLog.shift();
+    this.repaintChatBox({ animateLast: !quiet });
+    if (this.dom.chatboxContainer) this.dom.chatboxContainer.classList.add('animate-in');
+    if (this.config.cbHide > 0 && !this.config.previewMode) {
+      const msgId = item.msgId ? String(item.msgId) : '';
+      setTimeout(() => {
+        this.chatboxLog = (this.chatboxLog || []).filter(row => !msgId || String(row.msgId) !== msgId);
+        this.repaintChatBox();
+        if (!this.chatboxLog.length && this.dom.chatboxContainer && !this.config.previewMode) {
+          this.dom.chatboxContainer.classList.remove('animate-in');
+        }
+      }, this.config.cbHide * 1000);
+    }
+  }
+
   escapeHtml(s) {
-    return String(s ?? '').replace(/[&<>"']/g, ch => ({
-      '&': '&', '<': '<', '>': '>', '"': '"', "'": '&#39;'
-    }[ch]));
+    return String(s ?? '')
+      .replace(/&/g, '&' + 'amp;')
+      .replace(/</g, '&' + 'lt;')
+      .replace(/>/g, '&' + 'gt;')
+      .replace(/"/g, '&' + 'quot;')
+      .replace(/'/g, '&#' + '39;');
+  }
+
+  safeImgUrl(url) {
+    const value = String(url ?? '').trim();
+    if (/^https?:\/\//i.test(value)) return value;
+    if (value.startsWith('data:image/')) return value;
+    if (value.startsWith('assets/')) return value;
+    return '';
   }
 
   emoteImageUrl(em) {
@@ -2017,8 +2306,11 @@ class GTAOverlayEngine {
       msgId:    raw.msgId || raw.messageId || `msg-${Date.now()}-${++this.chatMsgCounter}`
     };
 
-    if (this.shouldFilterOutChatMessage(normalized)) return;
-    this.appendChatDomItem(normalized);
+    if (this.shouldFilterOutChatMessage(normalized)) {
+      if (!(this.config.modules.chatbox && !this.shouldFilterChatBox(normalized))) return;
+    }
+    if (this.config.modules.chat && !this.shouldFilterOutChatMessage(normalized)) this.appendChatDomItem(normalized);
+    if (this.config.modules.chatbox && !this.shouldFilterChatBox(normalized)) this.appendChatBoxItem(normalized);
   }
 
   appendChatDomItem(item) {
@@ -2036,8 +2328,9 @@ class GTAOverlayEngine {
     const roleClass = item.role === 'mod' ? 'role-mod' : (item.role === 'member' ? 'role-member' : 'role-viewer');
 
     let avatarHtml = '';
-    if (this.config.chatShowAvatars && item.avatar) {
-      avatarHtml = `<img class="chat-avatar" src="${item.avatar}" alt="" onerror="this.style.display='none'" />`;
+    const avatarUrl = this.safeImgUrl(item.avatar);
+    if (this.config.chatShowAvatars && avatarUrl) {
+      avatarHtml = `<img class="chat-avatar" src="${this.escapeHtml(avatarUrl)}" alt="" onerror="this.style.display='none'" />`;
     }
 
     let badgeHtml = '';
@@ -2054,7 +2347,7 @@ class GTAOverlayEngine {
     el.innerHTML = `
       ${avatarHtml}
       ${badgeHtml}
-      <span class="chat-user ${roleClass}">${uName}:</span>
+      <span class="chat-user ${roleClass}">${this.escapeHtml(uName)}:</span>
       <span class="chat-msg">${formattedMsg}</span>
       <span class="chat-sep">•</span>
     `;
@@ -2080,14 +2373,19 @@ class GTAOverlayEngine {
   }
 
   removeChatMessageById(msgId) {
-    if (!this.dom.chatTrack) return;
-    const target = this.dom.chatTrack.querySelector(`[data-msgid="${msgId}"]`);
-    if (target) target.remove();
+    const id = String(msgId);
+    [this.dom.chatTrack, this.dom.chatboxList].forEach(root => {
+      if (!root) return;
+      Array.from(root.children).forEach(el => { if (el.dataset.msgid === id) el.remove(); });
+    });
   }
 
   removeChatMessagesByUser(userId) {
-    if (!this.dom.chatTrack) return;
-    this.dom.chatTrack.querySelectorAll(`[data-sender="${userId}"]`).forEach(el => el.remove());
+    const id = String(userId);
+    [this.dom.chatTrack, this.dom.chatboxList].forEach(root => {
+      if (!root) return;
+      Array.from(root.children).forEach(el => { if (el.dataset.sender === id) el.remove(); });
+    });
   }
 
   // =====================================
@@ -2599,4 +2897,33 @@ class GTAOverlayEngine {
 
 document.addEventListener('DOMContentLoaded', () => {
   window.gtaOverlay = new GTAOverlayEngine(GTAOverlayConfig);
+
+  // Live mode (?live=1): the setup page pushes config through the OBS WebSocket
+  // (obs-browser emit_event). BroadcastChannel still covers two tabs in the same browser.
+  if (new URLSearchParams(window.location.search).get('live') === '1') {
+    const applyLivePayload = (d) => {
+      if (!d || !window.gtaOverlay) return;
+      if (d.event_data && !d.horiz) d = d.event_data;
+      if (d.rev && d.rev === window.gtaOverlay._liveRev) return;
+      if (d.rev) window.gtaOverlay._liveRev = d.rev;
+      const msg = window.gtaOverlay.config.layout === 'vertical' ? d.vert : d.horiz;
+      if (msg && msg.type) window.postMessage(msg, '*');
+      if (typeof d.pinned === 'boolean') {
+        window.postMessage({ type: 'SET_PREVIEW_PINNED', pinned: d.pinned, chrome: false }, '*');
+      }
+    };
+    window.addEventListener('gta-live-config', (ev) => {
+      let d = ev.detail;
+      if (typeof d === 'string') { try { d = JSON.parse(d); } catch (e) { return; } }
+      applyLivePayload(d);
+    });
+    if (typeof BroadcastChannel !== 'undefined') {
+      try {
+        const ch = new BroadcastChannel('gta-overlay-live');
+        ch.onmessage = (ev) => {
+          if (ev.data && ev.data.type) window.postMessage(ev.data, '*');
+        };
+      } catch (e) {}
+    }
+  }
 });

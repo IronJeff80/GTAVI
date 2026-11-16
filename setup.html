@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GTA VI Overlays - Universal Setup v0.2.4</title>
+  <title>GTA VI Overlays - Universal Setup v0.3.1</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -24,15 +24,17 @@
     .sidebar { background: #171a21; border-right: 3px solid var(--gta-border); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
     
     .brand-header { padding: 14px 20px 10px; display: flex; flex-direction: column; gap: 8px; border-bottom: 2px solid #232834; }
-    .brand-top { display: flex; align-items: center; justify-content: space-between; }
+    .brand-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
     .brand-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.95rem; letter-spacing: 1.5px; color: var(--gta-pink); text-shadow: 0 2px 0 var(--gta-border); display: flex; align-items: center; gap: 10px; }
     .ver-pill { font-family: 'Inter', sans-serif; font-size: 0.68rem; font-weight: 800; background: #232834; color: var(--gta-yellow); padding: 3px 8px; border-radius: 8px; letter-spacing: 0.5px; }
-    .sb-badge { font-size: 0.75rem; font-weight: 700; padding: 4px 10px; border-radius: 12px; background: #2b1d28; color: var(--gta-pink); border: 1px solid var(--gta-pink); display: flex; align-items: center; gap: 6px; }
+    .brand-pills { display: flex; gap: 8px; }
+    .brand-pills .sb-badge { flex: 1; justify-content: center; }
+    .sb-badge { font-size: 0.68rem; font-weight: 700; padding: 4px 8px; border-radius: 12px; background: #2b1d28; color: var(--gta-pink); border: 1px solid var(--gta-pink); display: flex; align-items: center; gap: 5px; white-space: nowrap; }
     .sb-badge.connected { background: #132a28; color: var(--gta-teal); border-color: var(--gta-teal); }
     
     .global-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
     
-    .tab-nav { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); background: #12151a; border-bottom: 2px solid #232834; }
+    .tab-nav { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); background: #12151a; border-bottom: 2px solid #232834; }
     .tab-btn { background: transparent; border: none; border-bottom: 3px solid transparent; color: #8c96a6; padding: 8px 2px; font-size: 0.62rem; font-weight: 800; text-transform: uppercase; letter-spacing: 0.2px; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: all 0.15s ease; white-space: nowrap; }
     .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.03); }
     .tab-btn.active { color: var(--gta-teal); border-bottom-color: var(--gta-teal); background: #171a21; }
@@ -41,6 +43,13 @@
     
     .panel { background: #1e222b; border: 2px solid var(--gta-border); border-radius: 12px; padding: 14px; display: flex; flex-direction: column; gap: 12px; }
     .panel-header { display: flex; justify-content: space-between; align-items: center; }
+    .palette-custom-row { display: flex; gap: 8px; align-items: center; margin: 4px 0 8px; }
+    .palette-custom-row input { flex: 1; min-width: 0; }
+    .user-bg-tools { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+    .user-bg-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
+    .user-bg-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.72rem; color: #d5dbe6; background: #171a21; border: 1px solid #2a3140; border-radius: 8px; padding: 4px 8px; }
+    .user-bg-item button { padding: 3px 8px; font-size: 0.68rem; }
+    .palette-note { font-size: 0.68rem; color: #8c96a6; margin: -4px 0 8px; }
     .panel-title { font-size: 0.78rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--gta-teal); display: flex; align-items: center; gap: 8px; cursor: pointer; user-select: none; }
     .panel-chevron { margin-left: 2px; font-size: 0.62rem; opacity: 0.7; transition: transform 0.15s ease; }
     .panel.collapsed .panel-chevron { transform: rotate(-90deg); }
@@ -175,8 +184,11 @@
   <aside class="sidebar">
     <div class="brand-header">
       <div class="brand-top">
-        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.2.4</span></div>
-        <div id="sb-status" class="sb-badge"><i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">Disconnected</span></div>
+        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.3.1</span></div>
+      </div>
+      <div class="brand-pills">
+        <div id="sb-status" class="sb-badge" title="Streamer.bot"><i class="fa-solid fa-plug"></i> <span>SB</span> <span class="sb-word" data-i18n="status_disconnected">Disconnected</span></div>
+        <div id="obs-status" class="sb-badge" title="OBS"><i class="fa-solid fa-video"></i> <span data-i18n="obs_pill">OBS</span> <span class="sb-word" data-i18n="status_disconnected">Disconnected</span></div>
       </div>
       <div class="global-controls">
         <label style="flex-direction:row; align-items:center; gap:8px;">
@@ -208,6 +220,7 @@
       <button class="tab-btn" data-tab="tab-alerts"><i class="fa-solid fa-bell"></i> <span data-i18n="tab_alerts">Alerts</span></button>
       <button class="tab-btn" data-tab="tab-shoutout"><i class="fa-solid fa-bullhorn"></i> <span data-i18n="tab_shoutout">Shoutout</span></button>
       <button class="tab-btn" data-tab="tab-chat"><i class="fa-solid fa-comments"></i> <span data-i18n="tab_chat">Chat</span></button>
+      <button class="tab-btn" data-tab="tab-chatbox"><i class="fa-solid fa-message"></i> <span data-i18n="tab_chatbox">Chat Box</span></button>
       <button class="tab-btn" data-tab="tab-qa"><i class="fa-solid fa-circle-question"></i> <span data-i18n="tab_qa">Q&amp;A</span></button>
       <button class="tab-btn" data-tab="tab-first5"><i class="fa-solid fa-users"></i> <span data-i18n="tab_first5">First 5</span></button>
       <button class="tab-btn" data-tab="tab-goals"><i class="fa-solid fa-chart-simple"></i> <span data-i18n="tab_goals">Goals</span></button>
@@ -224,6 +237,18 @@
         </div>
         <label style="margin-top:4px;"><span data-i18n="lbl_ws_pass">WebSocket Password</span> <input type="password" id="cfg-password" data-i18n-placeholder="ph_ws_pass" placeholder="Leave blank if no auth"></label>
         <button class="btn btn-teal" id="btn-connect-sb" style="margin-top:8px;" data-i18n="btn_connect_sb">Connect SB</button>
+      </div>
+
+      <div class="panel" id="panel-obs">
+        <div class="panel-title"><i class="fa-solid fa-video"></i> <span data-i18n="panel_obs">OBS Connection</span></div>
+        <p style="font-size:0.75rem; color:#9aa4b2;" data-i18n="desc_obs">Live updates go through the OBS WebSocket. In OBS open Tools, WebSocket Server Settings, enable the server, then enter that port and password here. Each browser source needs the Live URL.</p>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_ws_host">WebSocket IP / Host</span> <input type="text" id="cfg-obs-host" value="127.0.0.1" autocomplete="off"></label>
+          <label><span data-i18n="lbl_ws_port">Port</span> <input type="number" id="cfg-obs-port" value="4455"></label>
+        </div>
+        <label><span data-i18n="lbl_ws_pass">WebSocket Password</span> <input type="password" id="cfg-obs-password" data-i18n-placeholder="ph_obs_pass" placeholder="Required if OBS has a password" autocomplete="off"></label>
+        <button class="btn btn-teal" id="btn-connect-obs" type="button" data-i18n="btn_connect_obs">Connect OBS</button>
+        <div id="obs-status-log" class="status-log" data-i18n="obs_status_idle">Not connected.</div>
       </div>
 
       <div class="panel">
@@ -313,10 +338,17 @@
         <label><span data-i18n="lbl_bg_url">Global Background</span>
           <select id="cfg-bg">
             <option value="" data-i18n="opt_bg_none_only">None (Solid Fill Only)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
             <option value="assets/backgrounds/gta6-bg.webp">gta6-bg.webp</option>
           </select>
         </label>
-        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-6px;" data-i18n="desc_bg_auto">Backgrounds load from assets/backgrounds/. Add or remove images and update backgrounds.json to refresh the list.</p>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-6px;" data-i18n="desc_bg_auto">Built-in backgrounds come from assets/backgrounds/. Upload your own below. The overlay URL stores that file path, and Export saves the image so Import can restore it.</p>
+        <div class="user-bg-tools">
+          <input type="file" id="user-bg-file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;">
+          <button type="button" class="btn btn-teal" id="btn-upload-bg"><i class="fa-solid fa-upload"></i> <span data-i18n="btn_upload_bg">Upload Background</span></button>
+          <span id="user-bg-status" style="font-size:0.72rem; color:#9aa4b2;"></span>
+        </div>
+        <div id="user-bg-list" class="user-bg-list"></div>
       </div>
       <div class="panel">
         <div class="panel-header">
@@ -329,6 +361,12 @@
         </label>
           <button class="btn btn-dark" id="btn-reset-colors" style="padding: 5px 10px; font-size: 0.72rem;"><i class="fa-solid fa-rotate-left"></i> <span data-i18n="btn_reset">Reset</span></button>
         </div>
+        <div class="palette-custom-row">
+          <input type="text" id="palette-name" data-i18n-placeholder="ph_palette_name" placeholder="Palette name">
+          <button type="button" class="btn btn-teal" id="btn-save-palette"><span data-i18n="btn_save_palette">Save Palette</span></button>
+          <button type="button" class="btn btn-dark" id="btn-delete-palette"><span data-i18n="btn_delete_palette">Delete</span></button>
+        </div>
+        <p class="palette-note" data-i18n="desc_custom_palette">Saved palettes are included in Export and restored on Import.</p>
         <div class="grid-2">
           <label><span data-i18n="lbl_prim_pink">Primary Pink</span> <div class="color-picker-group"><input type="color" id="picker-cPink" value="#f4acc4"><input type="text" id="cfg-cPink" value="#f4acc4"></div></label>
           <label><span data-i18n="lbl_prim_teal">Primary Teal</span> <div class="color-picker-group"><input type="color" id="picker-cTeal" value="#53d8bf"><input type="text" id="cfg-cTeal" value="#53d8bf"></div></label>
@@ -495,6 +533,7 @@ public class CPHInline
           <select id="cfg-walkon-bg" data-default="assets/backgrounds/Palms.webp">
             <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
             <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
           </select>
         </label>
       </div>
@@ -562,6 +601,7 @@ public class CPHInline
           <select id="cfg-alert-bg" data-default="assets/backgrounds/Palms-Vertical.webp">
             <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
             <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
           </select>
         </label>
         <p style="font-size:0.68rem; color:#8c96a6; margin-top:-4px;" data-i18n="desc_alert_bg">Applies to the top section (avatar + title + name) only.</p>
@@ -640,6 +680,7 @@ public class CPHInline
           <select id="cfg-so-bg" data-default="assets/backgrounds/Palms-Vertical.webp">
             <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
             <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
           </select>
         </label>
       </div>
@@ -711,7 +752,7 @@ public class CPHInline
             <div class="color-picker-group"><input type="color" id="picker-cChatBg" value="#303030"><input type="text" id="cfg-cChatBg" value="#303030"></div>
           </label>
           <label><span data-i18n="lbl_bar_opacity">Bar Opacity (%)</span>
-            <input type="number" id="cfg-chatBgOp" value="88" min="0" max="100" step="5">
+            <input type="number" id="cfg-chatBgOp" value="88" min="0" max="100" step="1">
           </label>
           <label><span data-i18n="lbl_top_border_color">Top Border Color</span>
             <select id="cfg-chatAccent">
@@ -735,6 +776,7 @@ public class CPHInline
           <select id="cfg-chat-bg" data-default="assets/backgrounds/Ultimate.webp">
             <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
             <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
           </select>
         </label>
       </div>
@@ -756,6 +798,176 @@ public class CPHInline
         <label><span data-i18n="lbl_ignore_users">Ignore Users by Name or Channel ID (Comma-separated)</span>
           <input type="text" id="cfg-chatIgUsers" data-i18n-placeholder="ph_ignore_users" placeholder="e.g. Nightbot, StreamElements, UC...">
         </label>
+      </div>
+    </div>
+
+    <div id="tab-chatbox" class="tab-content">
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-message"></i> <span data-i18n="panel_cb_pos">Chat Box Position & Size</span></div>
+        <p style="font-size:0.75rem; color:#9aa4b2;" data-i18n="desc_cb">A stacked chat feed, separate from the horizontal bar. Check Chat Box under Modules to Generate, then copy that browser source.</p>
+        <div class="layout-switcher">
+          <button class="layout-btn active" data-target="horiz"><i class="fa-solid fa-tv"></i> <span data-i18n="btn_layout_horiz">Horizontal Layout</span></button>
+          <button class="layout-btn" data-target="vert"><i class="fa-solid fa-mobile-screen"></i> <span data-i18n="btn_layout_vert">Vertical Layout</span></button>
+        </div>
+        <div class="edit-horiz grid-3">
+          <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-cbX" value="40"></label>
+          <label><span data-i18n="lbl_bottom_y">Bottom (Y px)</span> <input type="number" id="cfg-cbY" value="80"></label>
+          <label><span data-i18n="lbl_scale">Scale</span> <input type="number" id="cfg-cbScale" value="1" step="0.05"></label>
+        </div>
+        <div class="edit-horiz grid-2">
+          <label><span data-i18n="lbl_box_width">Box Width</span> <input type="number" id="cfg-cbW" value="420" min="180"></label>
+          <label><span data-i18n="lbl_box_height">Box Height</span> <input type="number" id="cfg-cbH" value="480" min="120"></label>
+        </div>
+        <div class="edit-horiz toggle-strip">
+          <label class="mini-switch-card"><span data-i18n="lbl_center_h">Center H</span><input type="checkbox" class="switch" id="chk-cbAlignH"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_center_v">Center V</span><input type="checkbox" class="switch" id="chk-cbAlignV"></label>
+        </div>
+        <div class="edit-vert grid-3">
+          <label><span data-i18n="lbl_left_x">Left (X px)</span> <input type="number" id="cfg-v_cbX" value="24"></label>
+          <label><span data-i18n="lbl_bottom_y">Bottom (Y px)</span> <input type="number" id="cfg-v_cbY" value="40"></label>
+          <label><span data-i18n="lbl_scale">Scale</span> <input type="number" id="cfg-v_cbScale" value="1" step="0.05"></label>
+        </div>
+        <div class="edit-vert grid-2">
+          <label><span data-i18n="lbl_box_width">Box Width</span> <input type="number" id="cfg-v_cbW" value="360" min="180"></label>
+          <label><span data-i18n="lbl_box_height">Box Height</span> <input type="number" id="cfg-v_cbH" value="640" min="120"></label>
+        </div>
+        <div class="edit-vert toggle-strip">
+          <label class="mini-switch-card"><span data-i18n="lbl_center_h">Center H</span><input type="checkbox" class="switch" id="chk-v_cbAlignH"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_center_v">Center V</span><input type="checkbox" class="switch" id="chk-v_cbAlignV"></label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-palette"></i> <span data-i18n="panel_cb_look">Chat Box Style</span></div>
+        <div class="grid-3">
+          <label><span data-i18n="lbl_theme">Theme</span>
+            <select id="cfg-cbStyle">
+              <option value="boxes" data-i18n="opt_theme_boxes" selected>Boxes</option>
+              <option value="bubbles" data-i18n="opt_theme_bubbles">Bubbles</option>
+              <option value="lines" data-i18n="opt_theme_lines">Lines</option>
+              <option value="cards" data-i18n="opt_theme_cards">Cards</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_msg_anim">Message Animation</span>
+            <select id="cfg-cbAnim">
+              <option value="slide-up" data-i18n="opt_flow_slide_up" selected>Slide Up</option>
+              <option value="slide-left" data-i18n="opt_anim_from_left">From Left</option>
+              <option value="slide-right" data-i18n="opt_anim_from_right">From Right</option>
+              <option value="fade" data-i18n="opt_anim_fade">Fade</option>
+              <option value="pop" data-i18n="opt_anim_pop">Pop</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_flow">New Messages</span>
+            <select id="cfg-cbFlow">
+              <option value="bottom" data-i18n="opt_flow_bottom" selected>Newest at Bottom</option>
+              <option value="top" data-i18n="opt_flow_top">Newest at Top</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid-3">
+          <label><span data-i18n="lbl_msg_side">Message Side</span>
+            <select id="cfg-cbSide">
+              <option value="left" data-i18n="opt_cb_left" selected>Left</option>
+              <option value="right" data-i18n="opt_cb_right">Right</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_name_pos">Name Position</span>
+            <select id="cfg-cbName">
+              <option value="above" data-i18n="opt_name_above" selected>Name Above</option>
+              <option value="inline" data-i18n="opt_name_inline">Name Inline</option>
+              <option value="hide" data-i18n="opt_name_hide">Hide Name</option>
+            </select>
+          </label>
+          <label><span data-i18n="lbl_accent_color">Accent Color</span>
+            <select id="cfg-cbAccent">
+              <option value="teal" data-i18n="opt_teal" selected>TEAL</option>
+              <option value="pink" data-i18n="opt_pink">PINK</option>
+              <option value="purple" data-i18n="opt_purple">PURPLE</option>
+              <option value="yellow" data-i18n="opt_yellow">YELLOW</option>
+            </select>
+          </label>
+        </div>
+        <div class="grid-3">
+          <label><span data-i18n="lbl_font_size">Font Size (px)</span> <input type="number" id="cfg-cbFS" value="18" min="12" max="42"></label>
+          <label><span data-i18n="lbl_max_msgs">Max Messages</span> <input type="number" id="cfg-cbMax" value="8" min="1" max="30"></label>
+          <label><span data-i18n="lbl_auto_hide">Auto-Hide Msg After (sec, 0=Never)</span> <input type="number" id="cfg-cbHide" value="0" min="0" max="300"></label>
+        </div>
+        <div class="grid-3">
+          <label><span data-i18n="lbl_gap">Gap (px)</span> <input type="number" id="cfg-cbGap" value="8" min="0" max="40"></label>
+          <label><span data-i18n="lbl_radius">Corner Radius</span> <input type="number" id="cfg-cbRadius" value="16" min="0" max="40"></label>
+          <label><span data-i18n="lbl_pad">Padding</span> <input type="number" id="cfg-cbPad" value="12" min="0" max="40"></label>
+        </div>
+        <label><span data-i18n="lbl_av_size">Avatar Size</span> <input type="number" id="cfg-cbAvSize" value="36" min="16" max="72"></label>
+        <div class="toggle-strip">
+          <label class="mini-switch-card"><span data-i18n="lbl_show_avatars">Show Avatars</span><input type="checkbox" class="switch" id="chk-cbAv" checked></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_show_badges">Show Badges</span><input type="checkbox" class="switch" id="chk-cbBadges" checked></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_all_caps">ALL CAPS</span><input type="checkbox" class="switch" id="chk-cbUpper"></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_shadow">Drop Shadow</span><input type="checkbox" class="switch" id="chk-cbShadow" checked></label>
+          <label class="mini-switch-card"><span data-i18n="lbl_role_accent">Role Accent</span><input type="checkbox" class="switch" id="chk-cbRoleAccent"></label>
+        </div>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-4px;" data-i18n="desc_role_accent">Role Accent paints each message border with that viewer's color: member, moderator, or viewer.</p>
+        <label class="inline-toggle-row">
+          <span data-i18n="lbl_cb_clear">Clear Box Background</span>
+          <input type="checkbox" class="switch" id="chk-cbNoBg">
+        </label>
+        <label><span data-i18n="lbl_cb_bg">Chat Box Background</span>
+          <select id="cfg-cb-bg" data-default="global">
+            <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
+            <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
+          </select>
+        </label>
+        <label><span data-i18n="lbl_msg_bg">Message Background</span>
+          <select id="cfg-cb-msg-bg" data-default="">
+            <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
+            <option value="" data-i18n="opt_bg_none" selected>None (Solid Fill)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
+          </select>
+        </label>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-user-tag"></i> <span data-i18n="panel_cb_colors">Chat Box Colors</span></div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_mem_color">Member Name Color (Default Teal)</span>
+            <div class="color-picker-group"><input type="color" id="picker-cbMem" value="#53d8bf"><input type="text" id="cfg-cbMem" value="#53d8bf"></div>
+          </label>
+          <label><span data-i18n="lbl_mod_color">Moderator Name Color (Default Purple)</span>
+            <div class="color-picker-group"><input type="color" id="picker-cbMod" value="#a688ff"><input type="text" id="cfg-cbMod" value="#a688ff"></div>
+          </label>
+        </div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_view_color">Viewer Name Color (Default Yellow)</span>
+            <div class="color-picker-group"><input type="color" id="picker-cbView" value="#fede9a"><input type="text" id="cfg-cbView" value="#fede9a"></div>
+          </label>
+          <label><span data-i18n="lbl_msg_color">Message Text Color</span>
+            <div class="color-picker-group"><input type="color" id="picker-cbMsg" value="#f0f4f8"><input type="text" id="cfg-cbMsg" value="#f0f4f8"></div>
+          </label>
+        </div>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_bubble_fill">Bubble Fill</span>
+            <div class="color-picker-group"><input type="color" id="picker-cbFill" value="#171a21"><input type="text" id="cfg-cbFill" value="#171a21"></div>
+          </label>
+          <label><span data-i18n="lbl_bar_opacity">Bar Opacity (%)</span>
+            <input type="number" id="cfg-cbFillOp" value="82" min="0" max="100" step="1">
+          </label>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><i class="fa-solid fa-filter"></i> <span data-i18n="panel_chat_filters">Chat Filters (Commands & Users)</span></div>
+        <label class="inline-toggle-row">
+          <span data-i18n="lbl_ignore_cmds">Ignore Commands (Starts with Prefix)</span>
+          <input type="checkbox" class="switch" id="chk-cbNoCmd" checked>
+        </label>
+        <div class="grid-2">
+          <label><span data-i18n="lbl_cmd_prefixes">Command Prefixes (Comma-separated)</span>
+            <input type="text" id="cfg-cbPrefixes" value="!, #, /, $">
+          </label>
+          <label><span data-i18n="lbl_ignore_users">Ignore Users by Name or Channel ID (Comma-separated)</span>
+            <input type="text" id="cfg-cbIgUsers" data-i18n-placeholder="ph_ignore_users" placeholder="e.g. Nightbot, StreamElements, UC...">
+          </label>
+        </div>
       </div>
     </div>
 
@@ -826,6 +1038,7 @@ public class CPHInline
           <select id="cfg-qa-bg" data-default="assets/backgrounds/Palms.webp">
             <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
             <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
           </select>
         </label>
       </div>
@@ -1000,6 +1213,7 @@ public class CPHInline
             <select id="cfg-goals-bg" data-default="assets/backgrounds/Palms.webp">
               <option value="global" data-i18n="opt_bg_global">Use Global Background</option>
               <option value="" data-i18n="opt_bg_none">None (Solid Fill)</option>
+            <option value="frost" data-i18n="opt_bg_frost">Frosted Glass</option>
             </select>
           </label>
         </div>
@@ -1070,7 +1284,7 @@ public class CPHInline
     <!-- TAB 8: TEST -->
     <div id="tab-test" class="tab-content">
       <div class="panel">
-        <div class="panel-title"><i class="fa-solid fa-dice"></i> <span data-i18n="panel_simulators">5-Module Simulators</span></div>
+        <div class="panel-title"><i class="fa-solid fa-dice"></i> <span data-i18n="panel_simulators">Widget Simulators</span></div>
         <div class="grid-3" style="margin-bottom: 6px;">
           <button class="btn btn-teal" id="btn-sim-walkon"><i class="fa-solid fa-id-card"></i> <span data-i18n="btn_sim_walkon">Walk-On</span></button>
           <button class="btn btn-purple" id="btn-sim-alert"><i class="fa-solid fa-bell"></i> <span data-i18n="btn_sim_alert">Alert</span></button>
@@ -1078,6 +1292,7 @@ public class CPHInline
         </div>
         <div class="grid-2" style="margin-bottom: 6px;">
           <button class="btn btn-yellow" id="btn-sim-chat"><i class="fa-solid fa-comments"></i> <span data-i18n="btn_sim_chat">Send Test Chat</span></button>
+          <button class="btn btn-purple" id="btn-sim-chatbox"><i class="fa-solid fa-message"></i> <span data-i18n="btn_sim_chatbox">Test Chat Box</span></button>
           <button class="btn btn-teal" id="btn-sim-qa"><i class="fa-solid fa-circle-question"></i> <span data-i18n="btn_sim_qa">Test Q&amp;A</span></button>
           <button class="btn btn-pink" id="btn-sim-first5"><i class="fa-solid fa-users"></i> <span data-i18n="btn_sim_first5">Test First 5</span></button>
           <button class="btn btn-purple" id="btn-sim-goals"><i class="fa-solid fa-chart-simple"></i> <span data-i18n="btn_sim_goals">Test Goal Bars</span></button>
@@ -1130,6 +1345,7 @@ public class CPHInline
         <label class="mod-chk-label"><input type="checkbox" id="mod-alerts" class="mod-chk" checked> <span data-i18n="mod_2_alerts">2. Alerts Box</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-shoutout" class="mod-chk" checked> <span data-i18n="mod_3_shoutout">3. Shoutout</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-chat" class="mod-chk" checked> <span data-i18n="mod_4_chat">4. Chat Bar</span></label>
+        <label class="mod-chk-label"><input type="checkbox" id="mod-chatbox" class="mod-chk"> <span data-i18n="mod_8_chatbox">8. Chat Box</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-qa" class="mod-chk" checked> <span data-i18n="mod_5_qa">5. Q&amp;A Toast</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-first5" class="mod-chk" checked> <span data-i18n="mod_6_first5">6. First 5</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-goals" class="mod-chk" checked> <span data-i18n="mod_7_goals">7. Goal Bars</span></label>
@@ -1150,19 +1366,22 @@ public class CPHInline
           <span class="url-label"><i class="fa-solid fa-tv"></i> <span data-i18n="lbl_url_horiz">Horizontal</span></span>
           <input type="text" id="obs-url-horiz" class="url-input" readonly>
           <button class="btn btn-yellow" onclick="copyUrl('obs-url-horiz', this)"><i class="fa-solid fa-copy"></i> <span data-i18n="btn_copy">Copy</span></button>
+          <button class="btn btn-dark" onclick="copyLiveUrl('obs-url-horiz', this)" title="Copy with live=1 for instant OBS updates"><i class="fa-solid fa-broadcast-tower"></i> <span data-i18n="btn_copy_live">Live</span></button>
         </div>
         <div class="url-row">
           <span class="url-label"><i class="fa-solid fa-mobile-screen"></i> <span data-i18n="lbl_url_vert">Vertical</span></span>
           <input type="text" id="obs-url-vert" class="url-input" readonly>
           <button class="btn btn-teal" onclick="copyUrl('obs-url-vert', this)"><i class="fa-solid fa-copy"></i> <span data-i18n="btn_copy">Copy</span></button>
+          <button class="btn btn-dark" onclick="copyLiveUrl('obs-url-vert', this)" title="Copy with live=1 for instant OBS updates"><i class="fa-solid fa-broadcast-tower"></i> <span data-i18n="btn_copy_live">Live</span></button>
         </div>
+        <p style="font-size:0.68rem; color:#8c96a6; margin:6px 0 0; line-height:1.35;" data-i18n="desc_live_url">Live copies add &live=1. Paste that URL into each OBS browser source once. Connect OBS above and leave this page open. Changes then show up in those sources immediately. Pin Visible shows the hidden widgets while you tune.</p>
       </div>
     </div>
 
     <div class="preview-toolbar">
       <label class="pin-toggle-label">
         <input type="checkbox" id="chk-pin-preview" checked>
-        <span><i class="fa-solid fa-thumbtack"></i> <span data-i18n="lbl_pin_preview">Pin Visible (Setup Mode) — Drag any module to move • Drag corner handle to scale</span></span>
+        <span><i class="fa-solid fa-thumbtack"></i> <span data-i18n="lbl_pin_preview">Pin Visible — Drag to move • Corner to scale. Live OBS sources show Walk-On, Alerts, Shoutout, Q&A, First 5, and Goals while this is on.</span></span>
       </label>
       <div class="view-toggles">
         <button class="btn btn-dark active" onclick="setPreviewMode('dual', this)"><i class="fa-solid fa-columns"></i> <span data-i18n="btn_view_dual">Dual Preview</span></button>
@@ -1352,6 +1571,7 @@ public class CPHInline
         const payload = { type: 'SET_PREVIEW_PINNED', pinned: pinCheckbox.checked };
         if (frameHoriz && frameHoriz.contentWindow) frameHoriz.contentWindow.postMessage(payload, '*');
         if (frameVert && frameVert.contentWindow) frameVert.contentWindow.postMessage(payload, '*');
+        broadcastLivePin();
       });
     }
 
@@ -1381,6 +1601,7 @@ public class CPHInline
     bindAlignGroup(document.getElementById('chk-aAlignH'), document.getElementById('chk-aAlignV'), document.getElementById('chk-aAlignScreen'), document.getElementById('cfg-ax'), document.getElementById('cfg-ay'));
     bindAlignGroup(document.getElementById('chk-soAlignH'), document.getElementById('chk-soAlignV'), document.getElementById('chk-soAlignScreen'), document.getElementById('cfg-soX'), document.getElementById('cfg-soY'));
     bindAlignGroup(document.getElementById('chk-chatAlignH'), document.getElementById('chk-chatAlignV'), document.getElementById('chk-chatAlignScreen'), document.getElementById('cfg-chatX'), document.getElementById('cfg-chatY'));
+    bindAlignGroup(document.getElementById('chk-cbAlignH'), document.getElementById('chk-cbAlignV'), null, document.getElementById('cfg-cbX'), document.getElementById('cfg-cbY'));
     bindAlignGroup(document.getElementById('chk-qaAlignH'), document.getElementById('chk-qaAlignV'), document.getElementById('chk-qaAlignScreen'), document.getElementById('cfg-qaX'), document.getElementById('cfg-qaY'));
 
     // Vertical
@@ -1388,6 +1609,7 @@ public class CPHInline
     bindAlignGroup(document.getElementById('chk-v_aAlignH'), document.getElementById('chk-v_aAlignV'), document.getElementById('chk-v_aAlignScreen'), document.getElementById('cfg-v_ax'), document.getElementById('cfg-v_ay'));
     bindAlignGroup(document.getElementById('chk-v_soAlignH'), document.getElementById('chk-v_soAlignV'), document.getElementById('chk-v_soAlignScreen'), document.getElementById('cfg-v_soX'), document.getElementById('cfg-v_soY'));
     bindAlignGroup(document.getElementById('chk-v_chatAlignH'), document.getElementById('chk-v_chatAlignV'), document.getElementById('chk-v_chatAlignScreen'), document.getElementById('cfg-v_chatX'), document.getElementById('cfg-v_chatY'));
+    bindAlignGroup(document.getElementById('chk-v_cbAlignH'), document.getElementById('chk-v_cbAlignV'), null, document.getElementById('cfg-v_cbX'), document.getElementById('cfg-v_cbY'));
     bindAlignGroup(document.getElementById('chk-v_qaAlignH'), document.getElementById('chk-v_qaAlignV'), document.getElementById('chk-v_qaAlignScreen'), document.getElementById('cfg-v_qaX'), document.getElementById('cfg-v_qaY'));
     bindAlignGroup(document.getElementById('chk-f5AlignH'), document.getElementById('chk-f5AlignV'), null, document.getElementById('cfg-f5X'), document.getElementById('cfg-f5Y'));
     bindAlignGroup(document.getElementById('chk-v_f5AlignH'), document.getElementById('chk-v_f5AlignV'), null, document.getElementById('cfg-v_f5X'), document.getElementById('cfg-v_f5Y'));
@@ -1451,6 +1673,17 @@ public class CPHInline
         if (document.getElementById(`cfg-${pfx}chatX`)) document.getElementById(`cfg-${pfx}chatX`).disabled = Boolean(d.chatAlignH);
         if (document.getElementById(`cfg-${pfx}chatY`)) document.getElementById(`cfg-${pfx}chatY`).disabled = Boolean(d.chatAlignV);
         updateGeneratedUrlOnly();
+      } else if (d.type === 'CHATBOX_MANIPULATED') {
+        if (document.getElementById(`cfg-${pfx}cbX`)) document.getElementById(`cfg-${pfx}cbX`).value = d.cbX;
+        if (document.getElementById(`cfg-${pfx}cbY`)) document.getElementById(`cfg-${pfx}cbY`).value = d.cbY;
+        if (document.getElementById(`cfg-${pfx}cbScale`)) document.getElementById(`cfg-${pfx}cbScale`).value = d.cbScale;
+        const cbH = document.getElementById(`chk-${pfx}cbAlignH`);
+        const cbV = document.getElementById(`chk-${pfx}cbAlignV`);
+        if (cbH) cbH.checked = Boolean(d.cbAlignH);
+        if (cbV) cbV.checked = Boolean(d.cbAlignV);
+        if (document.getElementById(`cfg-${pfx}cbX`)) document.getElementById(`cfg-${pfx}cbX`).disabled = Boolean(d.cbAlignH);
+        if (document.getElementById(`cfg-${pfx}cbY`)) document.getElementById(`cfg-${pfx}cbY`).disabled = Boolean(d.cbAlignV);
+        updateGeneratedUrlOnly();
       } else if (d.type === 'QA_MANIPULATED') {
         if (document.getElementById(`cfg-${pfx}qaX`)) document.getElementById(`cfg-${pfx}qaX`).value = d.qaX;
         if (document.getElementById(`cfg-${pfx}qaY`)) document.getElementById(`cfg-${pfx}qaY`).value = d.qaY;
@@ -1497,7 +1730,7 @@ public class CPHInline
     });
 
     const DEFAULT_COLORS = { cPink: '#f4acc4', cTeal: '#53d8bf', cPurple: '#a688ff', cYellow: '#fede9a', cStroke: '#171a21', cBorder: '#0b2328', cBg: '#303030' };
-    const CHAT_COLOR_KEYS = ['cMem', 'cMod', 'cView', 'cMsg', 'cChatBg'];
+    const CHAT_COLOR_KEYS = ['cMem', 'cMod', 'cView', 'cMsg', 'cChatBg', 'cbMem', 'cbMod', 'cbView', 'cbMsg', 'cbFill'];
 
     const i18nDict = {
   "en": {
@@ -1531,10 +1764,25 @@ public class CPHInline
     "lbl_palette": "Palette",
     "opt_palette_game": "VI Game",
     "opt_palette_marketing": "VI Marketing",
+    "btn_save_palette": "Save Palette",
+    "btn_delete_palette": "Delete",
+    "ph_palette_name": "Palette name",
+    "desc_custom_palette": "Saved palettes are included in Export and restored on Import.",
     "mod_6_first5": "6. First 5",
     "tab_colors": "Colors",
     "tab_test": "Test",
     "panel_sb_conn": "Streamer.bot Connection",
+    "panel_obs": "OBS Connection",
+    "desc_obs": "Live updates go through the OBS WebSocket. In OBS open Tools, WebSocket Server Settings, enable the server, then enter that port and password here. Each browser source needs the Live URL.",
+    "ph_obs_pass": "Required if OBS has a password",
+    "btn_connect_obs": "Connect OBS",
+    "btn_disconnect_obs": "Disconnect OBS",
+    "obs_pill": "OBS",
+    "obs_status_idle": "Not connected.",
+    "obs_connected_detail": "Connected. Live browser sources update immediately.",
+    "obs_auth_failed": "OBS rejected the password.",
+    "obs_vendor_failed": "Connected, but OBS could not reach the browser sources. Update OBS and try again.",
+    "obs_unreachable": "OBS WebSocket is not reachable. Check the host, port, and that the server is enabled.",
     "lbl_ws_host": "WebSocket IP / Host",
     "lbl_ws_port": "Port",
     "lbl_ws_pass": "WebSocket Password",
@@ -1659,7 +1907,7 @@ public class CPHInline
     "lbl_stroke_color": "Icon / Text Stroke",
     "lbl_border_color": "Card Outer Border",
     "lbl_bg_fill_color": "Card Base Fill",
-    "panel_simulators": "5-Module Simulators",
+    "panel_simulators": "Widget Simulators",
     "btn_sim_walkon": "Walk-On",
     "btn_sim_alert": "Alert",
     "btn_sim_shoutout": "Shoutout",
@@ -1691,12 +1939,52 @@ public class CPHInline
     "mod_2_alerts": "2. Alerts Box",
     "mod_3_shoutout": "3. Shoutout",
     "mod_4_chat": "4. Chat Bar",
+    "tab_chatbox": "Chat Box",
+    "mod_8_chatbox": "8. Chat Box",
+    "panel_cb_pos": "Chat Box Position & Size",
+    "panel_cb_look": "Chat Box Style",
+    "panel_cb_colors": "Chat Box Colors",
+    "desc_cb": "A stacked chat feed, separate from the horizontal bar. Check Chat Box under Modules to Generate, then copy that browser source.",
+    "lbl_box_width": "Box Width",
+    "lbl_box_height": "Box Height",
+    "lbl_theme": "Theme",
+    "lbl_msg_anim": "Message Animation",
+    "lbl_flow": "New Messages",
+    "lbl_msg_side": "Message Side",
+    "lbl_name_pos": "Name Position",
+    "lbl_gap": "Gap (px)",
+    "lbl_radius": "Corner Radius",
+    "lbl_pad": "Padding",
+    "lbl_av_size": "Avatar Size",
+    "lbl_bubble_fill": "Bubble Fill",
+    "lbl_shadow": "Drop Shadow",
+    "lbl_cb_clear": "Clear Box Background",
+    "lbl_cb_bg": "Chat Box Background",
+    "opt_theme_boxes": "Boxes",
+    "opt_theme_bubbles": "Bubbles",
+    "opt_theme_lines": "Lines",
+    "opt_theme_cards": "Cards",
+    "opt_flow_slide_up": "Slide Up",
+    "opt_anim_from_left": "From Left",
+    "opt_anim_from_right": "From Right",
+    "opt_anim_fade": "Fade",
+    "opt_anim_pop": "Pop",
+    "opt_flow_bottom": "Newest at Bottom",
+    "opt_flow_top": "Newest at Top",
+    "opt_cb_left": "Left",
+    "opt_cb_right": "Right",
+    "opt_name_above": "Name Above",
+    "opt_name_inline": "Name Inline",
+    "opt_name_hide": "Hide Name",
+    "btn_sim_chatbox": "Test Chat Box",
     "mod_5_qa": "5. Q&A Toast",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copy",
+    "btn_copy_live": "Live",
+    "desc_live_url": "Live copies add &live=1. Paste that URL into each OBS browser source once. Connect OBS above and leave this page open. Changes then show up in those sources immediately. Pin Visible shows the hidden widgets while you tune.",
     "btn_copied": "Copied",
-    "lbl_pin_preview": "Pin Visible (Setup Mode) — Drag any module to move • Drag corner handle to scale",
+    "lbl_pin_preview": "Pin Visible — Drag to move • Corner to scale. Live OBS sources show Walk-On, Alerts, Shoutout, Q&A, First 5, and Goals while this is on.",
     "btn_view_dual": "Dual Preview",
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
@@ -1792,9 +2080,18 @@ public class CPHInline
     "desc_install_video": "A full walkthrough of the install: extract the zip, import Streamer.bot, and add the OBS browser sources.",
     "btn_install_video": "Watch the Install Guide",
     "opt_bg_none_only": "None (Solid Fill Only)",
-    "desc_bg_auto": "Backgrounds load from assets/backgrounds/. Add or remove images and update backgrounds.json to refresh the list.",
+    "desc_bg_auto": "Built-in backgrounds come from assets/backgrounds/. Upload your own below. The overlay URL stores that file path, and Export saves the image so Import can restore it.",
+    "btn_upload_bg": "Upload Background",
+    "lbl_msg_bg": "Message Background",
+    "lbl_role_accent": "Role Accent",
+    "desc_role_accent": "Role Accent paints each message border with that viewer's color: member, moderator, or viewer.",
+    "status_bg_saved": "Background saved. It is now in every background list.",
+    "status_bg_failed": "Could not save. Run the page with npm run dev.",
+    "status_bg_type": "Use a PNG, JPG, WEBP, or GIF.",
+    "status_bg_big": "Image must be under 4 MB.",
     "opt_bg_global": "Use Global Background",
     "opt_bg_none": "None (Solid Fill)",
+    "opt_bg_frost": "Frosted Glass",
     "lbl_card_bg": "Card Background",
     "lbl_alert_bg": "Alerts Header Background",
     "desc_alert_bg": "Applies to the top section (avatar + title + name) only.",
@@ -1918,6 +2215,17 @@ public class CPHInline
     "tab_colors": "Cores",
     "tab_test": "Teste",
     "panel_sb_conn": "Conexão Streamer.bot",
+    "panel_obs": "Conexão OBS",
+    "desc_obs": "As atualizações ao vivo passam pelo WebSocket do OBS. No OBS abra Ferramentas, Configurações do servidor WebSocket, ative o servidor e use aqui a mesma porta e senha. Cada fonte de navegador precisa da URL Ao vivo.",
+    "ph_obs_pass": "Obrigatória se o OBS tiver senha",
+    "btn_connect_obs": "Conectar OBS",
+    "btn_disconnect_obs": "Desconectar OBS",
+    "obs_pill": "OBS",
+    "obs_status_idle": "Não conectado.",
+    "obs_connected_detail": "Conectado. As fontes ao vivo atualizam na hora.",
+    "obs_auth_failed": "O OBS recusou a senha.",
+    "obs_vendor_failed": "Conectado, mas o OBS não alcançou as fontes de navegador. Atualize o OBS e tente de novo.",
+    "obs_unreachable": "WebSocket do OBS inacessível. Confira o host, a porta e se o servidor está ativo.",
     "lbl_ws_host": "IP / Host do WebSocket",
     "lbl_ws_port": "Porta",
     "lbl_ws_pass": "Senha do WebSocket",
@@ -2042,7 +2350,7 @@ public class CPHInline
     "lbl_stroke_color": "Contorno de Ícone / Texto",
     "lbl_border_color": "Borda Externa do Cartão",
     "lbl_bg_fill_color": "Preenchimento Base do Cartão",
-    "panel_simulators": "Simuladores de 5 Módulos",
+    "panel_simulators": "Simuladores dos Widgets",
     "btn_sim_walkon": "Entrada",
     "btn_sim_alert": "Alerta",
     "btn_sim_shoutout": "Destaque",
@@ -2074,12 +2382,52 @@ public class CPHInline
     "mod_2_alerts": "2. Caixa de Alertas",
     "mod_3_shoutout": "3. Destaque",
     "mod_4_chat": "4. Barra de Chat",
+    "tab_chatbox": "Caixa",
+    "mod_8_chatbox": "8. Caixa de Chat",
+    "panel_cb_pos": "Posição e Tamanho da Caixa",
+    "panel_cb_look": "Estilo da Caixa de Chat",
+    "panel_cb_colors": "Cores da Caixa de Chat",
+    "desc_cb": "Um chat empilhado, separado da barra horizontal. Marque Caixa de Chat em Módulos para Gerar e copie essa fonte.",
+    "lbl_box_width": "Largura",
+    "lbl_box_height": "Altura",
+    "lbl_theme": "Tema",
+    "lbl_msg_anim": "Animação da Mensagem",
+    "lbl_flow": "Mensagens Novas",
+    "lbl_msg_side": "Lado da Mensagem",
+    "lbl_name_pos": "Posição do Nome",
+    "lbl_gap": "Espaço (px)",
+    "lbl_radius": "Raio do Canto",
+    "lbl_pad": "Preenchimento",
+    "lbl_av_size": "Tamanho do Avatar",
+    "lbl_bubble_fill": "Fundo do Balão",
+    "lbl_shadow": "Sombra",
+    "lbl_cb_clear": "Fundo da Caixa Transparente",
+    "lbl_cb_bg": "Fundo da Caixa de Chat",
+    "opt_theme_boxes": "Caixas",
+    "opt_theme_bubbles": "Balões",
+    "opt_theme_lines": "Linhas",
+    "opt_theme_cards": "Cartões",
+    "opt_flow_slide_up": "Subir",
+    "opt_anim_from_left": "Da Esquerda",
+    "opt_anim_from_right": "Da Direita",
+    "opt_anim_fade": "Esmaecer",
+    "opt_anim_pop": "Estourar",
+    "opt_flow_bottom": "Mais nova embaixo",
+    "opt_flow_top": "Mais nova em cima",
+    "opt_cb_left": "Esquerda",
+    "opt_cb_right": "Direita",
+    "opt_name_above": "Nome acima",
+    "opt_name_inline": "Nome na linha",
+    "opt_name_hide": "Ocultar nome",
+    "btn_sim_chatbox": "Testar Caixa",
     "mod_5_qa": "5. Toast de Pergunta",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copiar",
+    "btn_copy_live": "Ao vivo",
+    "desc_live_url": "As cópias Ao vivo adicionam &live=1. Cole essa URL em cada fonte de navegador do OBS uma vez. Conecte o OBS acima e deixe esta página aberta. As mudanças aparecem nessas fontes na hora. Fixar visível mostra os widgets ocultos enquanto você ajusta.",
     "btn_copied": "Copiado",
-    "lbl_pin_preview": "Fixar Visível (Modo de Configuração) — Arraste qualquer módulo para mover • Arraste a alça do canto para escalar",
+    "lbl_pin_preview": "Fixar visível — Arraste para mover • Canto para escalar. As fontes ao vivo no OBS mostram Entrada, Alertas, Destaque, Perguntas, Primeiros 5 e Metas enquanto isto estiver ligado.",
     "btn_view_dual": "Prévia Dupla",
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
@@ -2126,6 +2474,10 @@ public class CPHInline
     "lbl_palette": "Paleta",
     "opt_palette_game": "VI Game",
     "opt_palette_marketing": "VI Marketing",
+    "btn_save_palette": "Salvar Paleta",
+    "btn_delete_palette": "Excluir",
+    "ph_palette_name": "Nome da paleta",
+    "desc_custom_palette": "As paletas salvas vão no Export e voltam no Import.",
     "lbl_f5_height": "Altura do Contêiner (px)",
     "lbl_f5_in_dir": "Direção de Entrada",
     "lbl_f5_in_style": "Estilo de Entrada",
@@ -2186,9 +2538,18 @@ public class CPHInline
     "desc_install_video": "Um passo a passo completo: extrair o zip, importar o Streamer.bot e adicionar as browser sources no OBS.",
     "btn_install_video": "Assistir ao guia",
     "opt_bg_none_only": "Nenhum (Só Preenchimento)",
-    "desc_bg_auto": "Os fundos vêm de assets/backgrounds/. Adicione ou remova imagens e atualize backgrounds.json para recarregar a lista.",
+    "desc_bg_auto": "Os fundos prontos vêm de assets/backgrounds/. Envie os seus abaixo. A URL da overlay guarda esse caminho, e a Exportação salva a imagem para a Importação restaurar.",
+    "btn_upload_bg": "Enviar Fundo",
+    "lbl_msg_bg": "Fundo da Mensagem",
+    "lbl_role_accent": "Cor por Cargo",
+    "desc_role_accent": "Cor por Cargo pinta a borda de cada mensagem com a cor desse espectador: membro, moderador ou viewer.",
+    "status_bg_saved": "Fundo salvo. Ele já aparece em todas as listas.",
+    "status_bg_failed": "Não foi possível salvar. Abra a página com npm run dev.",
+    "status_bg_type": "Use PNG, JPG, WEBP ou GIF.",
+    "status_bg_big": "A imagem deve ter menos de 4 MB.",
     "opt_bg_global": "Usar Fundo Global",
     "opt_bg_none": "Nenhum (Preenchimento)",
+    "opt_bg_frost": "Vidro Fosco",
     "lbl_card_bg": "Fundo do Cartão",
     "lbl_alert_bg": "Fundo do Cabeçalho dos Alertas",
     "desc_alert_bg": "Vale só para a parte de cima (avatar + título + nome).",
@@ -2312,6 +2673,17 @@ public class CPHInline
     "tab_first5": "First 5",
     "mod_6_first5": "6. Primeros 5",
     "panel_sb_conn": "Conexión con Streamer.bot",
+    "panel_obs": "Conexión OBS",
+    "desc_obs": "Las actualizaciones en vivo van por el WebSocket de OBS. En OBS abre Herramientas, Ajustes del servidor WebSocket, activa el servidor y usa aquí ese puerto y contraseña. Cada fuente de navegador necesita la URL En vivo.",
+    "ph_obs_pass": "Obligatoria si OBS tiene contraseña",
+    "btn_connect_obs": "Conectar OBS",
+    "btn_disconnect_obs": "Desconectar OBS",
+    "obs_pill": "OBS",
+    "obs_status_idle": "Sin conexión.",
+    "obs_connected_detail": "Conectado. Las fuentes en vivo se actualizan al instante.",
+    "obs_auth_failed": "OBS rechazó la contraseña.",
+    "obs_vendor_failed": "Conectado, pero OBS no pudo llegar a las fuentes de navegador. Actualiza OBS e inténtalo de nuevo.",
+    "obs_unreachable": "No se alcanza el WebSocket de OBS. Revisa el host, el puerto y que el servidor esté activo.",
     "lbl_ws_host": "IP / Host de WebSocket",
     "lbl_ws_port": "Puerto",
     "lbl_ws_pass": "Contraseña de WebSocket",
@@ -2436,7 +2808,7 @@ public class CPHInline
     "lbl_stroke_color": "Trazo de Icono / Texto",
     "lbl_border_color": "Borde Exterior de Tarjeta",
     "lbl_bg_fill_color": "Relleno Base de Tarjeta",
-    "panel_simulators": "Simuladores de 5 Módulos",
+    "panel_simulators": "Simuladores de widgets",
     "btn_sim_walkon": "Tarjeta",
     "btn_sim_alert": "Alerta",
     "btn_sim_shoutout": "Destacado",
@@ -2468,12 +2840,52 @@ public class CPHInline
     "mod_2_alerts": "2. Caja de Alertas",
     "mod_3_shoutout": "3. Destacado",
     "mod_4_chat": "4. Barra de Chat",
+    "tab_chatbox": "Caja",
+    "mod_8_chatbox": "8. Caja de Chat",
+    "panel_cb_pos": "Posición y Tamaño de la Caja",
+    "panel_cb_look": "Estilo de la Caja de Chat",
+    "panel_cb_colors": "Colores de la Caja de Chat",
+    "desc_cb": "Un chat apilado, aparte de la barra horizontal. Marca Caja de Chat en Módulos para generar y copia esa fuente.",
+    "lbl_box_width": "Ancho",
+    "lbl_box_height": "Alto",
+    "lbl_theme": "Tema",
+    "lbl_msg_anim": "Animación del Mensaje",
+    "lbl_flow": "Mensajes Nuevos",
+    "lbl_msg_side": "Lado del Mensaje",
+    "lbl_name_pos": "Posición del Nombre",
+    "lbl_gap": "Espacio (px)",
+    "lbl_radius": "Radio de Esquina",
+    "lbl_pad": "Relleno",
+    "lbl_av_size": "Tamaño del Avatar",
+    "lbl_bubble_fill": "Fondo del Globo",
+    "lbl_shadow": "Sombra",
+    "lbl_cb_clear": "Fondo de la Caja Transparente",
+    "lbl_cb_bg": "Fondo de la Caja de Chat",
+    "opt_theme_boxes": "Cajas",
+    "opt_theme_bubbles": "Globos",
+    "opt_theme_lines": "Líneas",
+    "opt_theme_cards": "Tarjetas",
+    "opt_flow_slide_up": "Subir",
+    "opt_anim_from_left": "Desde la Izquierda",
+    "opt_anim_from_right": "Desde la Derecha",
+    "opt_anim_fade": "Fundido",
+    "opt_anim_pop": "Estallido",
+    "opt_flow_bottom": "La nueva abajo",
+    "opt_flow_top": "La nueva arriba",
+    "opt_cb_left": "Izquierda",
+    "opt_cb_right": "Derecha",
+    "opt_name_above": "Nombre arriba",
+    "opt_name_inline": "Nombre en línea",
+    "opt_name_hide": "Ocultar nombre",
+    "btn_sim_chatbox": "Probar Caja",
     "mod_5_qa": "5. Toast de P&R",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copiar",
+    "btn_copy_live": "En vivo",
+    "desc_live_url": "Las copias En vivo añaden &live=1. Pega esa URL en cada fuente de navegador de OBS una vez. Conecta OBS arriba y deja esta página abierta. Los cambios aparecen en esas fuentes al instante. Fijar visible muestra los widgets ocultos mientras ajustas.",
     "btn_copied": "Copiado",
-    "lbl_pin_preview": "Fijar Visible (Modo Ajuste) — Arrastra cualquier módulo para mover • Arrastra la esquina para escalar",
+    "lbl_pin_preview": "Fijar visible — Arrastra para mover • Esquina para escalar. Las fuentes en vivo de OBS muestran Entrada, Alertas, Destacado, Preguntas, Primeros 5 y Metas mientras esto esté activo.",
     "btn_view_dual": "Vista Doble",
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
@@ -2520,6 +2932,10 @@ public class CPHInline
     "lbl_palette": "Paleta",
     "opt_palette_game": "VI Game",
     "opt_palette_marketing": "VI Marketing",
+    "btn_save_palette": "Guardar paleta",
+    "btn_delete_palette": "Eliminar",
+    "ph_palette_name": "Nombre de la paleta",
+    "desc_custom_palette": "Las paletas guardadas van en Exportar y vuelven al Importar.",
     "lbl_f5_height": "Alto del Contenedor (px)",
     "lbl_f5_in_dir": "Dirección de Entrada",
     "lbl_f5_in_style": "Estilo de Entrada",
@@ -2580,9 +2996,18 @@ public class CPHInline
     "desc_install_video": "Una guía completa: extraer el zip, importar Streamer.bot y añadir las browser sources en OBS.",
     "btn_install_video": "Ver la guía",
     "opt_bg_none_only": "Ninguno (Solo Relleno)",
-    "desc_bg_auto": "Los fondos salen de assets/backgrounds/. Añade o quita imágenes y actualiza backgrounds.json para recargar la lista.",
+    "desc_bg_auto": "Los fondos incluidos salen de assets/backgrounds/. Sube los tuyos abajo. La URL del overlay guarda esa ruta, y Exportar incluye la imagen para que Importar la restaure.",
+    "btn_upload_bg": "Subir Fondo",
+    "lbl_msg_bg": "Fondo del Mensaje",
+    "lbl_role_accent": "Acento por Rol",
+    "desc_role_accent": "Acento por Rol pinta el borde de cada mensaje con el color de ese espectador: miembro, moderador o viewer.",
+    "status_bg_saved": "Fondo guardado. Ya está en todas las listas.",
+    "status_bg_failed": "No se pudo guardar. Abre la página con npm run dev.",
+    "status_bg_type": "Usa PNG, JPG, WEBP o GIF.",
+    "status_bg_big": "La imagen debe pesar menos de 4 MB.",
     "opt_bg_global": "Usar Fondo Global",
     "opt_bg_none": "Ninguno (Relleno Sólido)",
+    "opt_bg_frost": "Vidrio esmerilado",
     "lbl_card_bg": "Fondo de la Tarjeta",
     "lbl_alert_bg": "Fondo del Encabezado de Alertas",
     "desc_alert_bg": "Solo aplica a la parte superior (avatar + título + nombre).",
@@ -2715,8 +3140,23 @@ public class CPHInline
     "lbl_palette": "Palette",
     "opt_palette_game": "VI Game",
     "opt_palette_marketing": "VI Marketing",
+    "btn_save_palette": "Enregistrer",
+    "btn_delete_palette": "Supprimer",
+    "ph_palette_name": "Nom de la palette",
+    "desc_custom_palette": "Les palettes enregistrées partent avec l'export et reviennent à l'import.",
     "mod_6_first5": "6. First 5",
     "panel_sb_conn": "Connexion Streamer.bot",
+    "panel_obs": "Connexion OBS",
+    "desc_obs": "Les mises à jour en direct passent par le WebSocket OBS. Dans OBS, ouvre Outils, Paramètres du serveur WebSocket, active le serveur, puis saisis ici le port et le mot de passe. Chaque source navigateur doit utiliser l'URL Direct.",
+    "ph_obs_pass": "Requis si OBS a un mot de passe",
+    "btn_connect_obs": "Connecter OBS",
+    "btn_disconnect_obs": "Déconnecter OBS",
+    "obs_pill": "OBS",
+    "obs_status_idle": "Non connecté.",
+    "obs_connected_detail": "Connecté. Les sources en direct se mettent à jour tout de suite.",
+    "obs_auth_failed": "OBS a refusé le mot de passe.",
+    "obs_vendor_failed": "Connecté, mais OBS n'a pas pu joindre les sources navigateur. Mets OBS à jour, puis réessaie.",
+    "obs_unreachable": "WebSocket OBS injoignable. Vérifie l'hôte, le port, et que le serveur est activé.",
     "lbl_ws_host": "IP / Hôte WebSocket",
     "lbl_ws_port": "Port",
     "lbl_ws_pass": "Mot de passe WebSocket",
@@ -2841,7 +3281,7 @@ public class CPHInline
     "lbl_stroke_color": "Contour Icône / Texte",
     "lbl_border_color": "Bordure Externe de Carte",
     "lbl_bg_fill_color": "Fond de Base de Carte",
-    "panel_simulators": "Simulateurs des 5 Modules",
+    "panel_simulators": "Simulateurs des widgets",
     "btn_sim_walkon": "Carte",
     "btn_sim_alert": "Alerte",
     "btn_sim_shoutout": "Dédicace",
@@ -2873,12 +3313,52 @@ public class CPHInline
     "mod_2_alerts": "2. Boîte d'Alertes",
     "mod_3_shoutout": "3. Dédicace",
     "mod_4_chat": "4. Barre de Chat",
+    "tab_chatbox": "Boîte",
+    "mod_8_chatbox": "8. Boîte de Chat",
+    "panel_cb_pos": "Position et Taille de la Boîte",
+    "panel_cb_look": "Style de la Boîte de Chat",
+    "panel_cb_colors": "Couleurs de la Boîte de Chat",
+    "desc_cb": "Un chat empilé, distinct de la barre horizontale. Coche Boîte de Chat dans Modules à générer, puis copie cette source.",
+    "lbl_box_width": "Largeur",
+    "lbl_box_height": "Hauteur",
+    "lbl_theme": "Thème",
+    "lbl_msg_anim": "Animation du Message",
+    "lbl_flow": "Nouveaux Messages",
+    "lbl_msg_side": "Côté du Message",
+    "lbl_name_pos": "Position du Nom",
+    "lbl_gap": "Écart (px)",
+    "lbl_radius": "Rayon des Coins",
+    "lbl_pad": "Marge interne",
+    "lbl_av_size": "Taille de l'Avatar",
+    "lbl_bubble_fill": "Fond de la Bulle",
+    "lbl_shadow": "Ombre",
+    "lbl_cb_clear": "Fond de Boîte Transparent",
+    "lbl_cb_bg": "Fond de la Boîte de Chat",
+    "opt_theme_boxes": "Boîtes",
+    "opt_theme_bubbles": "Bulles",
+    "opt_theme_lines": "Lignes",
+    "opt_theme_cards": "Cartes",
+    "opt_flow_slide_up": "Glisser vers le haut",
+    "opt_anim_from_left": "Depuis la gauche",
+    "opt_anim_from_right": "Depuis la droite",
+    "opt_anim_fade": "Fondu",
+    "opt_anim_pop": "Pop",
+    "opt_flow_bottom": "Plus récent en bas",
+    "opt_flow_top": "Plus récent en haut",
+    "opt_cb_left": "Gauche",
+    "opt_cb_right": "Droite",
+    "opt_name_above": "Nom au-dessus",
+    "opt_name_inline": "Nom sur la ligne",
+    "opt_name_hide": "Masquer le nom",
+    "btn_sim_chatbox": "Tester la Boîte",
     "mod_5_qa": "5. Toast Q&R",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copier",
+    "btn_copy_live": "Direct",
+    "desc_live_url": "Les copies Direct ajoutent &live=1. Colle cette URL dans chaque source navigateur OBS une seule fois. Connecte OBS ci-dessus et garde cette page ouverte. Les changements apparaissent tout de suite. Épingler affiche les widgets cachés pendant le réglage.",
     "btn_copied": "Copié",
-    "lbl_pin_preview": "Épingler Visible (Mode Configuration) — Glissez un module pour le déplacer • Glissez le coin pour redimensionner",
+    "lbl_pin_preview": "Épingler — Glisser pour déplacer • Coin pour redimensionner. Les sources OBS en direct affichent l'entrée, les alertes, le shoutout, les questions, le First 5 et les objectifs tant que c'est coché.",
     "btn_view_dual": "Double Aperçu",
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertical",
@@ -2974,9 +3454,18 @@ public class CPHInline
     "desc_install_video": "Le pas à pas complet : extraire le zip, importer Streamer.bot et ajouter les browser sources dans OBS.",
     "btn_install_video": "Voir le guide",
     "opt_bg_none_only": "Aucun (Remplissage seul)",
-    "desc_bg_auto": "Les fonds viennent de assets/backgrounds/. Ajoute ou retire des images et mets à jour backgrounds.json pour rafraîchir la liste.",
+    "desc_bg_auto": "Les fonds fournis viennent de assets/backgrounds/. Envoie les tiens ci-dessous. L'URL de l'overlay garde ce chemin, et l'export enregistre l'image pour que l'import la restaure.",
+    "btn_upload_bg": "Envoyer un fond",
+    "lbl_msg_bg": "Fond du message",
+    "lbl_role_accent": "Accent par rôle",
+    "desc_role_accent": "L'accent par rôle colore le bord de chaque message avec la couleur de ce viewer : membre, modérateur ou viewer.",
+    "status_bg_saved": "Fond enregistré. Il est dans toutes les listes.",
+    "status_bg_failed": "Enregistrement impossible. Ouvre la page avec npm run dev.",
+    "status_bg_type": "Utilise un PNG, JPG, WEBP ou GIF.",
+    "status_bg_big": "L'image doit faire moins de 4 Mo.",
     "opt_bg_global": "Utiliser le Fond Global",
     "opt_bg_none": "Aucun (Remplissage)",
+    "opt_bg_frost": "Verre dépoli",
     "lbl_card_bg": "Fond de la Carte",
     "lbl_alert_bg": "Fond de l’En-tête des Alertes",
     "desc_alert_bg": "S’applique seulement au haut (avatar + titre + nom).",
@@ -3109,8 +3598,23 @@ public class CPHInline
     "lbl_palette": "Palette",
     "opt_palette_game": "VI Game",
     "opt_palette_marketing": "VI Marketing",
+    "btn_save_palette": "Palette speichern",
+    "btn_delete_palette": "Löschen",
+    "ph_palette_name": "Palettenname",
+    "desc_custom_palette": "Gespeicherte Paletten sind im Export enthalten und kommen beim Import zurück.",
     "mod_6_first5": "6. First 5",
     "panel_sb_conn": "Streamer.bot-Verbindung",
+    "panel_obs": "OBS-Verbindung",
+    "desc_obs": "Live-Updates laufen über den OBS-WebSocket. In OBS unter Werkzeuge, WebSocket-Servereinstellungen den Server aktivieren und hier denselben Port und dasselbe Passwort eintragen. Jede Browserquelle braucht die Live-URL.",
+    "ph_obs_pass": "Nötig, wenn OBS ein Passwort hat",
+    "btn_connect_obs": "OBS verbinden",
+    "btn_disconnect_obs": "OBS trennen",
+    "obs_pill": "OBS",
+    "obs_status_idle": "Nicht verbunden.",
+    "obs_connected_detail": "Verbunden. Live-Browserquellen aktualisieren sich sofort.",
+    "obs_auth_failed": "OBS hat das Passwort abgelehnt.",
+    "obs_vendor_failed": "Verbunden, aber OBS erreicht die Browserquellen nicht. OBS aktualisieren und erneut versuchen.",
+    "obs_unreachable": "OBS-WebSocket nicht erreichbar. Host, Port und aktivierten Server prüfen.",
     "lbl_ws_host": "WebSocket-IP / Host",
     "lbl_ws_port": "Port",
     "lbl_ws_pass": "WebSocket-Passwort",
@@ -3235,7 +3739,7 @@ public class CPHInline
     "lbl_stroke_color": "Symbol- / Textkontur",
     "lbl_border_color": "Äußerer Kartenrahmen",
     "lbl_bg_fill_color": "Karten-Grundfüllung",
-    "panel_simulators": "5-Modul-Simulatoren",
+    "panel_simulators": "Widget-Simulatoren",
     "btn_sim_walkon": "Karte",
     "btn_sim_alert": "Alert",
     "btn_sim_shoutout": "Shoutout",
@@ -3267,12 +3771,52 @@ public class CPHInline
     "mod_2_alerts": "2. Alert-Box",
     "mod_3_shoutout": "3. Shoutout",
     "mod_4_chat": "4. Chatleiste",
+    "tab_chatbox": "Chatbox",
+    "mod_8_chatbox": "8. Chatbox",
+    "panel_cb_pos": "Chatbox Position & Größe",
+    "panel_cb_look": "Chatbox-Stil",
+    "panel_cb_colors": "Chatbox-Farben",
+    "desc_cb": "Ein gestapelter Chat, getrennt von der horizontalen Leiste. Chatbox unter Zu erzeugende Module aktivieren und diese Browserquelle kopieren.",
+    "lbl_box_width": "Breite",
+    "lbl_box_height": "Höhe",
+    "lbl_theme": "Thema",
+    "lbl_msg_anim": "Nachrichtenanimation",
+    "lbl_flow": "Neue Nachrichten",
+    "lbl_msg_side": "Nachrichtenseite",
+    "lbl_name_pos": "Namensposition",
+    "lbl_gap": "Abstand (px)",
+    "lbl_radius": "Eckenradius",
+    "lbl_pad": "Innenabstand",
+    "lbl_av_size": "Avatargröße",
+    "lbl_bubble_fill": "Blasenfüllung",
+    "lbl_shadow": "Schatten",
+    "lbl_cb_clear": "Boxhintergrund ausblenden",
+    "lbl_cb_bg": "Chatbox-Hintergrund",
+    "opt_theme_boxes": "Boxen",
+    "opt_theme_bubbles": "Blasen",
+    "opt_theme_lines": "Linien",
+    "opt_theme_cards": "Karten",
+    "opt_flow_slide_up": "Nach oben",
+    "opt_anim_from_left": "Von links",
+    "opt_anim_from_right": "Von rechts",
+    "opt_anim_fade": "Überblenden",
+    "opt_anim_pop": "Pop",
+    "opt_flow_bottom": "Neueste unten",
+    "opt_flow_top": "Neueste oben",
+    "opt_cb_left": "Links",
+    "opt_cb_right": "Rechts",
+    "opt_name_above": "Name darüber",
+    "opt_name_inline": "Name in der Zeile",
+    "opt_name_hide": "Name ausblenden",
+    "btn_sim_chatbox": "Chatbox testen",
     "mod_5_qa": "5. F&A-Toast",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertikal",
     "btn_copy": "Kopieren",
+    "btn_copy_live": "Live",
+    "desc_live_url": "Live-Kopien fügen &live=1 hinzu. Füge diese URL einmal in jede OBS-Browserquelle ein. Verbinde OBS oben und lass diese Seite offen. Änderungen erscheinen dort sofort. Sichtbar anheften zeigt die versteckten Widgets beim Feintuning.",
     "btn_copied": "Kopiert",
-    "lbl_pin_preview": "Sichtbar anheften (Einrichtungsmodus) — Modul ziehen zum Bewegen • Ecke ziehen zum Skalieren",
+    "lbl_pin_preview": "Sichtbar anheften — Ziehen zum Bewegen • Ecke zum Skalieren. Live-OBS-Quellen zeigen Walk-On, Alerts, Shoutout, Q&A, First 5 und Ziele, solange dies aktiv ist.",
     "btn_view_dual": "Doppelvorschau",
     "btn_view_horiz": "Horizontal",
     "btn_view_vert": "Vertikal",
@@ -3368,9 +3912,18 @@ public class CPHInline
     "desc_install_video": "Die komplette Anleitung: ZIP entpacken, Streamer.bot importieren und die Browser-Quellen in OBS anlegen.",
     "btn_install_video": "Anleitung ansehen",
     "opt_bg_none_only": "Keins (Nur Füllung)",
-    "desc_bg_auto": "Hintergründe kommen aus assets/backgrounds/. Bilder hinzufügen oder entfernen und backgrounds.json aktualisieren, um die Liste neu zu laden.",
+    "desc_bg_auto": "Mitgelieferte Hintergründe kommen aus assets/backgrounds/. Eigene Bilder unten hochladen. Die Overlay-URL speichert diesen Pfad, und der Export sichert das Bild für den Import.",
+    "btn_upload_bg": "Hintergrund hochladen",
+    "lbl_msg_bg": "Nachrichten-Hintergrund",
+    "lbl_role_accent": "Rollenfarbe",
+    "desc_role_accent": "Rollenfarbe färbt den Rand jeder Nachricht in der Farbe dieses Zuschauers: Mitglied, Moderator oder Zuschauer.",
+    "status_bg_saved": "Hintergrund gespeichert. Er steht jetzt in jeder Liste.",
+    "status_bg_failed": "Speichern fehlgeschlagen. Seite mit npm run dev öffnen.",
+    "status_bg_type": "PNG, JPG, WEBP oder GIF verwenden.",
+    "status_bg_big": "Das Bild muss unter 4 MB bleiben.",
     "opt_bg_global": "Globalen Hintergrund nutzen",
     "opt_bg_none": "Keiner (Füllung)",
+    "opt_bg_frost": "Milchglas",
     "lbl_card_bg": "Karten-Hintergrund",
     "lbl_alert_bg": "Hintergrund der Alert-Kopfzeile",
     "desc_alert_bg": "Gilt nur für den oberen Teil (Avatar + Titel + Name).",
@@ -3656,14 +4209,94 @@ public class CPHInline
       game: { cPink: '#f4acc4', cTeal: '#53d8bf', cPurple: '#a688ff', cYellow: '#fede9a', cStroke: '#171a21', cBorder: '#0b2328', cBg: '#303030' },
       marketing: { cPink: '#f74aa9', cTeal: '#28bad9', cPurple: '#375fcf', cYellow: '#ff9d49', cStroke: '#28bad9', cBorder: '#0b2328', cBg: '#1a1a1a' }
     };
-    document.getElementById('cfg-palette')?.addEventListener('change', (e) => {
-      const pal = PALETTES[e.target.value] || PALETTES.game;
-      Object.entries(pal).forEach(([key, val]) => {
+    const PALETTE_KEYS = Object.keys(DEFAULT_COLORS);
+    const PALETTE_STORE = 'gta-custom-palettes-v1';
+    let customPalettes = [];
+
+    function isValidPalette(p) {
+      return p && typeof p.id === 'string' && p.id.startsWith('custom:') && typeof p.name === 'string' && p.name.trim() && p.colors && typeof p.colors === 'object';
+    }
+    function persistPalettes() {
+      try { localStorage.setItem(PALETTE_STORE, JSON.stringify(customPalettes)); } catch (e) {}
+    }
+    function paletteById(id) {
+      if (PALETTES[id]) return PALETTES[id];
+      const found = customPalettes.find(p => p.id === id);
+      return found ? found.colors : null;
+    }
+    function applyPaletteColors(colors) {
+      if (!colors) return;
+      PALETTE_KEYS.forEach(key => {
+        const val = colors[key];
+        if (!/^#[0-9A-Fa-f]{6}$/.test(String(val || ''))) return;
         const picker = document.getElementById(`picker-${key}`);
         const input = document.getElementById(`cfg-${key}`);
         if (picker) picker.value = val;
         if (input) input.value = val;
       });
+    }
+    function readPaletteColors() {
+      const colors = {};
+      PALETTE_KEYS.forEach(key => {
+        colors[key] = document.getElementById(`cfg-${key}`)?.value || DEFAULT_COLORS[key];
+      });
+      return colors;
+    }
+    function renderPaletteSelect(keepValue) {
+      const sel = document.getElementById('cfg-palette');
+      if (!sel) return;
+      const keep = keepValue !== undefined ? keepValue : sel.value;
+      Array.from(sel.options).forEach(opt => {
+        if (String(opt.value).startsWith('custom:')) opt.remove();
+      });
+      customPalettes.forEach(p => {
+        const opt = document.createElement('option');
+        opt.value = p.id;
+        opt.textContent = p.name;
+        sel.appendChild(opt);
+      });
+      if (keep && Array.from(sel.options).some(o => o.value === keep)) sel.value = keep;
+    }
+    try {
+      const savedPalettes = JSON.parse(localStorage.getItem(PALETTE_STORE) || '[]');
+      if (Array.isArray(savedPalettes)) customPalettes = savedPalettes.filter(isValidPalette);
+    } catch (e) {}
+    renderPaletteSelect();
+
+    document.getElementById('cfg-palette')?.addEventListener('change', (e) => {
+      applyPaletteColors(paletteById(e.target.value) || PALETTES.game);
+      syncLiveConfig();
+    });
+    document.getElementById('btn-save-palette')?.addEventListener('click', () => {
+      const name = (document.getElementById('palette-name')?.value || '').trim();
+      if (!name) return;
+      const colors = readPaletteColors();
+      let entry = customPalettes.find(p => p.name.toLowerCase() === name.toLowerCase());
+      if (entry) {
+        entry.name = name;
+        entry.colors = colors;
+      } else {
+        let slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 40) || 'palette';
+        let id = 'custom:' + slug;
+        let n = 2;
+        while (customPalettes.some(p => p.id === id)) id = 'custom:' + slug + '-' + (n++);
+        entry = { id, name, colors };
+        customPalettes.push(entry);
+      }
+      persistPalettes();
+      renderPaletteSelect(entry.id);
+      const sel = document.getElementById('cfg-palette');
+      if (sel) sel.value = entry.id;
+      syncLiveConfig();
+    });
+    document.getElementById('btn-delete-palette')?.addEventListener('click', () => {
+      const sel = document.getElementById('cfg-palette');
+      if (!sel || !String(sel.value).startsWith('custom:')) return;
+      customPalettes = customPalettes.filter(p => p.id !== sel.value);
+      persistPalettes();
+      renderPaletteSelect('game');
+      sel.value = 'game';
+      applyPaletteColors(PALETTES.game);
       syncLiveConfig();
     });
 
@@ -3797,6 +4430,9 @@ public class CPHInline
       'chatFS','chatMax','chatHide',
       'cMem','cMod','cView','cMsg','cChatBg','chatBgOp','chatAccent',
       'chatPrefixes','chatIgUsers',
+      'cbX','cbY','cbScale','cbW','cbH','v_cbX','v_cbY','v_cbScale','v_cbW','v_cbH',
+      'cbStyle','cbAnim','cbFlow','cbSide','cbName','cbFS','cbMax','cbHide','cbGap','cbRadius','cbPad','cbAvSize',
+      'cb-bg','cb-msg-bg','cbAccent','cbMem','cbMod','cbView','cbMsg','cbFill','cbFillOp','cbPrefixes','cbIgUsers',
       'qaX','qaY','qaScale','v_qaX','v_qaY','v_qaScale',
       'qaDur','qaAnim','qaColor','qaTitle','qaVar','qaEvent',
       'f5X','f5Y','v_f5X','v_f5Y','f5GroupX','f5GroupY','v_f5GroupX','v_f5GroupY','f5Size','v_f5Size','f5InDir','f5InStyle','f5OutDir','f5OutStyle','f5Shape','f5Gap','v_f5Gap','f5Width','v_f5Width','f5Height','v_f5Height','f5Align','f5EndDelay','f5SfxVol','f5Color1','f5Color2','f5Color3','f5Color4','f5Color5','f5Event','goalsX','goalsY','goalsScale','v_goalsX','v_goalsY','v_goalsScale','goalsMode','goalsShowDur','goalsGapDur','goalsRepeatDelay','goalsAnimIn','goalsAnimOut','goalsColor','goals-bg','goalsLikesTitle','goalsLikesCount','goalsLikesGoal','goalsMembersTitle','goalsMembersCount','goalsMembersGoal','goalsJewelsTitle','goalsJewelsCount','goalsJewelsGoal','goalsSubsTitle','goalsSubsCount','goalsSubsGoal','goalsGiftsTitle','goalsGiftsCount','goalsGiftsGoal','goalsSupersTitle','goalsSupersCount','goalsSupersGoal'
@@ -3805,6 +4441,7 @@ public class CPHInline
       'al_sub','al_mem','al_ms','al_gft','al_grc','al_sc','al_stk','al_jwl',
       'showAvatar','showUser','showTier',
       'chatAv','chatBadges','chatUpper','chatNoBg','chatNoCmd',
+      'cbAv','cbBadges','cbUpper','cbShadow','cbRoleAccent','cbNoBg','cbNoCmd',
       'qaShowBadge','f5AlignH','f5AlignV','v_f5AlignH','v_f5AlignV','f5GroupCenterH','f5GroupCenterV','v_f5GroupCenterH','v_f5GroupCenterV','f5Sfx','goalsAlignH','goalsAlignV','v_goalsAlignH','v_goalsAlignV','goalsLikes','goalsMembers','goalsJewels','goalsSubs','goalsGifts','goalsSupers'
     ];
     
@@ -3841,6 +4478,8 @@ public class CPHInline
       s.soAlignV   = getChk('chk-soAlignV');
       s.chatAlignH = getChk('chk-chatAlignH');
       s.chatAlignV = getChk('chk-chatAlignV');
+      s.cbAlignH = getChk('chk-cbAlignH');
+      s.cbAlignV = getChk('chk-cbAlignV');
       s.qaAlignH   = getChk('chk-qaAlignH');
       s.qaAlignV   = getChk('chk-qaAlignV');
 
@@ -3853,6 +4492,8 @@ public class CPHInline
       s.v_soAlignV   = getChk('chk-v_soAlignV');
       s.v_chatAlignH = getChk('chk-v_chatAlignH');
       s.v_chatAlignV = getChk('chk-v_chatAlignV');
+      s.v_cbAlignH = getChk('chk-v_cbAlignH');
+      s.v_cbAlignV = getChk('chk-v_cbAlignV');
       s.v_qaAlignH   = getChk('chk-v_qaAlignH');
       s.v_qaAlignV   = getChk('chk-v_qaAlignV');
       
@@ -3865,6 +4506,7 @@ public class CPHInline
         if(document.getElementById('mod-alerts') && document.getElementById('mod-alerts').checked) mods.push('alerts');
         if(document.getElementById('mod-shoutout') && document.getElementById('mod-shoutout').checked) mods.push('shoutout');
         if(document.getElementById('mod-chat') && document.getElementById('mod-chat').checked) mods.push('chat');
+        if(document.getElementById('mod-chatbox') && document.getElementById('mod-chatbox').checked) mods.push('chatbox');
         if(document.getElementById('mod-qa') && document.getElementById('mod-qa').checked) mods.push('qa');
         if(document.getElementById('mod-first5') && document.getElementById('mod-first5').checked) mods.push('first5');
         if(document.getElementById('mod-goals') && document.getElementById('mod-goals').checked) mods.push('goals');
@@ -3897,11 +4539,36 @@ public class CPHInline
       }
     }
 
+    let liveChannel = null;
+    function getLiveChannel() {
+      if (!liveChannel && typeof BroadcastChannel !== 'undefined') {
+        try { liveChannel = new BroadcastChannel('gta-overlay-live'); } catch (e) {}
+      }
+      return liveChannel;
+    }
+
+    function broadcastLivePin() {
+      const ch = getLiveChannel();
+      if (ch) {
+        try {
+          ch.postMessage({ type: 'SET_PREVIEW_PINNED', pinned: !!(pinCheckbox && pinCheckbox.checked), chrome: false });
+        } catch (e) {}
+      }
+      pushLiveToObs();
+    }
+
     function syncLiveConfig() {
       updateGeneratedUrlOnly();
       fitPreviewCanvas();
-      if (frameHoriz && frameHoriz.contentWindow) frameHoriz.contentWindow.postMessage({ type: 'LIVE_CONFIG_UPDATE', targetLayout: 'horizontal', state: getSetupState('horiz') }, '*');
-      if (frameVert && frameVert.contentWindow) frameVert.contentWindow.postMessage({ type: 'LIVE_CONFIG_UPDATE', targetLayout: 'vertical', state: getSetupState('vert') }, '*');
+      const horizMsg = { type: 'LIVE_CONFIG_UPDATE', targetLayout: 'horizontal', state: getSetupState('horiz') };
+      const vertMsg  = { type: 'LIVE_CONFIG_UPDATE', targetLayout: 'vertical',   state: getSetupState('vert') };
+      if (frameHoriz && frameHoriz.contentWindow) frameHoriz.contentWindow.postMessage(horizMsg, '*');
+      if (frameVert && frameVert.contentWindow) frameVert.contentWindow.postMessage(vertMsg, '*');
+      const ch = getLiveChannel();
+      if (ch) {
+        try { ch.postMessage(horizMsg); ch.postMessage(vertMsg); } catch (e) {}
+      }
+      broadcastLivePin();
     }
 
     function initialLoadIframe() {
@@ -3930,6 +4597,18 @@ public class CPHInline
     });
     document.querySelectorAll('.mod-chk').forEach(el => el.addEventListener('change', initialLoadIframe));
 
+    function copyLiveUrl(elementId, btnEl) {
+      const el = document.getElementById(elementId);
+      if (!el) return;
+      let url = el.value || '';
+      if (url && !/[?&]live=1(?:&|$)/.test(url)) url += (url.includes('?') ? '&' : '?') + 'live=1';
+      navigator.clipboard.writeText(url).then(() => {
+        const orig = btnEl.innerHTML;
+        btnEl.innerHTML = '<i class="fa-solid fa-check"></i>';
+        setTimeout(() => { btnEl.innerHTML = orig; }, 1200);
+      }).catch(() => {});
+    }
+
     function copyUrl(elementId, btnEl) {
       const urlInput = document.getElementById(elementId);
       if (urlInput) {
@@ -3939,15 +4618,19 @@ public class CPHInline
       }
     }
 
-    function exportConfigFile(btnEl) {
+    async function exportConfigFile(btnEl) {
       const state = getSetupState('horiz');
+      const customBackgrounds = await collectUserBackgrounds();
       const exportPayload = {
         app: 'GTA VI Overlay Hub',
-        version: '0.2.4',
+        version: '0.3.1',
         exportedAt: new Date().toISOString(),
         pinPreview: Boolean(pinCheckbox && pinCheckbox.checked),
         previewMode: currentPreviewMode,
         layoutEdit: currentLayoutEdit,
+        customPalettes: customPalettes,
+        customBackgrounds: customBackgrounds,
+        obsConnection: readObsSettings(),
         lookupAction: document.getElementById('cfg-lookupAction')?.value || 'GTA_LookupYouTubeUser',
         testUserInput: document.getElementById('test-user-input')?.value || '',
         testQaMsg: document.getElementById('test-qa-msg')?.value || '',
@@ -3959,7 +4642,7 @@ public class CPHInline
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'gta6-overlay-config-v0.2.4.json';
+      a.download = 'gta6-overlay-config-v0.3.1.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -3975,6 +4658,11 @@ public class CPHInline
 
     function applyImportedConfig(raw) {
       if (!raw || typeof raw !== 'object') throw new Error('Invalid JSON');
+      if (Array.isArray(raw.customPalettes)) {
+        customPalettes = raw.customPalettes.filter(isValidPalette);
+        persistPalettes();
+        renderPaletteSelect();
+      }
       const s = (raw.state && typeof raw.state === 'object')
         ? raw.state
         : ((raw.settings && typeof raw.settings === 'object') ? raw.settings : raw);
@@ -4036,6 +4724,8 @@ public class CPHInline
         { h: 'v_aAlignH',    v: 'v_aAlignV',    scr: 'chk-v_aAlignScreen',    x: 'cfg-v_ax',    y: 'cfg-v_ay' },
         { h: 'v_soAlignH',   v: 'v_soAlignV',   scr: 'chk-v_soAlignScreen',   x: 'cfg-v_soX',   y: 'cfg-v_soY' },
         { h: 'v_chatAlignH', v: 'v_chatAlignV', scr: 'chk-v_chatAlignScreen', x: 'cfg-v_chatX', y: 'cfg-v_chatY' },
+        { h: 'cbAlignH', v: 'cbAlignV', scr: '', x: 'cfg-cbX', y: 'cfg-cbY' },
+        { h: 'v_cbAlignH', v: 'v_cbAlignV', scr: '', x: 'cfg-v_cbX', y: 'cfg-v_cbY' },
         { h: 'v_qaAlignH',   v: 'v_qaAlignV',   scr: 'chk-v_qaAlignScreen',   x: 'cfg-v_qaX',   y: 'cfg-v_qaY' }
       ];
       alignGroups.forEach(g => {
@@ -4057,7 +4747,7 @@ public class CPHInline
         const modStr = String(s.modules);
         const isAll = (modStr === 'all');
         const activeMods = modStr.split(',').map(m => m.trim());
-        ['walkon', 'alerts', 'shoutout', 'chat', 'qa'].forEach(modKey => {
+        ['walkon', 'alerts', 'shoutout', 'chat', 'chatbox', 'qa', 'first5', 'goals'].forEach(modKey => {
           const chk = document.getElementById(`mod-${modKey}`);
           if (chk) chk.checked = isAll || activeMods.includes(modKey);
         });
@@ -4086,6 +4776,12 @@ public class CPHInline
       if (raw.pinPreview !== undefined && pinCheckbox) {
         pinCheckbox.checked = Boolean(raw.pinPreview);
       }
+      if (raw.obsConnection && typeof raw.obsConnection === 'object') {
+        applyObsSettings(raw.obsConnection);
+        obsSticky = true;
+        saveObsSettings();
+        connectObs();
+      }
       if (raw.previewMode && ['dual', 'horiz', 'vert'].includes(raw.previewMode)) {
         const modeBtn = document.querySelector(`.view-toggles .btn[onclick*="'${raw.previewMode}'"]`);
         if (modeBtn) setPreviewMode(raw.previewMode, modeBtn);
@@ -4102,9 +4798,10 @@ public class CPHInline
         const file = e.target.files && e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = (ev) => {
+        reader.onload = async (ev) => {
           try {
             const parsed = JSON.parse(ev.target.result);
+            await restoreUserBackgrounds(parsed.customBackgrounds);
             applyImportedConfig(parsed);
             const btnImp = document.getElementById('btn-import-config');
             if (btnImp) {
@@ -4138,11 +4835,19 @@ public class CPHInline
           Twitch: ['ChatMessage']
         },
         onConnect: () => { 
-          if (sbStatusBadge) { sbStatusBadge.classList.add('connected'); sbStatusBadge.innerHTML = `<i class="fa-solid fa-circle-check"></i> <span data-i18n="status_connected">${t('status_connected')}</span>`; }
+          if (sbStatusBadge) {
+            sbStatusBadge.classList.add('connected');
+            const word = sbStatusBadge.querySelector('.sb-word');
+            if (word) { word.setAttribute('data-i18n', 'status_connected'); word.textContent = t('status_connected'); }
+          }
           refreshMemberEmojiFromSB();
         },
         onDisconnect: () => { 
-          if (sbStatusBadge) { sbStatusBadge.classList.remove('connected'); sbStatusBadge.innerHTML = `<i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">${t('status_disconnected')}</span>`; }
+          if (sbStatusBadge) {
+            sbStatusBadge.classList.remove('connected');
+            const word = sbStatusBadge.querySelector('.sb-word');
+            if (word) { word.setAttribute('data-i18n', 'status_disconnected'); word.textContent = t('status_disconnected'); }
+          }
           setEmoteStatus('disconnected');
         }
       };
@@ -4246,6 +4951,297 @@ public class CPHInline
     const btnConnectSb = document.getElementById('btn-connect-sb');
     if (btnConnectSb) btnConnectSb.addEventListener('click', connectSetupToSB);
 
+    const OBS_STORE = 'gta-obs-connection';
+    let obsWs = null;
+    let obsWanted = false;
+    let obsSticky = false;
+    let obsIdentified = false;
+    let obsReq = 0;
+    const obsWait = {};
+    let obsRetry = null;
+    let obsHeartbeat = null;
+    let obsPushTimer = null;
+    let obsVendorOk = true;
+
+    function sha256Bytes(data) {
+      const K = new Uint32Array([
+        0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,
+        0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,
+        0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,
+        0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,
+        0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,
+        0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,
+        0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,
+        0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2
+      ]);
+      const bytes = data instanceof Uint8Array ? data : new TextEncoder().encode(String(data));
+      const bitLen = bytes.length * 8;
+      const withPad = new Uint8Array(((bytes.length + 9 + 63) >> 6) << 6);
+      withPad.set(bytes);
+      withPad[bytes.length] = 0x80;
+      const view = new DataView(withPad.buffer);
+      view.setUint32(withPad.length - 8, Math.floor(bitLen / 0x100000000));
+      view.setUint32(withPad.length - 4, bitLen >>> 0);
+      let h0 = 0x6a09e667, h1 = 0xbb67ae85, h2 = 0x3c6ef372, h3 = 0xa54ff53a;
+      let h4 = 0x510e527f, h5 = 0x9b05688c, h6 = 0x1f83d9ab, h7 = 0x5be0cd19;
+      const w = new Uint32Array(64);
+      const rotr = (x, n) => (x >>> n) | (x << (32 - n));
+      for (let off = 0; off < withPad.length; off += 64) {
+        for (let i = 0; i < 16; i++) w[i] = view.getUint32(off + i * 4);
+        for (let i = 16; i < 64; i++) {
+          const s0 = rotr(w[i - 15], 7) ^ rotr(w[i - 15], 18) ^ (w[i - 15] >>> 3);
+          const s1 = rotr(w[i - 2], 17) ^ rotr(w[i - 2], 19) ^ (w[i - 2] >>> 10);
+          w[i] = (w[i - 16] + s0 + w[i - 7] + s1) >>> 0;
+        }
+        let a = h0, b = h1, c = h2, d = h3, e = h4, f = h5, g = h6, h = h7;
+        for (let i = 0; i < 64; i++) {
+          const S1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+          const ch = (e & f) ^ (~e & g);
+          const t1 = (h + S1 + ch + K[i] + w[i]) >>> 0;
+          const S0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+          const maj = (a & b) ^ (a & c) ^ (b & c);
+          const t2 = (S0 + maj) >>> 0;
+          h = g; g = f; f = e; e = (d + t1) >>> 0; d = c; c = b; b = a; a = (t1 + t2) >>> 0;
+        }
+        h0 = (h0 + a) >>> 0; h1 = (h1 + b) >>> 0; h2 = (h2 + c) >>> 0; h3 = (h3 + d) >>> 0;
+        h4 = (h4 + e) >>> 0; h5 = (h5 + f) >>> 0; h6 = (h6 + g) >>> 0; h7 = (h7 + h) >>> 0;
+      }
+      const out = new Uint8Array(32);
+      const ov = new DataView(out.buffer);
+      [h0, h1, h2, h3, h4, h5, h6, h7].forEach((v, i) => ov.setUint32(i * 4, v));
+      return out;
+    }
+    function b64bytes(bytes) {
+      let s = '';
+      for (let i = 0; i < bytes.length; i++) s += String.fromCharCode(bytes[i]);
+      return btoa(s);
+    }
+    function obsAuthString(password, salt, challenge) {
+      const secret = b64bytes(sha256Bytes(String(password) + String(salt)));
+      return b64bytes(sha256Bytes(secret + String(challenge)));
+    }
+    function liveHash(obj) {
+      const s = JSON.stringify(obj);
+      let h = 2166136261;
+      for (let i = 0; i < s.length; i++) {
+        h ^= s.charCodeAt(i);
+        h = Math.imul(h, 16777619);
+      }
+      return (h >>> 0).toString(16);
+    }
+    function readObsSettings() {
+      return {
+        host: (document.getElementById('cfg-obs-host')?.value || '127.0.0.1').trim(),
+        port: (document.getElementById('cfg-obs-port')?.value || '4455').trim(),
+        password: document.getElementById('cfg-obs-password')?.value || '',
+        sticky: obsSticky
+      };
+    }
+    function saveObsSettings() {
+      try { localStorage.setItem(OBS_STORE, JSON.stringify(readObsSettings())); } catch (e) {}
+    }
+    function applyObsSettings(saved) {
+      const hostEl = document.getElementById('cfg-obs-host');
+      const portEl = document.getElementById('cfg-obs-port');
+      const passEl = document.getElementById('cfg-obs-password');
+      if (hostEl && saved.host) hostEl.value = saved.host;
+      if (portEl && saved.port) portEl.value = saved.port;
+      if (passEl && saved.password !== undefined) passEl.value = saved.password;
+      obsSticky = !!saved.sticky;
+    }
+    function loadObsSettings() {
+      try {
+        const saved = JSON.parse(localStorage.getItem(OBS_STORE) || 'null');
+        if (saved && typeof saved === 'object') applyObsSettings(saved);
+      } catch (e) {}
+    }
+    function setObsButton(busy) {
+      const btn = document.getElementById('btn-connect-obs');
+      if (!btn) return;
+      const key = busy ? 'btn_disconnect_obs' : 'btn_connect_obs';
+      btn.innerHTML = `<i class="fa-solid fa-video"></i> <span data-i18n="${key}">${t(key)}</span>`;
+    }
+    function setObsUi(mode, message) {
+      const pill = document.getElementById('obs-status');
+      const log = document.getElementById('obs-status-log');
+      if (pill) {
+        pill.classList.toggle('connected', mode === 'on');
+        pill.title = mode === 'on' ? t('status_connected') : t('status_disconnected');
+        const word = pill.querySelector('.sb-word');
+        const key = mode === 'on' ? 'status_connected' : 'status_disconnected';
+        if (word) { word.setAttribute('data-i18n', key); word.textContent = t(key); }
+      }
+      if (log) {
+        log.removeAttribute('data-i18n');
+        log.textContent = message || '';
+        log.style.color = mode === 'on' ? '#53d8bf' : (mode === 'error' ? '#f4acc4' : '#9aa4b2');
+      }
+    }
+    function obsRequest(requestType, requestData) {
+      return new Promise((resolve, reject) => {
+        if (!obsWs || obsWs.readyState !== WebSocket.OPEN || !obsIdentified) {
+          reject(new Error('not connected'));
+          return;
+        }
+        const requestId = 'gta-' + (++obsReq);
+        const timer = setTimeout(() => {
+          delete obsWait[requestId];
+          reject({ comment: 'timeout' });
+        }, 4000);
+        obsWait[requestId] = { resolve, reject, timer };
+        obsWs.send(JSON.stringify({ op: 6, d: { requestType, requestId, requestData: requestData || {} } }));
+      });
+    }
+    function pushLiveToObs(immediate) {
+      if (!obsIdentified || !obsWs || obsWs.readyState !== WebSocket.OPEN) return;
+      const send = () => {
+        const body = {
+          horiz: { type: 'LIVE_CONFIG_UPDATE', targetLayout: 'horizontal', state: getSetupState('horiz') },
+          vert: { type: 'LIVE_CONFIG_UPDATE', targetLayout: 'vertical', state: getSetupState('vert') },
+          pinned: !!(pinCheckbox && pinCheckbox.checked)
+        };
+        body.rev = liveHash(body);
+        obsRequest('CallVendorRequest', {
+          vendorName: 'obs-browser',
+          requestType: 'emit_event',
+          requestData: { event_name: 'gta-live-config', event_data: body }
+        }).then(() => {
+          if (!obsVendorOk) {
+            obsVendorOk = true;
+            setObsUi('on', t('obs_connected_detail'));
+          }
+        }).catch(() => {
+          if (obsVendorOk) {
+            obsVendorOk = false;
+            setObsUi('on', t('obs_vendor_failed'));
+            const log = document.getElementById('obs-status-log');
+            if (log) log.style.color = '#f4acc4';
+          }
+        });
+      };
+      clearTimeout(obsPushTimer);
+      if (immediate) send();
+      else obsPushTimer = setTimeout(send, 40);
+    }
+    function stopObsTimers() {
+      if (obsRetry) { clearTimeout(obsRetry); obsRetry = null; }
+      if (obsHeartbeat) { clearInterval(obsHeartbeat); obsHeartbeat = null; }
+      clearTimeout(obsPushTimer);
+    }
+    function disconnectObs() {
+      obsWanted = false;
+      obsSticky = false;
+      obsIdentified = false;
+      stopObsTimers();
+      if (obsWs) {
+        obsWs.onclose = null;
+        obsWs.onerror = null;
+        try { obsWs.close(); } catch (e) {}
+        obsWs = null;
+      }
+      saveObsSettings();
+      setObsButton(false);
+      setObsUi('off', t('obs_status_idle'));
+    }
+    function connectObs(opts) {
+      const once = opts && opts.once;
+      saveObsSettings();
+      obsWanted = true;
+      obsIdentified = false;
+      obsVendorOk = true;
+      if (obsRetry) { clearTimeout(obsRetry); obsRetry = null; }
+      if (obsWs) {
+        obsWs.onclose = null;
+        obsWs.onerror = null;
+        try { obsWs.close(); } catch (e) {}
+        obsWs = null;
+      }
+      const cfg = readObsSettings();
+      let host = (cfg.host || '127.0.0.1').replace(/^wss?:\/\//i, '').replace(/\/$/, '').replace(/:\d+$/, '');
+      const port = cfg.port || '4455';
+      const password = cfg.password || '';
+      let socket;
+      try { socket = new WebSocket('ws://' + host + ':' + port); }
+      catch (e) {
+        setObsButton(false);
+        setObsUi('error', t('obs_unreachable'));
+        obsWanted = false;
+        return;
+      }
+      obsWs = socket;
+      setObsButton(true);
+      socket.onmessage = (ev) => {
+        let msg;
+        try { msg = JSON.parse(ev.data); } catch (e) { return; }
+        const d = msg.d || {};
+        if (msg.op === 0) {
+          const identify = { rpcVersion: d.rpcVersion || 1, eventSubscriptions: 0 };
+          if (d.authentication) {
+            identify.authentication = obsAuthString(password, d.authentication.salt, d.authentication.challenge);
+          }
+          socket.send(JSON.stringify({ op: 1, d: identify }));
+        } else if (msg.op === 2) {
+          obsIdentified = true;
+          obsSticky = true;
+          saveObsSettings();
+          setObsUi('on', t('obs_connected_detail'));
+          setObsButton(true);
+          if (obsHeartbeat) clearInterval(obsHeartbeat);
+          obsHeartbeat = setInterval(() => pushLiveToObs(true), 1500);
+          pushLiveToObs(true);
+        } else if (msg.op === 7) {
+          const slot = obsWait[d.requestId];
+          if (!slot) return;
+          clearTimeout(slot.timer);
+          delete obsWait[d.requestId];
+          if (d.requestStatus && d.requestStatus.result) slot.resolve(d.responseData || {});
+          else slot.reject(d.requestStatus || {});
+        }
+      };
+      socket.onerror = () => {};
+      socket.onclose = (ev) => {
+        if (obsWs !== socket) return;
+        obsWs = null;
+        obsIdentified = false;
+        if (obsHeartbeat) { clearInterval(obsHeartbeat); obsHeartbeat = null; }
+        Object.keys(obsWait).forEach((id) => { clearTimeout(obsWait[id].timer); delete obsWait[id]; });
+        if (!obsWanted) {
+          setObsButton(false);
+          setObsUi('off', t('obs_status_idle'));
+          return;
+        }
+        if (ev && ev.code === 4009) {
+          obsWanted = false;
+          obsSticky = false;
+          saveObsSettings();
+          setObsButton(false);
+          setObsUi('error', t('obs_auth_failed'));
+          return;
+        }
+        setObsUi('error', t('obs_unreachable'));
+        if (once && !obsSticky) {
+          obsWanted = false;
+          setObsButton(false);
+          return;
+        }
+        setObsButton(true);
+        obsRetry = setTimeout(() => connectObs(), 4000);
+      };
+    }
+    const btnConnectObs = document.getElementById('btn-connect-obs');
+    if (btnConnectObs) {
+      btnConnectObs.addEventListener('click', () => {
+        if (obsWanted) disconnectObs();
+        else { obsSticky = true; connectObs(); }
+      });
+    }
+    ['cfg-obs-host', 'cfg-obs-port', 'cfg-obs-password'].forEach((id) => {
+      const el = document.getElementById(id);
+      if (el) el.addEventListener('change', saveObsSettings);
+    });
+    loadObsSettings();
+    connectObs(obsSticky ? undefined : { once: true });
+
     // Mock Simulators
     const mocks = [
       { userName: 'Lucia_Caminos', levelName: 'Vice City Syndicate', months: 24, avatarUrl: 'https://i.pravatar.cc/300?img=47', role: 'member', msg: 'When are we hitting Ocean Beach?' },
@@ -4301,6 +5297,15 @@ public class CPHInline
         const roleSel = document.getElementById('sim-chat-role')?.value || 'random';
         const role = roleSel === 'random' ? pick.role : roleSel;
         sendToBoth({ type: 'TRIGGER_CHAT_TEST', payload: { userName: pick.userName, message: pick.msg, role: role, avatar: pick.avatarUrl } });
+      });
+    }
+    const btnSimChatBox = document.getElementById('btn-sim-chatbox');
+    if (btnSimChatBox) {
+      btnSimChatBox.addEventListener('click', () => {
+        const pick = mocks[Math.floor(Math.random() * mocks.length)];
+        const roleSel = document.getElementById('sim-chat-role')?.value || 'random';
+        const role = roleSel === 'random' ? pick.role : roleSel;
+        sendToBoth({ type: 'TRIGGER_CHATBOX_TEST', payload: { userName: pick.userName, message: pick.msg, role: role, avatar: pick.avatarUrl } });
       });
     }
 
@@ -4666,14 +5671,14 @@ public class CPHInline
     });
 
     initPanelCollapse();
-    fitPreviewCanvas(); applyLanguageTranslation(true); initialLoadIframe(); connectSetupToSB();
+    fitPreviewCanvas(); applyLanguageTranslation(true); initialLoadIframe(); connectSetupToSB(); broadcastLivePin();
   </script>
 
 <!-- Streamer.bot Import Modal -->
 <div id="sb-import-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center; padding:20px;">
   <div style="background:#171a21; border:3px solid #0b2328; border-radius:12px; max-width:900px; width:100%; max-height:90vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
     <div style="padding:16px 20px; border-bottom:2px solid #232834; display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.2.4</span></div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.3.0</span></div>
       <button id="btn-close-sb-import" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
     </div>
     <div style="padding:20px;">
@@ -4709,7 +5714,9 @@ public class CPHInline
       document.getElementById('cfg-qa-bg'),
       document.getElementById('cfg-alert-bg'),
       document.getElementById('cfg-chat-bg'),
-      document.getElementById('cfg-goals-bg')
+      document.getElementById('cfg-goals-bg'),
+      document.getElementById('cfg-cb-bg'),
+      document.getElementById('cfg-cb-msg-bg')
     ].filter(Boolean);
 
     if (selects.length === 0) {
@@ -4738,13 +5745,17 @@ public class CPHInline
       }
     }
 
-    if (!files || !Array.isArray(files)) {
-      console.warn('[GTA] Could not load backgrounds.json from any path');
-      return;
-    }
+    if (!files || !Array.isArray(files)) files = [];
+    let userFiles = [];
+    try {
+      const userRes = await fetch('/api/user-backgrounds');
+      if (userRes.ok) userFiles = await userRes.json();
+    } catch (e) {}
+    if (!Array.isArray(userFiles)) userFiles = [];
 
     selects.forEach(sel => {
-      const keepCount = sel.id === 'cfg-bg' ? 1 : 2; // global keeps 'None', widgets keep 'Use Global' + 'None'
+      const prev = sel.value;
+      const keepCount = sel.id === 'cfg-bg' ? 2 : 3; // global keeps None + Frost; widgets keep Use Global + None + Frost
       const firstOpts = Array.from(sel.options).slice(0, keepCount);
       sel.innerHTML = '';
       firstOpts.forEach(opt => sel.appendChild(opt.cloneNode(true)));
@@ -4754,15 +5765,121 @@ public class CPHInline
         opt.textContent = file;
         sel.appendChild(opt);
       });
-      // Select default if specified
-      const def = sel.dataset.default;
-      if (def) {
+      userFiles.forEach(file => {
+        const opt = document.createElement('option');
+        opt.value = `assets/backgrounds/user/${file}`;
+        opt.textContent = file;
+        opt.dataset.user = '1';
+        sel.appendChild(opt);
+      });
+      if (Array.from(sel.options).some(o => o.value === prev)) sel.value = prev;
+      else if (sel.dataset.default) {
+        const def = sel.dataset.default;
         const match = Array.from(sel.options).find(o => o.value === def);
         if (match) sel.value = def;
       }
     });
+    renderUserBackgroundList(userFiles);
     if (typeof initialLoadIframe === 'function') initialLoadIframe();
   }
+
+  function renderUserBackgroundList(files) {
+    const list = document.getElementById('user-bg-list');
+    if (!list) return;
+    list.innerHTML = '';
+    (files || []).forEach(file => {
+      const row = document.createElement('div');
+      row.className = 'user-bg-item';
+      const name = document.createElement('span');
+      name.textContent = file;
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-dark';
+      btn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+      btn.addEventListener('click', () => removeUserBackground(file));
+      row.appendChild(name);
+      row.appendChild(btn);
+      list.appendChild(row);
+    });
+  }
+
+  function setUserBgStatus(key) {
+    const el = document.getElementById('user-bg-status');
+    if (el) el.textContent = key ? (typeof t === 'function' ? t(key) : key) : '';
+  }
+
+  async function uploadUserBackground(file) {
+    const okType = /^image\/(png|jpeg|webp|gif)$/.test(file.type);
+    if (!okType) { setUserBgStatus('status_bg_type'); return; }
+    if (file.size > 4_000_000) { setUserBgStatus('status_bg_big'); return; }
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error);
+      reader.readAsDataURL(file);
+    });
+    const clean = String(file.name || 'image.png').replace(/[^a-zA-Z0-9._-]/g, '_');
+    const res = await fetch('/api/user-backgrounds', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: clean, dataUrl })
+    });
+    if (!res.ok) { setUserBgStatus('status_bg_failed'); return; }
+    setUserBgStatus('status_bg_saved');
+    await loadBackgrounds();
+  }
+
+  async function removeUserBackground(name) {
+    await fetch('/api/user-backgrounds?name=' + encodeURIComponent(name), { method: 'DELETE' });
+    await loadBackgrounds();
+  }
+
+  async function collectUserBackgrounds() {
+    try {
+      const res = await fetch('/api/user-backgrounds');
+      if (!res.ok) return [];
+      const files = await res.json();
+      const out = [];
+      for (const name of files) {
+        const img = await fetch('assets/backgrounds/user/' + encodeURIComponent(name));
+        if (!img.ok) continue;
+        const blob = await img.blob();
+        const dataUrl = await new Promise((resolve) => {
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.readAsDataURL(blob);
+        });
+        out.push({ name, dataUrl });
+      }
+      return out;
+    } catch (e) {
+      return [];
+    }
+  }
+
+  async function restoreUserBackgrounds(list) {
+    if (!Array.isArray(list) || !list.length) return;
+    for (const item of list) {
+      if (!item || !item.name || !item.dataUrl) continue;
+      try {
+        await fetch('/api/user-backgrounds', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: item.name, dataUrl: item.dataUrl })
+        });
+      } catch (e) {}
+    }
+    await loadBackgrounds();
+  }
+
+  document.getElementById('btn-upload-bg')?.addEventListener('click', () => {
+    document.getElementById('user-bg-file')?.click();
+  });
+  document.getElementById('user-bg-file')?.addEventListener('change', (e) => {
+    const file = e.target.files && e.target.files[0];
+    e.target.value = '';
+    if (file) uploadUserBackground(file);
+  });
 
 
   // Streamer.bot Import Modal - dual version support
@@ -4818,7 +5935,7 @@ public class CPHInline
     const blob = new Blob([ta.value], {type: 'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.2.4.txt';
+    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.3.0.txt';
     a.click();
     URL.revokeObjectURL(a.href);
   });
