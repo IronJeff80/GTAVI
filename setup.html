@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GTA VI Overlays - Universal Setup v0.3.1</title>
+  <title>GTA VI Overlays - Universal Setup v0.3.2</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -46,6 +46,7 @@
     .palette-custom-row { display: flex; gap: 8px; align-items: center; margin: 4px 0 8px; }
     .palette-custom-row input { flex: 1; min-width: 0; }
     .user-bg-tools { display: flex; gap: 8px; align-items: center; margin: 6px 0; }
+    .user-bg-tools input[type="url"] { flex: 1; min-width: 0; }
     .user-bg-list { display: flex; flex-direction: column; gap: 4px; margin-bottom: 6px; }
     .user-bg-item { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 0.72rem; color: #d5dbe6; background: #171a21; border: 1px solid #2a3140; border-radius: 8px; padding: 4px 8px; }
     .user-bg-item button { padding: 3px 8px; font-size: 0.68rem; }
@@ -184,7 +185,7 @@
   <aside class="sidebar">
     <div class="brand-header">
       <div class="brand-top">
-        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.3.1</span></div>
+        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.3.2</span></div>
       </div>
       <div class="brand-pills">
         <div id="sb-status" class="sb-badge" title="Streamer.bot"><i class="fa-solid fa-plug"></i> <span>SB</span> <span class="sb-word" data-i18n="status_disconnected">Disconnected</span></div>
@@ -342,7 +343,11 @@
             <option value="assets/backgrounds/gta6-bg.webp">gta6-bg.webp</option>
           </select>
         </label>
-        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-6px;" data-i18n="desc_bg_auto">Built-in backgrounds come from assets/backgrounds/. Upload your own below. The overlay URL stores that file path, and Export saves the image so Import can restore it.</p>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-6px;" data-i18n="desc_bg_auto">Built-in images ship with the page. On the live site, paste a direct https image link. OBS loads that link. It is stored in the overlay URL and in Import/Export. Upload a file only works when you run this page yourself with npm run dev.</p>
+        <div class="user-bg-tools">
+          <input type="url" id="user-bg-url" data-i18n-placeholder="ph_bg_link" placeholder="https://example.com/background.webp">
+          <button type="button" class="btn btn-purple" id="btn-add-bg-url"><i class="fa-solid fa-link"></i> <span data-i18n="btn_add_bg_link">Add Link</span></button>
+        </div>
         <div class="user-bg-tools">
           <input type="file" id="user-bg-file" accept="image/png,image/jpeg,image/webp,image/gif" style="display:none;">
           <button type="button" class="btn btn-teal" id="btn-upload-bg"><i class="fa-solid fa-upload"></i> <span data-i18n="btn_upload_bg">Upload Background</span></button>
@@ -1345,10 +1350,10 @@ public class CPHInline
         <label class="mod-chk-label"><input type="checkbox" id="mod-alerts" class="mod-chk" checked> <span data-i18n="mod_2_alerts">2. Alerts Box</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-shoutout" class="mod-chk" checked> <span data-i18n="mod_3_shoutout">3. Shoutout</span></label>
         <label class="mod-chk-label"><input type="checkbox" id="mod-chat" class="mod-chk" checked> <span data-i18n="mod_4_chat">4. Chat Bar</span></label>
-        <label class="mod-chk-label"><input type="checkbox" id="mod-chatbox" class="mod-chk"> <span data-i18n="mod_8_chatbox">8. Chat Box</span></label>
-        <label class="mod-chk-label"><input type="checkbox" id="mod-qa" class="mod-chk" checked> <span data-i18n="mod_5_qa">5. Q&amp;A Toast</span></label>
-        <label class="mod-chk-label"><input type="checkbox" id="mod-first5" class="mod-chk" checked> <span data-i18n="mod_6_first5">6. First 5</span></label>
-        <label class="mod-chk-label"><input type="checkbox" id="mod-goals" class="mod-chk" checked> <span data-i18n="mod_7_goals">7. Goal Bars</span></label>
+        <label class="mod-chk-label"><input type="checkbox" id="mod-chatbox" class="mod-chk" checked> <span data-i18n="mod_8_chatbox">5. Chat Box</span></label>
+        <label class="mod-chk-label"><input type="checkbox" id="mod-qa" class="mod-chk" checked> <span data-i18n="mod_5_qa">6. Q&amp;A Toast</span></label>
+        <label class="mod-chk-label"><input type="checkbox" id="mod-first5" class="mod-chk" checked> <span data-i18n="mod_6_first5">7. First 5</span></label>
+        <label class="mod-chk-label"><input type="checkbox" id="mod-goals" class="mod-chk" checked> <span data-i18n="mod_7_goals">8. Goal Bars</span></label>
 
         <div class="config-io-group">
           <input type="file" id="import-config-file" accept=".json,application/json" style="display:none;">
@@ -1754,7 +1759,7 @@ public class CPHInline
     "tab_qa": "Q&A",
     "tab_first5": "First 5",
     "tab_goals": "Goals",
-    "mod_7_goals": "7. Goal Bars",
+    "mod_7_goals": "8. Goal Bars",
     "panel_goals_pos": "Goal Bars Position",
     "panel_goals_display": "Display Settings",
     "panel_goals_vars": "Goal Variables",
@@ -1768,7 +1773,7 @@ public class CPHInline
     "btn_delete_palette": "Delete",
     "ph_palette_name": "Palette name",
     "desc_custom_palette": "Saved palettes are included in Export and restored on Import.",
-    "mod_6_first5": "6. First 5",
+    "mod_6_first5": "7. First 5",
     "tab_colors": "Colors",
     "tab_test": "Test",
     "panel_sb_conn": "Streamer.bot Connection",
@@ -1940,7 +1945,7 @@ public class CPHInline
     "mod_3_shoutout": "3. Shoutout",
     "mod_4_chat": "4. Chat Bar",
     "tab_chatbox": "Chat Box",
-    "mod_8_chatbox": "8. Chat Box",
+    "mod_8_chatbox": "5. Chat Box",
     "panel_cb_pos": "Chat Box Position & Size",
     "panel_cb_look": "Chat Box Style",
     "panel_cb_colors": "Chat Box Colors",
@@ -1977,7 +1982,7 @@ public class CPHInline
     "opt_name_inline": "Name Inline",
     "opt_name_hide": "Hide Name",
     "btn_sim_chatbox": "Test Chat Box",
-    "mod_5_qa": "5. Q&A Toast",
+    "mod_5_qa": "6. Q&A Toast",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copy",
@@ -2080,8 +2085,13 @@ public class CPHInline
     "desc_install_video": "A full walkthrough of the install: extract the zip, import Streamer.bot, and add the OBS browser sources.",
     "btn_install_video": "Watch the Install Guide",
     "opt_bg_none_only": "None (Solid Fill Only)",
-    "desc_bg_auto": "Built-in backgrounds come from assets/backgrounds/. Upload your own below. The overlay URL stores that file path, and Export saves the image so Import can restore it.",
+    "desc_bg_auto": "Built-in images ship with the page. On the live site, paste a direct https image link. OBS loads that link. It is stored in the overlay URL and in Import/Export. Upload a file only works when you run this page yourself with npm run dev.",
     "btn_upload_bg": "Upload Background",
+    "btn_add_bg_link": "Add Link",
+    "ph_bg_link": "https://example.com/background.webp",
+    "status_bg_link_saved": "Link added. Pick it in any background list.",
+    "status_bg_link_bad": "Paste a direct http or https image link.",
+    "status_bg_https": "The live site needs an https image link.",
     "lbl_msg_bg": "Message Background",
     "lbl_role_accent": "Role Accent",
     "desc_role_accent": "Role Accent paints each message border with that viewer's color: member, moderator, or viewer.",
@@ -2211,7 +2221,7 @@ public class CPHInline
     "tab_chat": "Chat",
     "tab_qa": "Perguntas",
     "tab_first5": "First 5",
-    "mod_6_first5": "6. Primeiros 5",
+    "mod_6_first5": "7. Primeiros 5",
     "tab_colors": "Cores",
     "tab_test": "Teste",
     "panel_sb_conn": "Conexão Streamer.bot",
@@ -2383,7 +2393,7 @@ public class CPHInline
     "mod_3_shoutout": "3. Destaque",
     "mod_4_chat": "4. Barra de Chat",
     "tab_chatbox": "Caixa",
-    "mod_8_chatbox": "8. Caixa de Chat",
+    "mod_8_chatbox": "5. Caixa de Chat",
     "panel_cb_pos": "Posição e Tamanho da Caixa",
     "panel_cb_look": "Estilo da Caixa de Chat",
     "panel_cb_colors": "Cores da Caixa de Chat",
@@ -2420,7 +2430,7 @@ public class CPHInline
     "opt_name_inline": "Nome na linha",
     "opt_name_hide": "Ocultar nome",
     "btn_sim_chatbox": "Testar Caixa",
-    "mod_5_qa": "5. Toast de Pergunta",
+    "mod_5_qa": "6. Toast de Pergunta",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copiar",
@@ -2464,7 +2474,7 @@ public class CPHInline
     "opt_f5_circle": "Círculo",
     "opt_f5_rounded": "Quadrado Arredondado",
     "tab_goals": "Metas",
-    "mod_7_goals": "7. Barras de Metas",
+    "mod_7_goals": "8. Barras de Metas",
     "panel_goals_pos": "Posição das Barras de Metas",
     "panel_goals_display": "Exibição",
     "panel_goals_vars": "Variáveis das Metas",
@@ -2538,8 +2548,13 @@ public class CPHInline
     "desc_install_video": "Um passo a passo completo: extrair o zip, importar o Streamer.bot e adicionar as browser sources no OBS.",
     "btn_install_video": "Assistir ao guia",
     "opt_bg_none_only": "Nenhum (Só Preenchimento)",
-    "desc_bg_auto": "Os fundos prontos vêm de assets/backgrounds/. Envie os seus abaixo. A URL da overlay guarda esse caminho, e a Exportação salva a imagem para a Importação restaurar.",
+    "desc_bg_auto": "As imagens prontas vêm com a página. No site ao vivo, cole um link https direto da imagem. O OBS carrega esse link. Ele fica na URL da overlay e na Importação/Exportação. Enviar arquivo só funciona quando você roda a página com npm run dev.",
     "btn_upload_bg": "Enviar Fundo",
+    "btn_add_bg_link": "Adicionar Link",
+    "ph_bg_link": "https://exemplo.com/fundo.webp",
+    "status_bg_link_saved": "Link adicionado. Escolha-o em qualquer lista de fundo.",
+    "status_bg_link_bad": "Cole um link http ou https direto da imagem.",
+    "status_bg_https": "O site ao vivo precisa de um link https.",
     "lbl_msg_bg": "Fundo da Mensagem",
     "lbl_role_accent": "Cor por Cargo",
     "desc_role_accent": "Cor por Cargo pinta a borda de cada mensagem com a cor desse espectador: membro, moderador ou viewer.",
@@ -2671,7 +2686,7 @@ public class CPHInline
     "tab_colors": "Colores",
     "tab_test": "Prueba",
     "tab_first5": "First 5",
-    "mod_6_first5": "6. Primeros 5",
+    "mod_6_first5": "7. Primeros 5",
     "panel_sb_conn": "Conexión con Streamer.bot",
     "panel_obs": "Conexión OBS",
     "desc_obs": "Las actualizaciones en vivo van por el WebSocket de OBS. En OBS abre Herramientas, Ajustes del servidor WebSocket, activa el servidor y usa aquí ese puerto y contraseña. Cada fuente de navegador necesita la URL En vivo.",
@@ -2841,7 +2856,7 @@ public class CPHInline
     "mod_3_shoutout": "3. Destacado",
     "mod_4_chat": "4. Barra de Chat",
     "tab_chatbox": "Caja",
-    "mod_8_chatbox": "8. Caja de Chat",
+    "mod_8_chatbox": "5. Caja de Chat",
     "panel_cb_pos": "Posición y Tamaño de la Caja",
     "panel_cb_look": "Estilo de la Caja de Chat",
     "panel_cb_colors": "Colores de la Caja de Chat",
@@ -2878,7 +2893,7 @@ public class CPHInline
     "opt_name_inline": "Nombre en línea",
     "opt_name_hide": "Ocultar nombre",
     "btn_sim_chatbox": "Probar Caja",
-    "mod_5_qa": "5. Toast de P&R",
+    "mod_5_qa": "6. Toast de P&R",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copiar",
@@ -2922,7 +2937,7 @@ public class CPHInline
     "opt_f5_circle": "Círculo",
     "opt_f5_rounded": "Cuadrado Redondeado",
     "tab_goals": "Metas",
-    "mod_7_goals": "7. Barras de Metas",
+    "mod_7_goals": "8. Barras de Metas",
     "panel_goals_pos": "Posición de las Barras",
     "panel_goals_display": "Visualización",
     "panel_goals_vars": "Variables de Metas",
@@ -2996,8 +3011,13 @@ public class CPHInline
     "desc_install_video": "Una guía completa: extraer el zip, importar Streamer.bot y añadir las browser sources en OBS.",
     "btn_install_video": "Ver la guía",
     "opt_bg_none_only": "Ninguno (Solo Relleno)",
-    "desc_bg_auto": "Los fondos incluidos salen de assets/backgrounds/. Sube los tuyos abajo. La URL del overlay guarda esa ruta, y Exportar incluye la imagen para que Importar la restaure.",
+    "desc_bg_auto": "Las imágenes incluidas vienen con la página. En el sitio en vivo, pega un enlace https directo a la imagen. OBS carga ese enlace. Queda en la URL del overlay y en Importar/Exportar. Subir un archivo solo funciona si ejecutas la página con npm run dev.",
     "btn_upload_bg": "Subir Fondo",
+    "btn_add_bg_link": "Añadir enlace",
+    "ph_bg_link": "https://ejemplo.com/fondo.webp",
+    "status_bg_link_saved": "Enlace añadido. Elígelo en cualquier lista de fondo.",
+    "status_bg_link_bad": "Pega un enlace http o https directo a la imagen.",
+    "status_bg_https": "El sitio en vivo necesita un enlace https.",
     "lbl_msg_bg": "Fondo del Mensaje",
     "lbl_role_accent": "Acento por Rol",
     "desc_role_accent": "Acento por Rol pinta el borde de cada mensaje con el color de ese espectador: miembro, moderador o viewer.",
@@ -3130,7 +3150,7 @@ public class CPHInline
     "tab_test": "Test",
     "tab_first5": "First 5",
     "tab_goals": "Objectifs",
-    "mod_7_goals": "7. Barres d'Objectifs",
+    "mod_7_goals": "8. Barres d'Objectifs",
     "panel_goals_pos": "Position des Barres",
     "panel_goals_display": "Affichage",
     "panel_goals_vars": "Variables des Objectifs",
@@ -3144,7 +3164,7 @@ public class CPHInline
     "btn_delete_palette": "Supprimer",
     "ph_palette_name": "Nom de la palette",
     "desc_custom_palette": "Les palettes enregistrées partent avec l'export et reviennent à l'import.",
-    "mod_6_first5": "6. First 5",
+    "mod_6_first5": "7. First 5",
     "panel_sb_conn": "Connexion Streamer.bot",
     "panel_obs": "Connexion OBS",
     "desc_obs": "Les mises à jour en direct passent par le WebSocket OBS. Dans OBS, ouvre Outils, Paramètres du serveur WebSocket, active le serveur, puis saisis ici le port et le mot de passe. Chaque source navigateur doit utiliser l'URL Direct.",
@@ -3314,7 +3334,7 @@ public class CPHInline
     "mod_3_shoutout": "3. Dédicace",
     "mod_4_chat": "4. Barre de Chat",
     "tab_chatbox": "Boîte",
-    "mod_8_chatbox": "8. Boîte de Chat",
+    "mod_8_chatbox": "5. Boîte de Chat",
     "panel_cb_pos": "Position et Taille de la Boîte",
     "panel_cb_look": "Style de la Boîte de Chat",
     "panel_cb_colors": "Couleurs de la Boîte de Chat",
@@ -3351,7 +3371,7 @@ public class CPHInline
     "opt_name_inline": "Nom sur la ligne",
     "opt_name_hide": "Masquer le nom",
     "btn_sim_chatbox": "Tester la Boîte",
-    "mod_5_qa": "5. Toast Q&R",
+    "mod_5_qa": "6. Toast Q&R",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertical",
     "btn_copy": "Copier",
@@ -3454,8 +3474,13 @@ public class CPHInline
     "desc_install_video": "Le pas à pas complet : extraire le zip, importer Streamer.bot et ajouter les browser sources dans OBS.",
     "btn_install_video": "Voir le guide",
     "opt_bg_none_only": "Aucun (Remplissage seul)",
-    "desc_bg_auto": "Les fonds fournis viennent de assets/backgrounds/. Envoie les tiens ci-dessous. L'URL de l'overlay garde ce chemin, et l'export enregistre l'image pour que l'import la restaure.",
+    "desc_bg_auto": "Les images fournies viennent avec la page. Sur le site en ligne, colle un lien https direct vers l'image. OBS charge ce lien. Il est dans l'URL de l'overlay et dans l'import/export. Envoyer un fichier ne marche que si tu lances la page avec npm run dev.",
     "btn_upload_bg": "Envoyer un fond",
+    "btn_add_bg_link": "Ajouter le lien",
+    "ph_bg_link": "https://exemple.com/fond.webp",
+    "status_bg_link_saved": "Lien ajouté. Choisis-le dans n'importe quelle liste.",
+    "status_bg_link_bad": "Colle un lien http ou https direct vers l'image.",
+    "status_bg_https": "Le site en ligne a besoin d'un lien https.",
     "lbl_msg_bg": "Fond du message",
     "lbl_role_accent": "Accent par rôle",
     "desc_role_accent": "L'accent par rôle colore le bord de chaque message avec la couleur de ce viewer : membre, modérateur ou viewer.",
@@ -3588,7 +3613,7 @@ public class CPHInline
     "tab_test": "Test",
     "tab_first5": "First 5",
     "tab_goals": "Ziele",
-    "mod_7_goals": "7. Zielbalken",
+    "mod_7_goals": "8. Zielbalken",
     "panel_goals_pos": "Position der Zielbalken",
     "panel_goals_display": "Anzeige",
     "panel_goals_vars": "Ziel-Variablen",
@@ -3602,7 +3627,7 @@ public class CPHInline
     "btn_delete_palette": "Löschen",
     "ph_palette_name": "Palettenname",
     "desc_custom_palette": "Gespeicherte Paletten sind im Export enthalten und kommen beim Import zurück.",
-    "mod_6_first5": "6. First 5",
+    "mod_6_first5": "7. First 5",
     "panel_sb_conn": "Streamer.bot-Verbindung",
     "panel_obs": "OBS-Verbindung",
     "desc_obs": "Live-Updates laufen über den OBS-WebSocket. In OBS unter Werkzeuge, WebSocket-Servereinstellungen den Server aktivieren und hier denselben Port und dasselbe Passwort eintragen. Jede Browserquelle braucht die Live-URL.",
@@ -3772,7 +3797,7 @@ public class CPHInline
     "mod_3_shoutout": "3. Shoutout",
     "mod_4_chat": "4. Chatleiste",
     "tab_chatbox": "Chatbox",
-    "mod_8_chatbox": "8. Chatbox",
+    "mod_8_chatbox": "5. Chatbox",
     "panel_cb_pos": "Chatbox Position & Größe",
     "panel_cb_look": "Chatbox-Stil",
     "panel_cb_colors": "Chatbox-Farben",
@@ -3809,7 +3834,7 @@ public class CPHInline
     "opt_name_inline": "Name in der Zeile",
     "opt_name_hide": "Name ausblenden",
     "btn_sim_chatbox": "Chatbox testen",
-    "mod_5_qa": "5. F&A-Toast",
+    "mod_5_qa": "6. F&A-Toast",
     "lbl_url_horiz": "Horizontal",
     "lbl_url_vert": "Vertikal",
     "btn_copy": "Kopieren",
@@ -3912,8 +3937,13 @@ public class CPHInline
     "desc_install_video": "Die komplette Anleitung: ZIP entpacken, Streamer.bot importieren und die Browser-Quellen in OBS anlegen.",
     "btn_install_video": "Anleitung ansehen",
     "opt_bg_none_only": "Keins (Nur Füllung)",
-    "desc_bg_auto": "Mitgelieferte Hintergründe kommen aus assets/backgrounds/. Eigene Bilder unten hochladen. Die Overlay-URL speichert diesen Pfad, und der Export sichert das Bild für den Import.",
+    "desc_bg_auto": "Mitgelieferte Bilder kommen mit der Seite. Auf der Live-Seite einen direkten https-Bildlink einfügen. OBS lädt diesen Link. Er steht in der Overlay-URL und im Import/Export. Eine Datei hochladen geht nur, wenn du die Seite selbst mit npm run dev startest.",
     "btn_upload_bg": "Hintergrund hochladen",
+    "btn_add_bg_link": "Link hinzufügen",
+    "ph_bg_link": "https://beispiel.de/hintergrund.webp",
+    "status_bg_link_saved": "Link hinzugefügt. In jeder Hintergrundliste wählbar.",
+    "status_bg_link_bad": "Einen direkten http- oder https-Bildlink einfügen.",
+    "status_bg_https": "Die Live-Seite braucht einen https-Link.",
     "lbl_msg_bg": "Nachrichten-Hintergrund",
     "lbl_role_accent": "Rollenfarbe",
     "desc_role_accent": "Rollenfarbe färbt den Rand jeder Nachricht in der Farbe dieses Zuschauers: Mitglied, Moderator oder Zuschauer.",
@@ -4623,13 +4653,14 @@ public class CPHInline
       const customBackgrounds = await collectUserBackgrounds();
       const exportPayload = {
         app: 'GTA VI Overlay Hub',
-        version: '0.3.1',
+        version: '0.3.2',
         exportedAt: new Date().toISOString(),
         pinPreview: Boolean(pinCheckbox && pinCheckbox.checked),
         previewMode: currentPreviewMode,
         layoutEdit: currentLayoutEdit,
         customPalettes: customPalettes,
         customBackgrounds: customBackgrounds,
+        customBackgroundUrls: typeof loadStoredBgUrls === 'function' ? loadStoredBgUrls() : [],
         obsConnection: readObsSettings(),
         lookupAction: document.getElementById('cfg-lookupAction')?.value || 'GTA_LookupYouTubeUser',
         testUserInput: document.getElementById('test-user-input')?.value || '',
@@ -4642,7 +4673,7 @@ public class CPHInline
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'gta6-overlay-config-v0.3.1.json';
+      a.download = 'gta6-overlay-config-v0.3.2.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -4801,6 +4832,7 @@ public class CPHInline
         reader.onload = async (ev) => {
           try {
             const parsed = JSON.parse(ev.target.result);
+            if (typeof rememberBackgroundUrls === 'function') rememberBackgroundUrls(parsed.customBackgroundUrls);
             await restoreUserBackgrounds(parsed.customBackgrounds);
             applyImportedConfig(parsed);
             const btnImp = document.getElementById('btn-import-config');
@@ -5772,6 +5804,13 @@ public class CPHInline
         opt.dataset.user = '1';
         sel.appendChild(opt);
       });
+      loadStoredBgUrls().forEach(link => {
+        const opt = document.createElement('option');
+        opt.value = link;
+        opt.textContent = link.replace(/^https?:\/\//, '').slice(0, 72);
+        opt.dataset.link = '1';
+        sel.appendChild(opt);
+      });
       if (Array.from(sel.options).some(o => o.value === prev)) sel.value = prev;
       else if (sel.dataset.default) {
         const def = sel.dataset.default;
@@ -5801,6 +5840,72 @@ public class CPHInline
       row.appendChild(btn);
       list.appendChild(row);
     });
+    loadStoredBgUrls().forEach(link => {
+      const row = document.createElement('div');
+      row.className = 'user-bg-item';
+      const name = document.createElement('span');
+      name.textContent = link.replace(/^https?:\/\//, '');
+      const btn = document.createElement('button');
+      btn.type = 'button';
+      btn.className = 'btn btn-dark';
+      btn.innerHTML = '<i class="fa-solid fa-trash"></i>';
+      btn.addEventListener('click', () => removeStoredBgUrl(link));
+      row.appendChild(name);
+      row.appendChild(btn);
+      list.appendChild(row);
+    });
+  }
+
+  function isBgUrl(value) {
+    try {
+      const u = new URL(String(value || '').trim());
+      if (u.protocol !== 'http:' && u.protocol !== 'https:') return false;
+      if (location.protocol === 'https:' && u.protocol !== 'https:') return false;
+      if (/["'()]/.test(u.href)) return false;
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  function loadStoredBgUrls() {
+    try {
+      const raw = JSON.parse(localStorage.getItem('gta-bg-urls-v1') || '[]');
+      return Array.isArray(raw) ? raw.filter(isBgUrl) : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function saveStoredBgUrls(list) {
+    localStorage.setItem('gta-bg-urls-v1', JSON.stringify(list));
+  }
+
+  function rememberBackgroundUrls(list) {
+    if (!Array.isArray(list)) return;
+    const merged = loadStoredBgUrls();
+    list.forEach(link => { if (isBgUrl(link) && !merged.includes(link)) merged.push(link); });
+    saveStoredBgUrls(merged);
+  }
+
+  function addStoredBgUrl() {
+    const input = document.getElementById('user-bg-url');
+    const value = (input && input.value || '').trim();
+    if (!isBgUrl(value)) {
+      setUserBgStatus(location.protocol === 'https:' ? 'status_bg_https' : 'status_bg_link_bad');
+      return;
+    }
+    const list = loadStoredBgUrls();
+    if (!list.includes(value)) list.push(value);
+    saveStoredBgUrls(list);
+    if (input) input.value = '';
+    setUserBgStatus('status_bg_link_saved');
+    loadBackgrounds();
+  }
+
+  function removeStoredBgUrl(link) {
+    saveStoredBgUrls(loadStoredBgUrls().filter(item => item !== link));
+    loadBackgrounds();
   }
 
   function setUserBgStatus(key) {
@@ -5858,20 +5963,25 @@ public class CPHInline
   }
 
   async function restoreUserBackgrounds(list) {
-    if (!Array.isArray(list) || !list.length) return;
-    for (const item of list) {
-      if (!item || !item.name || !item.dataUrl) continue;
-      try {
-        await fetch('/api/user-backgrounds', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: item.name, dataUrl: item.dataUrl })
-        });
-      } catch (e) {}
+    if (Array.isArray(list)) {
+      for (const item of list) {
+        if (!item || !item.name || !item.dataUrl) continue;
+        try {
+          await fetch('/api/user-backgrounds', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: item.name, dataUrl: item.dataUrl })
+          });
+        } catch (e) {}
+      }
     }
     await loadBackgrounds();
   }
 
+  document.getElementById('btn-add-bg-url')?.addEventListener('click', addStoredBgUrl);
+  document.getElementById('user-bg-url')?.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); addStoredBgUrl(); }
+  });
   document.getElementById('btn-upload-bg')?.addEventListener('click', () => {
     document.getElementById('user-bg-file')?.click();
   });

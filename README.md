@@ -1,4 +1,15 @@
-# GTA VI OBS Overlays Suite (v0.3.1)
+# GTA VI OBS Overlays Suite (v0.3.2)
+
+A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
+
+Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.3.2
+
+- On the live site, add a custom background by pasting a direct https image link. OBS loads that link. The link is stored in the overlay URL and in Import/Export.
+- Uploading a file still works only in a local copy running `npm run dev`, because the public site cannot save files.
+
+## What's new in v0.3.1
 
 A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
 
