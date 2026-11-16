@@ -12,6 +12,18 @@ public class CPHInline
         CPH.TryGetArg<string>("successMessage", out string successMessage);
         CPH.TryGetArg<string>("failMessage", out string failMessage);
 
+        if (string.IsNullOrEmpty(userType))
+        {
+            // Command triggers set eventSource to "command"; the real platform is in commandSource.
+            foreach (string key in new[] { "commandSource", "eventSource" })
+            {
+                if (CPH.TryGetArg<string>(key, out string src) && !string.IsNullOrEmpty(src))
+                {
+                    string srcLower = src.ToLower();
+                    if (srcLower == "twitch" || srcLower == "youtube") { userType = srcLower; break; }
+                }
+            }
+        }
         userType = userType?.ToLower() ?? "youtube";
 
         // Clean the target username for the database lookup
@@ -43,6 +55,22 @@ public class CPHInline
             storedUserId = CPH.GetTwitchUserVar<string>(targetName, "userId", true);
             storedAvatarUrl = CPH.GetTwitchUserVar<string>(targetName, "avatarUrl", true);
             storedChannelLink = CPH.GetTwitchUserVar<string>(targetName, "channelLink", true);
+
+            // Fall back to the Twitch API when the user variables were never populated
+            if (string.IsNullOrEmpty(storedAvatarUrl))
+            {
+                try
+                {
+                    var info = CPH.TwitchGetExtendedUserInfoByLogin(targetName);
+                    if (info != null)
+                    {
+                        storedUserId = info.UserId;
+                        storedAvatarUrl = info.ProfileImageUrl;
+                        storedChannelLink = $"https://twitch.tv/{targetName.ToLower()}";
+                    }
+                }
+                catch (Exception ex) { CPH.LogWarn($"[GTA-Shoutout] Twitch lookup failed: {ex.Message}"); }
+            }
         }
 
         // 3. Verify user exists in the database
@@ -62,7 +90,7 @@ public class CPHInline
         }
 
         // Upscale YouTube avatar URL from =s88 to =s600 for crisp overlay rendering
-        if (!string.IsNullOrEmpty(storedAvatarUrl))
+        if (userType == "youtube" && !string.IsNullOrEmpty(storedAvatarUrl))
         {
             storedAvatarUrl = Regex.Replace(storedAvatarUrl, @"=s\d+-", "=s600-");
         }
@@ -106,6 +134,10 @@ public class CPHInline
         if (platform == "youtube")
         {
             CPH.SendYouTubeMessage(msg);
+        }
+        else if (platform == "twitch")
+        {
+            CPH.SendMessage(msg, true);
         }
         else
         {

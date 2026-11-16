@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>GTA VI Overlays - Universal Setup v0.2.3</title>
+  <title>GTA VI Overlays - Universal Setup v0.2.4</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -175,7 +175,7 @@
   <aside class="sidebar">
     <div class="brand-header">
       <div class="brand-top">
-        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.2.3</span></div>
+        <div class="brand-title">GTA VI OVERLAY HUB <span class="ver-pill">v0.2.4</span></div>
         <div id="sb-status" class="sb-badge"><i class="fa-solid fa-plug"></i> <span data-i18n="status_disconnected">Disconnected</span></div>
       </div>
       <div class="global-controls">
@@ -187,6 +187,13 @@
             <option value="es">Español</option>
             <option value="fr">Français</option>
             <option value="de">Deutsch</option>
+          </select>
+        </label>
+        <label style="flex-direction:row; align-items:center; gap:8px;">
+          <span style="color:#8c96a6;"><i class="fa-solid fa-tower-broadcast"></i></span>
+          <select id="cfg-platform">
+            <option value="youtube" data-i18n="opt_platform_youtube" selected>YouTube</option>
+            <option value="twitch" data-i18n="opt_platform_twitch">Twitch</option>
           </select>
         </label>
         <label style="flex-direction:row; align-items:center; gap:8px;">
@@ -512,7 +519,14 @@ public class CPHInline
         <div class="alert-config-row"><span data-i18n="al_gift_rec">Gift Membership Received</span><select id="cfg-ac_grc"><option value="teal" data-i18n="opt_teal" selected>TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_grc" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_grc" checked></div></div>
         <div class="alert-config-row"><span data-i18n="al_superchat">Super Chat</span><select id="cfg-ac_sc"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_sc" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_sc" checked></div></div>
         <div class="alert-config-row"><span data-i18n="al_supersticker">Super Sticker</span><select id="cfg-ac_stk"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_stk" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_stk" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_jewels">Jewels Gifted</span><select id="cfg-ac_jwl"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_jwl" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_jwl" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_jewels_bits">Jewels / Bits</span><select id="cfg-ac_jwl"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_jwl" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_jwl" checked></div></div>
+      </div>
+
+      <div class="panel">
+        <div class="panel-title"><i class="fa-brands fa-twitch"></i> <span data-i18n="panel_twitch_events">Twitch Events</span></div>
+        <p style="font-size:0.72rem; color:#9aa4b2;" data-i18n="desc_twitch_events">Twitch Subs, ReSubs, Gift Bombs and Gift Subs use the New Subscriber, Milestone, Gift Sent and Gift Received rows above. Bits use the Jewels / Bits row. Follows and Raids are Twitch only.</p>
+        <div class="alert-config-row"><span data-i18n="al_follow">New Follower</span><select id="cfg-ac_fol"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple" selected>PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_fol" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_fol" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_raid">Incoming Raid</span><select id="cfg-ac_rd"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink" selected>PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_rd" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_rd" checked></div></div>
       </div>
 
       <div class="panel">
@@ -1084,7 +1098,9 @@ public class CPHInline
               <option value="giftRec" data-i18n="al_gift_rec">Gift Received</option>
               <option value="superchat" data-i18n="al_superchat">Super Chat</option>
               <option value="supersticker" data-i18n="al_supersticker">Super Sticker</option>
-              <option value="jewels" data-i18n="al_jewels">Jewels Gifted</option>
+              <option value="jewels" data-i18n="al_jewels_bits">Jewels / Bits</option>
+              <option value="follow" data-i18n="al_follow">New Follower</option>
+              <option value="raid" data-i18n="al_raid">Incoming Raid</option>
             </select>
           </label>
           <label><span data-i18n="lbl_sim_chat_role">Chat Role to Simulate</span>
@@ -1596,6 +1612,13 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Jewels Gifted",
+    "al_jewels_bits": "Jewels / Bits",
+    "panel_twitch_events": "Twitch Events",
+    "desc_twitch_events": "Twitch Subs, ReSubs, Gift Bombs and Gift Subs use the New Subscriber, Milestone, Gift Sent and Gift Received rows above. Bits use the Jewels / Bits row. Follows and Raids are Twitch only.",
+    "al_follow": "New Follower",
+    "al_raid": "Incoming Raid",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Alerts Position & Timing",
     "lbl_sb_alert_event": "SB Custom Alert Event",
     "panel_so_pos": "Shoutout Toast Position & Timing",
@@ -1976,6 +1999,13 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Joias Enviadas",
+    "al_jewels_bits": "Joias / Bits",
+    "panel_twitch_events": "Eventos da Twitch",
+    "desc_twitch_events": "Subs, ReSubs, Gift Bombs e Gift Subs da Twitch usam as linhas Novo Inscrito, Marco, Presente Enviado e Presente Recebido acima. Bits usam a linha Joias / Bits. Follows e Raids são apenas da Twitch.",
+    "al_follow": "Novo Seguidor",
+    "al_raid": "Raid Recebida",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Posição e Tempo dos Alertas",
     "lbl_sb_alert_event": "Evento de Alerta SB",
     "panel_so_pos": "Posição e Tempo do Shoutout",
@@ -2367,6 +2397,13 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Joyas Regaladas",
+    "al_jewels_bits": "Joyas / Bits",
+    "panel_twitch_events": "Eventos de Twitch",
+    "desc_twitch_events": "Los Subs, ReSubs, Gift Bombs y Gift Subs de Twitch usan las filas Nuevo Suscriptor, Hito, Regalo Enviado y Regalo Recibido de arriba. Los Bits usan la fila Joyas / Bits. Follows y Raids son solo de Twitch.",
+    "al_follow": "Nuevo Seguidor",
+    "al_raid": "Raid Entrante",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Posición y Tiempo de Alertas",
     "lbl_sb_alert_event": "Evento de Alerta Personalizado SB",
     "panel_so_pos": "Posición y Tiempo del Destacado",
@@ -2769,6 +2806,13 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Joyaux Offerts",
+    "al_jewels_bits": "Joyaux / Bits",
+    "panel_twitch_events": "Événements Twitch",
+    "desc_twitch_events": "Les Subs, ReSubs, Gift Bombs et Gift Subs Twitch utilisent les lignes Nouvel Abonné, Palier, Cadeau Envoyé et Cadeau Reçu ci-dessus. Les Bits utilisent la ligne Joyaux / Bits. Follows et Raids sont uniquement Twitch.",
+    "al_follow": "Nouveau Follower",
+    "al_raid": "Raid Entrant",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Position et Durée des Alertes",
     "lbl_sb_alert_event": "Événement d'Alerte SB",
     "panel_so_pos": "Position et Durée de la Dédicace",
@@ -3160,6 +3204,13 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Juwelen geschenkt",
+    "al_jewels_bits": "Juwelen / Bits",
+    "panel_twitch_events": "Twitch-Events",
+    "desc_twitch_events": "Twitch-Subs, ReSubs, Gift Bombs und Gift Subs nutzen oben die Zeilen Neuer Abonnent, Meilenstein, Geschenk gesendet und Geschenk erhalten. Bits nutzen die Zeile Juwelen / Bits. Follows und Raids gibt es nur auf Twitch.",
+    "al_follow": "Neuer Follower",
+    "al_raid": "Eingehender Raid",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Alert-Position & Timing",
     "lbl_sb_alert_event": "Eigenes SB-Alert-Event",
     "panel_so_pos": "Shoutout-Position & Timing",
@@ -3766,8 +3817,9 @@ public class CPHInline
       'fontHeading','fontBody','bg','walkon-bg','so-bg','qa-bg','alert-bg','chat-bg','vAvatar','vTier',
       'cPink','cTeal','cPurple','cYellow','cStroke','cBorder','cBg','palette',
       'alertEvent','ax','ay','ascale','v_ax','v_ay','v_ascale','aDur',
-      'ac_sub','ac_mem','ac_ms','ac_gft','ac_grc','ac_sc','ac_stk','ac_jwl',
-      'ad_sub','ad_mem','ad_ms','ad_gft','ad_grc','ad_sc','ad_stk','ad_jwl',
+      'platform',
+      'ac_sub','ac_mem','ac_ms','ac_gft','ac_grc','ac_sc','ac_stk','ac_jwl','ac_fol','ac_rd',
+      'ad_sub','ad_mem','ad_ms','ad_gft','ad_grc','ad_sc','ad_stk','ad_jwl','ad_fol','ad_rd',
       'soX','soY','soScale','v_soX','v_soY','v_soScale',
       'soDur','soAnim','soLayout','soColor','soTitle','soVar','soEvent',
       'chatX','chatY','chatW','chatScale','v_chatX','v_chatY','v_chatW','v_chatScale',
@@ -3779,7 +3831,7 @@ public class CPHInline
       'f5X','f5Y','v_f5X','v_f5Y','f5GroupX','f5GroupY','v_f5GroupX','v_f5GroupY','f5Size','v_f5Size','f5InDir','f5InStyle','f5OutDir','f5OutStyle','f5Shape','f5Gap','v_f5Gap','f5Width','v_f5Width','f5Height','v_f5Height','f5Align','f5EndDelay','f5SfxVol','f5Color1','f5Color2','f5Color3','f5Color4','f5Color5','f5Event','goalsX','goalsY','goalsScale','v_goalsX','v_goalsY','v_goalsScale','goalsMode','goalsShowDur','goalsGapDur','goalsRepeatDelay','goalsAnimIn','goalsAnimOut','goalsColor','goals-bg','goalsLikesTitle','goalsLikesCount','goalsLikesGoal','goalsMembersTitle','goalsMembersCount','goalsMembersGoal','goalsJewelsTitle','goalsJewelsCount','goalsJewelsGoal','goalsSubsTitle','goalsSubsCount','goalsSubsGoal','goalsGiftsTitle','goalsGiftsCount','goalsGiftsGoal','goalsSupersTitle','goalsSupersCount','goalsSupersGoal'
     ];
     const checkboxToggles = [
-      'al_sub','al_mem','al_ms','al_gft','al_grc','al_sc','al_stk','al_jwl',
+      'al_sub','al_mem','al_ms','al_gft','al_grc','al_sc','al_stk','al_jwl','al_fol','al_rd',
       'showAvatar','showUser','showTier',
       'chatAv','chatBadges','chatUpper','chatNoBg','chatNoCmd',
       'qaShowBadge','f5AlignH','f5AlignV','v_f5AlignH','v_f5AlignV','f5GroupCenterH','f5GroupCenterV','v_f5GroupCenterH','v_f5GroupCenterV','f5Sfx','goalsAlignH','goalsAlignV','v_goalsAlignH','v_goalsAlignV','goalsLikes','goalsMembers','goalsJewels','goalsSubs','goalsGifts','goalsSupers'
@@ -3920,7 +3972,7 @@ public class CPHInline
       const state = getSetupState('horiz');
       const exportPayload = {
         app: 'GTA VI Overlay Hub',
-        version: '0.2.3',
+        version: '0.2.4',
         exportedAt: new Date().toISOString(),
         pinPreview: Boolean(pinCheckbox && pinCheckbox.checked),
         previewMode: currentPreviewMode,
@@ -3936,7 +3988,7 @@ public class CPHInline
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = 'gta6-overlay-config-v0.2.3.json';
+      a.download = 'gta6-overlay-config-v0.2.4.json';
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
@@ -3987,6 +4039,7 @@ public class CPHInline
       if (raw.lookupAction !== undefined && document.getElementById('cfg-lookupAction')) {
         document.getElementById('cfg-lookupAction').value = raw.lookupAction;
       }
+      applyPlatformUi(false);
       if (raw.testUserInput !== undefined && document.getElementById('test-user-input')) {
         document.getElementById('test-user-input').value = raw.testUserInput;
       }
@@ -4209,7 +4262,7 @@ public class CPHInline
               payload: {
                 userName: u.name || d.userName || 'YouTube User',
                 userId: u.id || d.userId || '',
-                message: d.message || '',
+                message: d.message || d.text || '',
                 emotes: d.emotes || [],
                 parts: d.parts || [],
                 role: (u.isModerator || u.isOwner) ? 'mod' : ((u.isSponsor || u.isMember) ? 'member' : 'viewer'),
@@ -4219,9 +4272,77 @@ public class CPHInline
           }
         });
       });
+      sbAdminClient.on('Twitch.ChatMessage', (payload) => {
+        // Streamer.bot 1.1: { user: { id, name, role, subscribed }, text, messageId, emotes, parts }; older: { message: {...} }.
+        const data = payload?.data || payload;
+        if (!data) return;
+        const d = (data.message && typeof data.message === 'object') ? data.message : data;
+        const u = (d.user && typeof d.user === 'object') ? d.user : {};
+        const roleNum = parseInt(u.role ?? d.role ?? 1, 10) || 1;   // 1 viewer, 2 VIP, 3 mod, 4 broadcaster
+        const isMod = Boolean(d.isModerator || roleNum >= 3);
+        const isMember = Boolean(u.subscribed || d.isSubscriber || d.isVip || roleNum === 2);
+        [frameHoriz, frameVert].forEach(frame => {
+          if (frame && frame.contentWindow) {
+            frame.contentWindow.postMessage({
+              type: 'TRIGGER_CHAT_TEST',
+              payload: {
+                userName: u.name || u.login || d.displayName || d.username || (typeof d.user === 'string' ? d.user : '') || 'Twitch User',
+                userId: u.id || d.userId || d.user_id || '',
+                message: d.text ?? (typeof d.message === 'string' ? d.message : (d.rawInput || '')),
+                emotes: d.emotes || [],
+                parts: d.parts || [],
+                role: isMod ? 'mod' : (isMember ? 'member' : 'viewer'),
+                avatar: u.profileImageUrl || d.avatarUrl || d.userProfileUrl || '',
+                msgId: d.messageId || d.msgId || undefined
+              }
+            }, '*');
+          }
+        });
+      });
     }
     const btnConnectSb = document.getElementById('btn-connect-sb');
     if (btnConnectSb) btnConnectSb.addEventListener('click', connectSetupToSB);
+
+    // Platform (YouTube / Twitch): the overlay uses it for every platform-specific name.
+    // Here it also swaps the default goal titles and lookup action, and shows the Twitch Events panel.
+    // Same pairs as TWITCH_GOAL_DEFAULTS in js/overlays.js (title and Streamer.bot global per goal bar).
+    const PLATFORM_GOAL_TITLES = [
+      ['goalsMembersTitle', 'Memberships', 'Subs'],
+      ['goalsMembersCount', 'memberCount', 'subCount'],
+      ['goalsMembersGoal', 'memberGoal', 'subGoal'],
+      ['goalsJewelsTitle', 'Jewels', 'Bits'],
+      ['goalsJewelsGoal', 'JewelsGoal', 'jewelsGoal'],
+      ['goalsSubsTitle', 'Subscribers', 'Followers'],
+      ['goalsSubsCount', 'liveSubCount', 'followerCount'],
+      ['goalsSubsGoal', 'liveSubGoal', 'followerGoal'],
+      ['goalsGiftsTitle', 'Membership Gifts', 'Gift Subs']
+    ];
+    function applyPlatformUi(fromUser) {
+      const isTw = document.getElementById('cfg-platform')?.value === 'twitch';
+      const twPanel = document.querySelector('[data-i18n="panel_twitch_events"]')?.closest('.panel');
+      if (twPanel) twPanel.style.display = isTw ? '' : 'none';
+      const sb107Btn = document.getElementById('btn-open-sb-import-107');
+      if (sb107Btn) sb107Btn.style.display = isTw ? 'none' : '';
+      const liveSubPanel = document.getElementById('panel-livesub');
+      if (liveSubPanel) liveSubPanel.style.display = isTw ? 'none' : '';
+      const simType = document.getElementById('sim-alert-type');
+      if (simType) {
+        simType.querySelectorAll('option[value="follow"], option[value="raid"]').forEach(o => { o.hidden = !isTw; o.disabled = !isTw; });
+        if (!isTw && (simType.value === 'follow' || simType.value === 'raid')) simType.value = 'sub';
+      }
+      if (!fromUser) return;
+      PLATFORM_GOAL_TITLES.forEach(([id, ytName, twName]) => {
+        const el = document.getElementById(`cfg-${id}`);
+        if (el && el.value.trim() === (isTw ? ytName : twName)) el.value = isTw ? twName : ytName;
+      });
+      const actionEl = document.getElementById('cfg-lookupAction');
+      if (actionEl && ['', 'GTA_LookupYouTubeUser', 'GTA_LookupTwitchUser'].includes(actionEl.value.trim())) {
+        actionEl.value = isTw ? 'GTA_LookupTwitchUser' : 'GTA_LookupYouTubeUser';
+      }
+    }
+    const platformEl = document.getElementById('cfg-platform');
+    if (platformEl) platformEl.addEventListener('change', () => { applyPlatformUi(true); syncLiveConfig(); });
+    applyPlatformUi(false);
 
     // Mock Simulators
     const mocks = [
@@ -4259,6 +4380,14 @@ public class CPHInline
         if (type === 'superchat') { p.triggerName = t('al_superchat'); p.amount = "$20.00"; p.message = "Love the stream!"; }
         if (type === 'supersticker') { p.triggerName = t('al_supersticker'); p.amount = "$5.00"; p.stickerImageUrl = "https://www.gstatic.com/youtube/img/pdg/gift/assets/loot_box.webp"; p.message = "Awesome!"; }
         if (type === 'jewels') { p.triggerName = t('al_jewels'); p.jewelsAmount = 150; p.jewelsName = "Controller"; p.jewelsUrl = "https://www.gstatic.com/youtube/img/pdg/gift/assets/controller.webp"; }
+        if (type === 'follow') { p.triggerName = t('al_follow'); }
+        if (type === 'raid') { p.triggerName = t('al_raid'); p.userName = 'BigStreamer'; p.count = 42; }
+        // Twitch sample data (the overlay picks the Twitch names from the Platform setting).
+        if (document.getElementById('cfg-platform')?.value === 'twitch') {
+          delete p.jewelsName; delete p.jewelsUrl;
+          if (type === 'sub' || type === 'milestone') p.levelName = '1';
+          if (type === 'jewels') { p.jewelsAmount = 500; p.message = "Take my bits!"; }
+        }
         sendToBoth({ type: 'TRIGGER_ALERT_TEST', payload: p });
       });
     }
@@ -4650,7 +4779,7 @@ public class CPHInline
 <div id="sb-import-modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; align-items:center; justify-content:center; padding:20px;">
   <div style="background:#171a21; border:3px solid #0b2328; border-radius:12px; max-width:900px; width:100%; max-height:90vh; overflow:auto; box-shadow:0 20px 60px rgba(0,0,0,0.6);">
     <div style="padding:16px 20px; border-bottom:2px solid #232834; display:flex; justify-content:space-between; align-items:center;">
-      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.2.3</span></div>
+      <div style="font-family:'Bebas Neue',sans-serif; font-size:1.6rem; color:#f4acc4; letter-spacing:1px;"><span data-i18n="sb_import_title">Streamer.bot Import</span> <span class="ver-pill">v0.2.4</span></div>
       <button id="btn-close-sb-import" style="background:none; border:none; color:#fff; font-size:1.4rem; cursor:pointer;">&times;</button>
     </div>
     <div style="padding:20px;">
@@ -4749,14 +4878,17 @@ public class CPHInline
     const label = document.getElementById('sb-import-version-label');
     if (!modal || !ta) return;
 
+    // The import matches the Platform setting: YouTube-only or Twitch-only actions (Twitch needs 1.1.0).
+    const platform = document.getElementById('cfg-platform')?.value === 'twitch' ? 'twitch' : 'youtube';
     const versions = {
-      '1.0.7': { label: '1.0.7 Stable', file: 'streamerbot/Streamer.Bot-1.0.7-ImportCode.txt' },
-      '1.1.0': { label: '1.1.0 Alpha', file: 'streamerbot/Streamer.Bot-1.1.0-Alpha-ImportCode.txt' }
+      '1.0.7': { label: '1.0.7 Stable', files: { youtube: 'streamerbot/Streamer.Bot-1.0.7-ImportCode.txt' } },
+      '1.1.0': { label: '1.1.0 Alpha', files: { youtube: 'streamerbot/Streamer.Bot-1.1.0-Alpha-ImportCode.txt', twitch: 'streamerbot/Streamer.Bot-1.1.0-Alpha-Twitch-ImportCode.txt' } }
     };
     const ver = versions[versionKey];
-    if (!ver) return;
+    if (!ver || !ver.files[platform]) return;
+    ver.file = ver.files[platform];
 
-    if (label) label.textContent = ver.label;
+    if (label) label.textContent = `${ver.label} · ${platform === 'twitch' ? 'Twitch' : 'YouTube'}`;
     ta.value = t('sb_loading');
     modal.style.display = 'flex';
 
@@ -4795,7 +4927,8 @@ public class CPHInline
     const blob = new Blob([ta.value], {type: 'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.2.3.txt';
+    const platform = document.getElementById('cfg-platform')?.value === 'twitch' ? 'Twitch' : 'YouTube';
+    a.download = `GTA-VI-Widget-Hub-SBImport-${platform}-v0.2.4.txt`;
     a.click();
     URL.revokeObjectURL(a.href);
   });

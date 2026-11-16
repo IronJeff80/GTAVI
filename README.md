@@ -1,8 +1,44 @@
-# GTA VI OBS Overlays Suite (v0.2.3)
+# GTA VI OBS Overlays Suite (v0.2.4)
 
-A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live.
+A modular OBS Studio browser-source overlay suite inspired by **Grand Theft Auto VI**. Powered by **Streamer.bot WebSockets** for YouTube Live and Twitch.
 
 Open `setup.html` (or run the local dev server below) to build the OBS browser-source URLs.
+
+## What's new in v0.2.4
+
+- **Platform switch (YouTube / Twitch)** at the top of the setup page, next to the language. It adds `platform=youtube` or `platform=twitch` to the overlay URL, and the overlay uses the matching names everywhere. YouTube is the default and looks the same as before.
+
+  | Alert slot | YouTube | Twitch |
+  |---|---|---|
+  | Member / Sub | New Member | New Subscriber |
+  | Milestone | Membership Milestone | Resub |
+  | Gift Sent | Membership Gift ("5 Memberships") | Gift Subs ("5 Subs") |
+  | Gift Received | Gift Membership Received | Gift Sub Received |
+  | Jewels | Jewels Gifted ("500 Jewels") | Bits Cheered ("500 Bits") |
+  | Follow / Raid | - | New Follower / Incoming Raid |
+
+  Goal bars on Twitch:
+
+  | YouTube bar | Twitch bar | Twitch count / goal globals | Filled by (v0.2.4 import) |
+  |---|---|---|---|
+  | Memberships | Subs | `subCount` / `subGoal` | `GTA_GoalBars_TwitchCounts` (Get Subscriber Count on Follow, Sub, Gift Sub, Stream Online) |
+  | Jewels | Bits | `jewelsCount` / `jewelsGoal` | `GTA_GoalBars_TwitchBits` (adds `%bits%` on Cheer) |
+  | Subscribers | Followers | `followerCount` / `followerGoal` | `GTA_GoalBars_TwitchCounts` (Get Follower Count) |
+  | Membership Gifts | Gift Subs | `membershipGiftsCount` / `membershipGiftsGoal` | `GTA_GoalBars_TwitchGifts` (+1 per Gift Sub) |
+
+  Likes and Super Chats/Stickers are hidden because Twitch has no equivalent. A title or variable name you typed yourself is kept. "[Settings] Set Goal Bar Goals" also sets `subGoal` (100) and `followerGoal` (1000) and runs on Twitch Stream Online. The Twitch Events panel (Follow and Raid rows) only shows on Twitch, and the Live Subscriber Count panel only shows on YouTube.
+- **Separate Streamer.bot imports per platform.** The setup page's "Streamer.bot 1.1.0 Alpha" button gives the import that matches the Platform switch:
+  - YouTube: `streamerbot/Streamer.Bot-1.1.0-Alpha-ImportCode.txt` (YouTube actions and triggers only, same as before plus the updated scripts).
+  - Twitch: `streamerbot/Streamer.Bot-1.1.0-Alpha-Twitch-ImportCode.txt` (Twitch triggers only: alerts, First 5, walk-on, lookup, `!so` / `!highlight` on Twitch chat, Twitch goal bars; no YouTube actions).
+  - The 1.0.7 import is YouTube-only, so its button is hidden on Twitch. A combined YouTube + Twitch import is not available yet.
+- `GTA_QA_Highlight.cs` finds the Twitch avatar for Twitch highlights.
+- Twitch alerts arrive through `streamerbot/GTA_Master_Alerts.cs` (`GTA_Alert`). Paste the updated script into the alert action, then add the Twitch Follow, Cheer, Subscription, Resubscription, Gift Subscription, Gift Bomb and Raid triggers to it. Bits use the Jewels row (`al_jwl` / `ac_jwl` / `ad_jwl`). Follow and Raid have their own rows (`al_fol` / `ac_fol` / `ad_fol`, `al_rd` / `ac_rd` / `ad_rd`). Gift subs that are part of a gift bomb are skipped.
+- **Test runs on Twitch use a random follower.** When you test `GTA_Alert` or `GTA_First5` in Streamer.bot (the Test button on a trigger, or the Test trigger), the alert or First 5 shows the name and picture of a random follower of your channel, so you can check the overlay with real pictures before going live. The 100 newest followers are fetched from Twitch at most once every 10 minutes and shown in shuffled order. If Twitch returns no followers (none yet, or the Twitch connection has no follower access) or a picture can't be found, the test uses the stock name and picture and Streamer.bot logs a `[GTA-Test]` warning. Real events never use a random follower. YouTube tests are unchanged.
+  - Streamer.bot's own Test trigger does not say which platform it is for. `[Settings] GTA Platform (Twitch)` / `[Settings] GTA Platform (YouTube)` saves the global `gtaPlatform` when Streamer.bot starts. Run it once by hand after importing. Tests from a platform's own triggers (Twitch Follow, YouTube Super Chat, ...) ignore it.
+  - Test runs of First 5 skip the 5-per-stream counter, so testing does not use up the real first chatters. Users in the "No First Words" group are still excluded. Test pictures still take a spot in the overlay's row until it clears after the end delay, or until you refresh the browser source before going live.
+- Twitch chat now shows in the setup preview, not only in OBS.
+- New scripts: `streamerbot/GTA_WalkOnTwitch.cs` (Twitch walk-on card) and `streamerbot/GTA_LookupTwitchUser.cs` (the Test tab uses it when the platform is Twitch). `GTA_Shoutout.cs` resolves Twitch users and replies in Twitch chat.
+- Streamer.bot must have your Twitch account connected.
 
 ## What's new in v0.2.3
 

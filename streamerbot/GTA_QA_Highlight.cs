@@ -30,7 +30,13 @@ public class CPHInline
         else if (args.ContainsKey("avatarUrl") && !string.IsNullOrEmpty(args["avatarUrl"].ToString()))
             avatar = args["avatarUrl"].ToString();
 
-        if (string.IsNullOrEmpty(avatar))
+        // Twitch: chat, command or quick action from Twitch (__source TwitchChatMessage, commandSource/eventSource "twitch").
+        string source = args.ContainsKey("__source") && args["__source"] != null ? args["__source"].ToString() : "";
+        string origin = ((args.ContainsKey("commandSource") ? args["commandSource"]?.ToString() : "") + " "
+                       + (args.ContainsKey("eventSource") ? args["eventSource"]?.ToString() : "")).ToLower();
+        bool isTwitch = source.StartsWith("Twitch", StringComparison.OrdinalIgnoreCase) || origin.Contains("twitch");
+
+        if (string.IsNullOrEmpty(avatar) && !isTwitch)
         {
             string userId = args.ContainsKey("userId") ? args["userId"].ToString() : "";
             if (!string.IsNullOrEmpty(userId))
@@ -43,6 +49,17 @@ public class CPHInline
                 avatar = CPH.GetYouTubeUserVar<string>(user, "avatarUrl", true)
                       ?? CPH.GetYouTubeUserVar<string>(user, "userProfileUrl", true);
             }
+        }
+
+        // Twitch avatar (Twitch messages only): userName is the Twitch login.
+        if (string.IsNullOrEmpty(avatar) && isTwitch)
+        {
+            try
+            {
+                var info = CPH.TwitchGetExtendedUserInfoByLogin(user);
+                if (info != null) avatar = info.ProfileImageUrl ?? "";
+            }
+            catch (Exception ex) { CPH.LogWarn($"[GTA-QA] Twitch avatar lookup failed: {ex.Message}"); }
         }
 
         // Upscale YouTube avatar to 600px
