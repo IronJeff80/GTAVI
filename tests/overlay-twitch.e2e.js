@@ -123,6 +123,25 @@ const server = http.createServer((req, res) => {
   assert.deepEqual(await goalTitles(''), ['Likes', 'Memberships', 'Jewels', 'Subscribers', 'Membership Gifts', 'Super Chats/Stickers']);
   assert.deepEqual(await goalTitles('&goalsJewels=0&twGoalsBits=0'), ['Likes', 'Memberships', 'Subscribers', 'Membership Gifts', 'Super Chats/Stickers']);
 
+  // Chat Box on Twitch: the message has no picture, so it comes from the saved userProfileUrl and fills in afterwards.
+  async function chatBoxAvatars(query) {
+    await page.goto(`${base}/gta-overlay.html?modules=chatbox&platform=twitch${query}`, { waitUntil: 'domcontentloaded' });
+    await page.waitForFunction(() => window.gtaOverlay);
+    return page.evaluate(async () => {
+      const o = window.gtaOverlay;
+      o.client = {
+        getUserGlobals: async () => ({ variables: [{ userId: '42', value: 'https://static-cdn.jtvnw.net/lucia.png' }] }),
+        getUserGlobal: async () => ({ status: 'ok', variable: { value: '' } })
+      };
+      o.handleTwitchChatEvent({ message: { text: 'hello', user: { name: 'Lucia', id: '42', role: 1 }, messageId: 'c1' } });
+      await new Promise(r => setTimeout(r, 300));
+      return [...document.querySelectorAll('#chatbox-list .cb-avatar')].map(i => i.getAttribute('src'));
+    });
+  }
+  assert.deepEqual(await chatBoxAvatars(''), ['https://static-cdn.jtvnw.net/lucia.png'], 'Chat Box shows the saved Twitch picture');
+  assert.deepEqual(await chatBoxAvatars('&chatAv=0'), ['https://static-cdn.jtvnw.net/lucia.png'], 'chat bar avatar setting does not affect Chat Box');
+  assert.deepEqual(await chatBoxAvatars('&cbAv=0'), [], 'Chat Box Show Avatars off');
+
   console.log('overlay-twitch e2e: all checks passed');
   await browser.close();
   server.close();

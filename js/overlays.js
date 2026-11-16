@@ -2086,7 +2086,9 @@ class GTAOverlayEngine {
     if (!item) return;
     // Twitch chat has no picture: use the saved Twitch user variable userProfileUrl
     // (written by "[Settings] Save user Vars on First Words"). Twitch platform only.
-    const wantAvatar = this.config.platform === 'twitch' && this.config.chatShowAvatars && this.client && item.userId;
+    // Looked up for the chat bar and the Chat Box, each with its own Show Avatars setting.
+    const wantAvatar = this.config.platform === 'twitch' && this.client && item.userId &&
+      ((this.config.modules.chat && this.config.chatShowAvatars) || (this.config.modules.chatbox && this.config.cbAvatars));
     if (wantAvatar && !item.avatar) item.avatar = this.twitchChatAvatars?.get(item.userId) || '';
     this.handleIncomingChatMessage(item);
     if (wantAvatar && !item.avatar) this.lookupTwitchChatAvatar(item.userId);
@@ -2119,6 +2121,12 @@ class GTAOverlayEngine {
   }
 
   fillChatAvatar(userId, url) {
+    // Chat Box: give that user's lines the picture and redraw them in place (no entry animation).
+    const boxRows = (this.chatboxLog || []).filter(row => String(row.userId) === String(userId) && !row.avatar);
+    if (boxRows.length) {
+      boxRows.forEach(row => { row.avatar = url; });
+      if (this.config.cbAvatars) this.repaintChatBox();
+    }
     if (!this.dom.chatTrack || !this.config.chatShowAvatars) return;
     this.dom.chatTrack.querySelectorAll('.chat-item').forEach(el => {
       if (el.dataset.sender !== String(userId) || el.querySelector('.chat-avatar')) return;
