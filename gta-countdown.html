@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>GTA VI — Leonida Countdown</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Inter:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --pink: #f4acc4;
+    --teal: #53d8bf;
+    --purple: #a688ff;
+    --yellow: #fede9a;
+    --ink: #171a21;
+    --line: #0b2328;
+    --fill: #303030;
+    --pulse: 7s;
+    --traffic: 16s;
+    --glow: 0.35;
+  }
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0; width: 100%; height: 100%; overflow: hidden;
+    background: #05060a; color: #f4f7fb;
+    font-family: Inter, system-ui, sans-serif;
+  }
+  body.clear { background: transparent; }
+  #fit {
+    position: absolute; width: 1920px; height: 1080px;
+    transform-origin: top left; overflow: hidden;
+  }
+  .world { position: absolute; inset: 0; background:
+    radial-gradient(900px 520px at 70% 18%, rgba(166,136,255,.28), transparent 60%),
+    radial-gradient(800px 480px at 18% 80%, rgba(244,172,196,.22), transparent 55%),
+    linear-gradient(180deg, #14102a 0%, #1b1030 28%, #10242c 62%, #071016 100%);
+  }
+  .sun {
+    position: absolute; left: 8%; top: 18%; width: 280px; height: 280px; border-radius: 50%;
+    background: radial-gradient(circle, #fff6d8 0%, #fede9a 18%, #f4acc4 42%, rgba(166,136,255,0) 70%);
+    filter: blur(2px); opacity: .85; animation: sunPulse var(--pulse) ease-in-out infinite;
+  }
+  .scan {
+    position: absolute; inset: 0; pointer-events: none; opacity: .18;
+    background: repeating-linear-gradient(180deg, transparent 0 2px, rgba(0,0,0,.45) 2px 3px);
+    mix-blend-mode: multiply;
+  }
+  .sweep {
+    position: absolute; inset: -20% -10%; pointer-events: none; opacity: 0;
+    background: linear-gradient(100deg, transparent 40%, rgba(83,216,191,.18) 50%, transparent 60%);
+    animation: sweep 9s linear infinite;
+  }
+  .phase-hour .sweep, .phase-hot .sweep, .phase-final .sweep { opacity: 1; }
+  .skyline, .road { position: absolute; left: 0; right: 0; }
+  .skyline { bottom: 150px; height: 280px; display: flex; align-items: flex-end; gap: 8px; padding: 0 40px; }
+  .bldg {
+    flex: 0 0 auto; width: var(--w); height: var(--h);
+    background:
+      repeating-linear-gradient(90deg, rgba(254,222,154,.0) 0 10px, rgba(83,216,191,.55) 10px 12px),
+      repeating-linear-gradient(180deg, rgba(244,172,196,.0) 0 14px, rgba(244,172,196,.45) 14px 16px),
+      linear-gradient(180deg, #241833, #10141c);
+    box-shadow: 0 0 24px rgba(166,136,255,.25);
+    animation: winBlink calc(var(--pulse) * .7) steps(2, end) infinite;
+    animation-delay: var(--d, 0s);
+    position: relative;
+  }
+  .bldg.teal { box-shadow: 0 0 28px rgba(83,216,191,.45); }
+  .bldg.pink { box-shadow: 0 0 28px rgba(244,172,196,.5); }
+  .bldg:nth-child(3n)::after, .bldg:nth-child(4n)::before {
+    content: ""; position: absolute; left: 10%; right: 10%; height: 8px;
+    background: linear-gradient(90deg, var(--pink), var(--yellow));
+    top: 12px; filter: blur(.2px);
+  }
+  .road {
+    bottom: 0; height: 168px;
+    background:
+      linear-gradient(180deg, transparent, rgba(0,0,0,.55) 30%, #07080c 100%),
+      repeating-linear-gradient(90deg, #1a120c 0 80px, #120e0b 80px 160px);
+  }
+  .lanes {
+    position: absolute; left: 0; right: 0; top: 46px; height: 4px;
+    background: repeating-linear-gradient(90deg, var(--yellow) 0 36px, transparent 36px 78px);
+    animation: lanes var(--traffic) linear infinite; opacity: .8;
+  }
+  .headlights, .taillights {
+    position: absolute; top: 70px; height: 8px; width: 140px; border-radius: 8px; filter: blur(1px);
+  }
+  .headlights { background: linear-gradient(90deg, transparent, #fff6c8); animation: drive var(--traffic) linear infinite; }
+  .taillights { background: linear-gradient(90deg, #ff5d7a, transparent); animation: drive2 calc(var(--traffic) * .8) linear infinite; top: 108px; }
+  .palm { position: absolute; bottom: 120px; width: 280px; height: 520px; opacity: .92; }
+  .palm-l { left: -20px; transform-origin: 50% 100%; animation: sway 6.5s ease-in-out infinite; }
+  .palm-r { right: -30px; transform: scaleX(-1); transform-origin: 50% 100%; animation: sway 7.4s ease-in-out infinite reverse; }
+  .stage {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; z-index: 2; padding-bottom: 40px;
+  }
+  .plate {
+    display: flex; gap: 10px; align-items: center;
+    font-size: 18px; letter-spacing: .42em; font-weight: 700; color: var(--yellow);
+    text-transform: uppercase;
+  }
+  .plate i {
+    width: 42px; height: 2px; background: linear-gradient(90deg, transparent, var(--teal));
+    display: block;
+  }
+  .plate i.r { transform: scaleX(-1); }
+  .mark { text-align: center; line-height: .8; margin: 8px 0 0; }
+  .mark .gta {
+    display: block; font-family: 'Bebas Neue', sans-serif; letter-spacing: .48em;
+    font-size: 28px; color: #d5dbe6; margin-left: .48em;
+  }
+  .mark .vi {
+    font-family: 'Bebas Neue', sans-serif; font-size: 168px; letter-spacing: .04em;
+    background: linear-gradient(100deg, var(--teal), var(--yellow) 40%, var(--pink) 70%, var(--purple));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: drop-shadow(0 10px 0 #0b2328) drop-shadow(0 0 24px rgba(244,172,196,.45));
+    animation: viPulse var(--pulse) ease-in-out infinite;
+  }
+  .tag {
+    margin: 6px 0 18px; font-family: 'Bebas Neue', sans-serif; font-size: 42px;
+    letter-spacing: .18em; color: #f7fbff;
+  }
+  .clock { display: flex; gap: 18px; }
+  .unit {
+    width: 196px; height: 188px; position: relative;
+    background:
+      linear-gradient(160deg, rgba(23,26,33,.72), rgba(48,48,48,.88)),
+      linear-gradient(120deg, rgba(83,216,191,.18), rgba(244,172,196,.12));
+    border: 3px solid var(--line);
+    border-radius: 18px;
+    box-shadow: 0 0 0 1px rgba(83,216,191,.35), 0 18px 40px rgba(0,0,0,.45), inset 0 0 30px rgba(166,136,255,.12);
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    overflow: hidden;
+  }
+  .unit::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(90deg, var(--teal), var(--pink), var(--purple));
+    height: 4px; top: 0;
+  }
+  .unit b {
+    font-family: 'Bebas Neue', sans-serif; font-size: 108px; line-height: .85;
+    color: #fff; text-shadow: 0 6px 0 #0b2328;
+  }
+  .unit span {
+    margin-top: 6px; font-size: 13px; letter-spacing: .32em; font-weight: 700; color: var(--teal);
+  }
+  .unit.tick b { animation: punch .28s cubic-bezier(.2,1.4,.3,1); }
+  .where {
+    margin: 22px 0 0; letter-spacing: .22em; font-size: 14px; font-weight: 700; color: #c9d2e0;
+  }
+  .where em { color: var(--pink); font-style: normal; }
+  .wanted { display: flex; gap: 10px; margin-top: 16px; }
+  .wanted i {
+    width: 22px; height: 22px; background: #2a3140; clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    filter: drop-shadow(0 0 0 transparent);
+  }
+  .wanted i.on { background: var(--yellow); filter: drop-shadow(0 0 8px var(--yellow)); }
+  .wanted i.hot { background: var(--pink); animation: starBlink .45s steps(2, end) infinite; }
+  .bars {
+    position: absolute; left: 0; right: 0; bottom: 0; height: 10px; z-index: 3; display: flex;
+  }
+  .bars span { flex: 1; }
+  .bars span:nth-child(1) { background: var(--teal); }
+  .bars span:nth-child(2) { background: var(--yellow); }
+  .bars span:nth-child(3) { background: var(--pink); }
+  .bars span:nth-child(4) { background: var(--purple); }
+  .ticker {
+    position: absolute; left: 0; right: 0; bottom: 18px; overflow: hidden; z-index: 3;
+    font-family: 'Bebas Neue', sans-serif; letter-spacing: .28em; font-size: 22px; color: var(--ink);
+    background: linear-gradient(90deg, var(--teal), var(--yellow), var(--pink));
+    height: 36px; display: flex; align-items: center;
+  }
+  .ticker p { margin: 0; white-space: nowrap; animation: marquee 22s linear infinite; }
+  #fx { position: absolute; inset: 0; width: 1920px; height: 1080px; z-index: 4; pointer-events: none; }
+  .live {
+    display: none; text-align: center; position: relative; z-index: 5;
+  }
+  .phase-live .pre { display: none; }
+  .phase-live .live { display: block; animation: liveIn .7s cubic-bezier(.16,1,.3,1) both; }
+  .live h2 {
+    margin: 0; font-family: 'Bebas Neue', sans-serif; font-size: 92px; letter-spacing: .12em;
+    color: #fff; text-shadow: 0 8px 0 #0b2328, 0 0 30px rgba(83,216,191,.8);
+  }
+  .live .big {
+    font-family: 'Bebas Neue', sans-serif; font-size: 210px; line-height: .8; margin: 0;
+    background: linear-gradient(90deg, var(--yellow), var(--pink), var(--purple), var(--teal));
+    background-size: 200% 100%; -webkit-background-clip: text; background-clip: text; color: transparent;
+    animation: hue 3s linear infinite; filter: drop-shadow(0 12px 0 #0b2328);
+  }
+  .live p { letter-spacing: .34em; font-weight: 700; color: var(--yellow); }
+  .flash {
+    position: absolute; inset: 0; background: #fff; opacity: 0; z-index: 6; pointer-events: none;
+  }
+  .phase-live .flash { animation: boom .9s ease-out 1; }
+  .phase-day { --pulse: 4.5s; --traffic: 11s; --glow: .5; }
+  .phase-hour { --pulse: 2.2s; --traffic: 7s; --glow: .7; }
+  .phase-hot { --pulse: 1.1s; --traffic: 4s; --glow: .9; }
+  .phase-final { --pulse: .42s; --traffic: 2.4s; --glow: 1; }
+  .phase-hot .world, .phase-final .world { animation: heat .35s steps(2, end) infinite; }
+  .phase-final .unit.secs { width: 420px; height: 280px; }
+  .phase-final .unit.secs b { font-size: 200px; }
+  .phase-final .unit.days, .phase-final .unit.hours { display: none; }
+  .phase-hour .unit.days, .phase-hot .unit.days { display: none; }
+  .hide-days .unit.days { display: none; }
+  @keyframes sunPulse { 50% { transform: scale(1.06); opacity: 1; } }
+  @keyframes viPulse { 50% { filter: drop-shadow(0 10px 0 #0b2328) drop-shadow(0 0 36px rgba(83,216,191,.75)); } }
+  @keyframes sway { 50% { transform: rotate(2.5deg); } }
+  .palm-r { animation-name: swayR; }
+  @keyframes swayR { 50% { transform: scaleX(-1) rotate(2.5deg); } }
+  @keyframes lanes { to { background-position: 156px 0; } }
+  @keyframes drive { from { left: -20%; } to { left: 110%; } }
+  @keyframes drive2 { from { left: 110%; } to { left: -20%; } }
+  @keyframes sweep { from { transform: translateX(-30%); } to { transform: translateX(30%); } }
+  @keyframes punch { from { transform: scale(1.18); } to { transform: scale(1); } }
+  @keyframes starBlink { 50% { filter: none; background: #2a3140; } }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+  @keyframes hue { to { background-position: 200% 0; } }
+  @keyframes liveIn { from { transform: scale(.8); opacity: 0; } to { transform: none; opacity: 1; } }
+  @keyframes boom { 0% { opacity: .95; } 100% { opacity: 0; } }
+  @keyframes heat { 50% { filter: saturate(1.4) hue-rotate(-8deg); } }
+  @keyframes winBlink { 50% { filter: brightness(1.35); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; }
+  }
+</style>
+</head>
+<body>
+<div id="fit">
+  <div class="world" id="world">
+    <div class="sun"></div>
+    <div class="sweep"></div>
+    <svg class="palm palm-l" viewBox="0 0 200 420" aria-hidden="true">
+      <path d="M108 420 C100 300 118 220 96 140" stroke="#14302a" stroke-width="14" fill="none"/>
+      <g fill="#0e3b34">
+        <path d="M96 150 C40 80 10 110 20 40 C70 70 90 40 96 150Z"/>
+        <path d="M96 150 C150 60 190 90 200 20 C140 55 120 30 96 150Z"/>
+        <path d="M96 150 C70 40 110 10 150 24 C120 50 110 80 96 150Z"/>
+        <path d="M96 150 C30 120 8 160 18 190 C50 160 80 160 96 150Z"/>
+        <path d="M96 148 C160 130 188 160 176 198 C140 170 110 166 96 148Z"/>
+      </g>
+    </svg>
+    <svg class="palm palm-r" viewBox="0 0 200 420" aria-hidden="true">
+      <path d="M108 420 C100 300 118 220 96 140" stroke="#14302a" stroke-width="14" fill="none"/>
+      <g fill="#0e3b34">
+        <path d="M96 150 C40 80 10 110 20 40 C70 70 90 40 96 150Z"/>
+        <path d="M96 150 C150 60 190 90 200 20 C140 55 120 30 96 150Z"/>
+        <path d="M96 150 C70 40 110 10 150 24 C120 50 110 80 96 150Z"/>
+        <path d="M96 150 C30 120 8 160 18 190 C50 160 80 160 96 150Z"/>
+        <path d="M96 148 C160 130 188 160 176 198 C140 170 110 166 96 148Z"/>
+      </g>
+    </svg>
+    <div class="skyline" id="skyline"></div>
+    <div class="road">
+      <div class="lanes"></div>
+      <div class="headlights"></div>
+      <div class="taillights"></div>
+    </div>
+    <div class="scan"></div>
+  </div>
+
+  <div class="stage" id="stage">
+    <div class="pre">
+      <div class="plate"><i></i><span>LEONIDA · ROLLING MIDNIGHT</span><i class="r"></i></div>
+      <div class="mark"><span class="gta">GRAND THEFT AUTO</span><span class="vi">VI</span></div>
+      <div class="tag" id="tag">THE STREETS OPEN IN</div>
+      <div class="clock" id="clock">
+        <div class="unit days"><b id="d">00</b><span>DAYS</span></div>
+        <div class="unit hours"><b id="h">00</b><span>HOURS</span></div>
+        <div class="unit mins"><b id="m">00</b><span>MINS</span></div>
+        <div class="unit secs"><b id="s">00</b><span>SECS</span></div>
+      </div>
+      <div class="wanted" id="wanted" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+      <div class="where">NEW ZEALAND <em>00:00 NZDT · NOV 19</em> · 3:00 AM PST · NOV 18</div>
+    </div>
+    <div class="live">
+      <div class="plate"><i></i><span>OCEAN DRIVE IS OPEN</span><i class="r"></i></div>
+      <p class="big">VI</p>
+      <h2>IS LIVE</h2>
+      <p>WELCOME TO LEONIDA</p>
+    </div>
+  </div>
+  <canvas id="fx" width="1920" height="1080"></canvas>
+  <div class="flash"></div>
+  <div class="ticker"><p>WELCOME TO LEONIDA &nbsp;·&nbsp; VICE CITY NIGHTS &nbsp;·&nbsp; OCEAN DRIVE &nbsp;·&nbsp; THE DROP IS COMING &nbsp;·&nbsp; NEW ZEALAND GOES FIRST &nbsp;·&nbsp; WELCOME TO LEONIDA &nbsp;·&nbsp; VICE CITY NIGHTS &nbsp;·&nbsp; OCEAN DRIVE &nbsp;·&nbsp; THE DROP IS COMING &nbsp;·&nbsp; NEW ZEALAND GOES FIRST &nbsp;·&nbsp;</p></div>
+  <div class="bars"><span></span><span></span><span></span><span></span></div>
+</div>
+<script>
+(function () {
+  // Midnight in New Zealand (NZDT, UTC+13) on Nov 19, 2026.
+  // That instant is 11:00 UTC Nov 18, which is 3:00 AM PST.
+  const TARGET = Date.UTC(2026, 10, 18, 11, 0, 0);
+  const params = new URLSearchParams(location.search);
+  if (params.get('clear') === '1') document.body.classList.add('clear');
+
+  const skyline = document.getElementById('skyline');
+  const heights = [120, 180, 240, 150, 260, 200, 140, 230, 170, 210, 130, 250, 160, 190, 220];
+  heights.forEach((h, i) => {
+    const el = document.createElement('div');
+    el.className = 'bldg' + (i % 3 === 0 ? ' teal' : i % 3 === 1 ? ' pink' : '');
+    el.style.setProperty('--w', (48 + (i * 17) % 46) + 'px');
+    el.style.setProperty('--h', h + 'px');
+    el.style.setProperty('--d', (i * .37) + 's');
+    skyline.appendChild(el);
+  });
+
+  const fit = document.getElementById('fit');
+  function layout() {
+    const s = Math.min(innerWidth / 1920, innerHeight / 1080);
+    fit.style.transform = 'scale(' + s + ')';
+    fit.style.left = ((innerWidth - 1920 * s) / 2) + 'px';
+    fit.style.top = ((innerHeight - 1080 * s) / 2) + 'px';
+  }
+  addEventListener('resize', layout);
+  layout();
+
+  const tag = document.getElementById('tag');
+  const wanted = [...document.querySelectorAll('#wanted i')];
+  const els = {
+    d: document.getElementById('d'),
+    h: document.getElementById('h'),
+    m: document.getElementById('m'),
+    s: document.getElementById('s')
+  };
+  const tags = {
+    far: 'THE STREETS OPEN IN',
+    day: 'GET TO VICE CITY',
+    hour: 'ENGINES ON',
+    hot: 'HOLD ON TO SOMETHING',
+    final: 'THIS IS IT'
+  };
+  const stars = { far: 1, day: 2, hour: 3, hot: 4, final: 5, live: 5 };
+
+  let previewLeft = null;
+  const preview = params.get('preview');
+  if (preview === 'live') previewLeft = 0;
+  else if (preview && /^\d+$/.test(preview)) previewLeft = Math.max(0, parseInt(preview, 10)) * 1000;
+  const previewStart = performance.now();
+
+  function remaining() {
+    if (previewLeft === null) return TARGET - Date.now();
+    return previewLeft - (performance.now() - previewStart);
+  }
+
+  function phaseFor(ms) {
+    if (ms <= 0) return 'live';
+    if (ms < 60000) return 'final';
+    if (ms < 10 * 60000) return 'hot';
+    if (ms < 60 * 60000) return 'hour';
+    if (ms < 24 * 3600000) return 'day';
+    return 'far';
+  }
+
+  let phase = '';
+  let lastSec = '';
+  let celebrated = false;
+
+  function pad(n) { return String(n).padStart(2, '0'); }
+
+  function setPhase(next) {
+    if (next === phase) return;
+    phase = next;
+    document.body.className = (params.get('clear') === '1' ? 'clear ' : '') + 'phase-' + next + (document.body.classList.contains('hide-days') ? ' hide-days' : '');
+    const n = stars[next] || 0;
+    wanted.forEach((star, i) => {
+      star.className = i < n ? (next === 'final' || next === 'hot' ? 'on hot' : 'on') : '';
+    });
+    if (tags[next]) tag.textContent = tags[next];
+  }
+
+  const canvas = document.getElementById('fx');
+  const ctx = canvas.getContext('2d');
+  const bits = [];
+  const colors = ['#f4acc4', '#53d8bf', '#a688ff', '#fede9a', '#ffffff'];
+
+  function burst(x, y, power) {
+    const count = 28 + Math.floor(Math.random() * 18);
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    for (let i = 0; i < count; i++) {
+      const a = (Math.PI * 2 * i) / count + Math.random() * .2;
+      const sp = (2 + Math.random() * 4) * (power || 1);
+      bits.push({ x, y, vx: Math.cos(a) * sp, vy: Math.sin(a) * sp, life: 1, color, g: .045 + Math.random() * .02, r: 2 + Math.random() * 2.4 });
+    }
+  }
+
+  function tickFx() {
+    ctx.clearRect(0, 0, 1920, 1080);
+    for (let i = bits.length - 1; i >= 0; i--) {
+      const p = bits[i];
+      p.vy += p.g;
+      p.x += p.vx;
+      p.y += p.vy;
+      p.life -= .012;
+      if (p.life <= 0) { bits.splice(i, 1); continue; }
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.color;
+      ctx.fillRect(p.x, p.y, p.r, p.r);
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(tickFx);
+  }
+  requestAnimationFrame(tickFx);
+
+  let party = null;
+  function celebrate() {
+    if (celebrated) return;
+    celebrated = true;
+    setPhase('live');
+    burst(960, 420, 1.6);
+    burst(520, 360, 1.2);
+    burst(1400, 380, 1.2);
+    party = setInterval(() => {
+      burst(280 + Math.random() * 1360, 120 + Math.random() * 420, .8 + Math.random());
+    }, 520);
+  }
+
+  function frame() {
+    const ms = remaining();
+    const next = phaseFor(ms);
+    if (next === 'live') {
+      celebrate();
+    } else {
+      const total = Math.ceil(ms / 1000);
+      const days = Math.floor(total / 86400);
+      const hours = Math.floor((total % 86400) / 3600);
+      const mins = Math.floor((total % 3600) / 60);
+      const secs = total % 60;
+      document.body.classList.toggle('hide-days', days <= 0);
+      setPhase(next);
+      const map = { d: pad(days), h: pad(hours), m: pad(mins), s: pad(secs) };
+      Object.keys(map).forEach((k) => {
+        if (els[k].textContent !== map[k]) {
+          els[k].textContent = map[k];
+          if (k === 's') {
+            els[k].parentElement.classList.remove('tick');
+            void els[k].offsetWidth;
+            els[k].parentElement.classList.add('tick');
+          }
+        }
+      });
+      if (next === 'final' && secs !== lastSec) {
+        lastSec = secs;
+        if (secs <= 10) burst(960, 520, .45);
+      }
+    }
+    requestAnimationFrame(frame);
+  }
+  requestAnimationFrame(frame);
+})();
+</script>
+</body>
+</html>

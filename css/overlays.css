@@ -1063,18 +1063,26 @@ body.preview-interactive .first5-container .studio-drag-pill {
 .goals-inner.widget-in-zoom,
 .goals-inner.widget-out-slide-down,
 .goals-inner.widget-out-fade,
-.goals-inner.widget-out-zoom {
+.goals-inner.widget-out-zoom,
+.goal-bar.widget-in-slide-up,
+.goal-bar.widget-in-fade,
+.goal-bar.widget-in-zoom,
+.goal-bar.widget-out-slide-down,
+.goal-bar.widget-out-fade,
+.goal-bar.widget-out-zoom {
   animation-duration: 0.48s;
   animation-fill-mode: both;
   animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
 }
-.goals-inner.widget-in-slide-up { animation-name: goalsWidgetInUp; }
-.goals-inner.widget-out-slide-down { animation-name: goalsWidgetOutDown; }
-.goals-inner.widget-in-fade { animation-name: goalsWidgetInFade; }
-.goals-inner.widget-out-fade { animation-name: goalsWidgetOutFade; }
-.goals-inner.widget-in-zoom { animation-name: goalsWidgetInZoom; }
-.goals-inner.widget-out-zoom { animation-name: goalsWidgetOutZoom; }
-.goals-inner.widget-hidden { opacity: 0; visibility: hidden; }
+.goals-inner.widget-in-slide-up, .goal-bar.widget-in-slide-up { animation-name: goalsWidgetInUp; }
+.goals-inner.widget-out-slide-down, .goal-bar.widget-out-slide-down { animation-name: goalsWidgetOutDown; }
+.goals-inner.widget-in-fade, .goal-bar.widget-in-fade { animation-name: goalsWidgetInFade; }
+.goals-inner.widget-out-fade, .goal-bar.widget-out-fade { animation-name: goalsWidgetOutFade; }
+.goals-inner.widget-in-zoom, .goal-bar.widget-in-zoom { animation-name: goalsWidgetInZoom; }
+.goals-inner.widget-out-zoom, .goal-bar.widget-out-zoom { animation-name: goalsWidgetOutZoom; }
+.goals-inner.widget-hidden, .goal-bar.widget-hidden { opacity: 0; visibility: hidden; }
+.goals-container.content-anim .goals-inner { transition: opacity .28s ease, visibility .28s ease; }
+.goals-container.content-anim .goals-inner.shell-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
 @keyframes goalsWidgetInUp { 0% { opacity: 0; transform: translateY(120%); } 100% { opacity: 1; transform: translateY(0); } }
 @keyframes goalsWidgetOutDown { 0% { opacity: 1; transform: translateY(0); } 100% { opacity: 0; transform: translateY(120%); } }
 @keyframes goalsWidgetInFade { 0% { opacity: 0; } 100% { opacity: 1; } }

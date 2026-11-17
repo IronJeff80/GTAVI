@@ -308,6 +308,8 @@ const GTAOverlayConfig = (() => {
     goalsRepeatDelay: parseInt(params.get('goalsRepeatDelay') || '30', 10) * 1000,
     goalsAnimIn: params.get('goalsAnimIn') || 'zoom',
     goalsAnimOut: params.get('goalsAnimOut') || 'slide-down',
+    goalsAnimContent: params.get('goalsAnimContent') === '1',
+    goalsHideDelay: params.get('goalsHideDelay') !== '0',
     goalsColor: params.get('goalsColor') || 'teal',
     goalsLikes: params.get('goalsLikes') !== '0',
     goalsMembers: params.get('goalsMembers') !== '0',
@@ -1631,6 +1633,8 @@ class GTAOverlayEngine {
         this.config.goalsRepeatDelay = parseInt(s.goalsRepeatDelay || '30', 10) * 1000;
         this.config.goalsAnimIn = s.goalsAnimIn || 'zoom';
         this.config.goalsAnimOut = s.goalsAnimOut || 'slide-down';
+        this.config.goalsAnimContent = s.goalsAnimContent === '1' || s.goalsAnimContent === true;
+        this.config.goalsHideDelay = s.goalsHideDelay !== '0' && s.goalsHideDelay !== false;
         this.config.goalsColor = s.goalsColor || 'teal';
         this.config.goalsLikes = s.goalsLikes !== '0';
         this.config.goalsMembers = s.goalsMembers !== '0';
@@ -2617,17 +2621,18 @@ class GTAOverlayEngine {
 
   clearGoalsWidgetMotion() {
     if (!this.dom.goalsInner) return;
-    this.dom.goalsInner.classList.remove(...this.goalsMotionClasses());
+    this.dom.goalsInner.classList.remove(...this.goalsMotionClasses(), 'shell-hidden');
+    this.dom.goalsInner.querySelectorAll('.goal-bar').forEach(b => b.classList.remove(...this.goalsMotionClasses()));
   }
 
-  playGoalsWidgetAnim(phase) {
-    const el = this.dom.goalsInner;
-    if (!el) return;
+  playGoalsWidgetAnim(phase, el) {
+    const node = el || this.dom.goalsInner;
+    if (!node) return;
     const raw = phase === 'in' ? (this.config.goalsAnimIn || 'zoom') : (this.config.goalsAnimOut || 'slide-down');
     const cls = (phase === 'in' ? 'widget-in-' : 'widget-out-') + raw;
-    el.classList.remove(...this.goalsMotionClasses());
-    void el.offsetWidth;
-    el.classList.add(cls);
+    node.classList.remove(...this.goalsMotionClasses());
+    void node.offsetWidth;
+    node.classList.add(cls);
   }
 
   startGoalsTicker() {
@@ -2639,22 +2644,33 @@ class GTAOverlayEngine {
     let idx = 0;
     const alive = () => gen === this._goalsTickerGen;
     const animMs = 480;
+    const contentOnly = !!this.config.goalsAnimContent;
+    const hideOnDelay = this.config.goalsHideDelay !== false;
     const showCurrent = () => {
       if (!alive()) return;
-      bars.forEach((b, i) => { b.style.display = i === idx ? '' : 'none'; });
-      this.playGoalsWidgetAnim('in');
+      if (this.dom.goalsInner) this.dom.goalsInner.classList.remove('shell-hidden', ...this.goalsMotionClasses());
+      bars.forEach((b, i) => {
+        b.style.display = i === idx ? '' : 'none';
+        b.classList.remove(...this.goalsMotionClasses());
+      });
+      const target = contentOnly ? bars[idx] : this.dom.goalsInner;
+      this.playGoalsWidgetAnim('in', target);
       const hold = animMs + (this.config.goalsShowDur || 10000);
       this._goalsTickerTimer = setTimeout(() => {
         if (!alive()) return;
-        this.playGoalsWidgetAnim('out');
+        this.playGoalsWidgetAnim('out', target);
         this._goalsTickerTimer = setTimeout(() => {
           if (!alive()) return;
-          if (this.dom.goalsInner) {
+          const isLast = idx === bars.length - 1;
+          const gap = isLast ? (this.config.goalsRepeatDelay || 0) : (this.config.goalsGapDur || 0);
+          if (contentOnly) {
+            bars[idx].classList.remove(...this.goalsMotionClasses());
+            bars[idx].classList.add('widget-hidden');
+            if (isLast && hideOnDelay && this.dom.goalsInner) this.dom.goalsInner.classList.add('shell-hidden');
+          } else if (this.dom.goalsInner) {
             this.dom.goalsInner.classList.remove(...this.goalsMotionClasses());
             this.dom.goalsInner.classList.add('widget-hidden');
           }
-          const isLast = idx === bars.length - 1;
-          const gap = isLast ? (this.config.goalsRepeatDelay || 0) : (this.config.goalsGapDur || 0);
           idx = (idx + 1) % bars.length;
           this._goalsTickerTimer = setTimeout(showCurrent, gap);
         }, animMs);
@@ -2785,7 +2801,7 @@ class GTAOverlayEngine {
       this.stopGoalsTicker(true);
       return;
     }
-    const key = [this.config.goalsShowDur, this.config.goalsGapDur, this.config.goalsRepeatDelay, this.config.goalsAnimIn, this.config.goalsAnimOut].join('|');
+    const key = [this.config.goalsShowDur, this.config.goalsGapDur, this.config.goalsRepeatDelay, this.config.goalsAnimIn, this.config.goalsAnimOut, this.config.goalsAnimContent ? '1' : '0', this.config.goalsHideDelay ? '1' : '0'].join('|');
     if (rebuilt || !this._goalsTickerTimer || this._goalsTickerKey !== key) {
       this._goalsTickerKey = key;
       this.startGoalsTicker();
@@ -2854,7 +2870,10 @@ class GTAOverlayEngine {
     const signature = bars.map(b => b.title + '\u0002' + b.countVar).join('\u0001');
     const inner = this.dom.goalsInner;
     const existing = inner.querySelectorAll('.goal-bar');
-    if (this.dom.goalsContainer) this.dom.goalsContainer.classList.toggle('ticker', this.config.goalsMode === 'ticker');
+    if (this.dom.goalsContainer) {
+      this.dom.goalsContainer.classList.toggle('ticker', this.config.goalsMode === 'ticker');
+      this.dom.goalsContainer.classList.toggle('content-anim', !!this.config.goalsAnimContent);
+    }
     if (inner.dataset.signature === signature && existing.length === bars.length) {
       bars.forEach((b, i) => {
         const el = existing[i];

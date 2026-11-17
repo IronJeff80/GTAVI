@@ -1245,6 +1245,11 @@ public class CPHInline
         </div>
         <p style="font-size:0.68rem; color:#8c96a6; margin-top:-4px;" data-i18n="desc_goals_ticker">In ticker mode these move the whole goal card on and off screen. The card stays hidden through the gap and the repeat delay.</p>
         <div class="toggle-strip">
+          <label class="mini-switch-card"><span data-i18n="chk_goals_anim_content">Animate Content Only</span><input type="checkbox" class="switch" id="chk-goalsAnimContent"></label>
+          <label class="mini-switch-card"><span data-i18n="chk_goals_hide_delay">Hide Card on Repeat Delay</span><input type="checkbox" class="switch" id="chk-goalsHideDelay" checked></label>
+        </div>
+        <p style="font-size:0.68rem; color:#8c96a6; margin-top:-4px;" data-i18n="desc_goals_anim_content">Animate Content Only keeps the card on screen and moves just the goal inside it. The short gap between goals leaves the card up. Hide Card on Repeat Delay drops the whole card during the repeat wait, then brings it back for the next cycle.</p>
+        <div class="toggle-strip">
           <label class="mini-switch-card"><span data-i18n="chk_goals_likes">Likes</span><input type="checkbox" class="switch" id="chk-goalsLikes" checked></label>
           <label class="mini-switch-card"><span data-i18n="chk_goals_members">Memberships</span><input type="checkbox" class="switch" id="chk-goalsMembers" checked></label>
           <label class="mini-switch-card"><span data-i18n="chk_goals_jewels">Jewels</span><input type="checkbox" class="switch" id="chk-goalsJewels" checked></label>
@@ -2136,6 +2141,9 @@ public class CPHInline
     "opt_fade": "Fade",
     "opt_zoom": "Zoom",
     "desc_goals_ticker": "In ticker mode these move the whole goal card on and off screen. The card stays hidden through the gap and the repeat delay.",
+    "chk_goals_anim_content": "Animate Content Only",
+    "chk_goals_hide_delay": "Hide Card on Repeat Delay",
+    "desc_goals_anim_content": "Animate Content Only keeps the card on screen and moves just the goal inside it. The short gap between goals leaves the card up. Hide Card on Repeat Delay drops the whole card during the repeat wait, then brings it back for the next cycle.",
     "chk_goals_likes": "Likes",
     "chk_goals_members": "Memberships",
     "chk_goals_jewels": "Jewels",
@@ -2600,6 +2608,9 @@ public class CPHInline
     "opt_fade": "Esmaecer",
     "opt_zoom": "Zoom",
     "desc_goals_ticker": "No modo rotativo, isso move o cartão inteiro para dentro e para fora da tela. Ele fica oculto durante a pausa e a espera da repetição.",
+    "chk_goals_anim_content": "Animar Só o Conteúdo",
+    "chk_goals_hide_delay": "Ocultar Cartão na Repetição",
+    "desc_goals_anim_content": "Animar Só o Conteúdo deixa o cartão na tela e move apenas a meta. A pausa curta entre metas mantém o cartão visível. Ocultar Cartão na Repetição esconde o cartão inteiro durante a espera e o traz de volta no próximo ciclo.",
     "chk_goals_likes": "Curtidas",
     "chk_goals_members": "Memberships",
     "chk_goals_jewels": "Joias",
@@ -3064,6 +3075,9 @@ public class CPHInline
     "opt_fade": "Fundido",
     "opt_zoom": "Zoom",
     "desc_goals_ticker": "En modo ticker, esto mueve toda la tarjeta dentro y fuera de la pantalla. Sigue oculta durante la pausa y la espera de repetición.",
+    "chk_goals_anim_content": "Animar Solo el Contenido",
+    "chk_goals_hide_delay": "Ocultar Tarjeta en la Repetición",
+    "desc_goals_anim_content": "Animar Solo el Contenido deja la tarjeta en pantalla y mueve solo la meta. La pausa corta entre metas deja la tarjeta visible. Ocultar Tarjeta en la Repetición esconde toda la tarjeta durante la espera y la vuelve a mostrar en el siguiente ciclo.",
     "chk_goals_likes": "Me gusta",
     "chk_goals_members": "Membresías",
     "chk_goals_jewels": "Joyas",
@@ -3528,6 +3542,9 @@ public class CPHInline
     "opt_fade": "Fondu",
     "opt_zoom": "Zoom",
     "desc_goals_ticker": "En mode défilement, cela fait entrer et sortir toute la carte. Elle reste cachée pendant l’intervalle et le délai de répétition.",
+    "chk_goals_anim_content": "Animer Seulement le Contenu",
+    "chk_goals_hide_delay": "Masquer la Carte Pendant la Répétition",
+    "desc_goals_anim_content": "Animer Seulement le Contenu laisse la carte à l’écran et ne déplace que l’objectif. Le court intervalle entre les objectifs laisse la carte visible. Masquer la Carte Pendant la Répétition cache toute la carte pendant l’attente, puis la ramène au cycle suivant.",
     "chk_goals_likes": "J’aime",
     "chk_goals_members": "Memberships",
     "chk_goals_jewels": "Joyaux",
@@ -3992,6 +4009,9 @@ public class CPHInline
     "opt_fade": "Überblenden",
     "opt_zoom": "Zoom",
     "desc_goals_ticker": "Im Ticker-Modus bewegen diese Animationen die ganze Karte auf den Bildschirm und wieder herunter. Während Pause und Wiederholung bleibt sie verborgen.",
+    "chk_goals_anim_content": "Nur Inhalt animieren",
+    "chk_goals_hide_delay": "Karte bei Wiederholung ausblenden",
+    "desc_goals_anim_content": "Nur Inhalt animieren lässt die Karte stehen und bewegt nur das Ziel. Die kurze Pause zwischen den Zielen lässt die Karte sichtbar. Karte bei Wiederholung ausblenden blendet die ganze Karte während der Wartezeit aus und holt sie zum nächsten Durchlauf zurück.",
     "chk_goals_likes": "Likes",
     "chk_goals_members": "Mitgliedschaften",
     "chk_goals_jewels": "Juwelen",
@@ -4505,7 +4525,7 @@ public class CPHInline
       'showAvatar','showUser','showTier',
       'chatAv','chatBadges','chatUpper','chatNoBg','chatNoCmd',
       'cbAv','cbBadges','cbUpper','cbShadow','cbRoleAccent','cbNoBg','cbNoCmd',
-      'qaShowBadge','f5AlignH','f5AlignV','v_f5AlignH','v_f5AlignV','f5GroupCenterH','f5GroupCenterV','v_f5GroupCenterH','v_f5GroupCenterV','f5Sfx','goalsAlignH','goalsAlignV','v_goalsAlignH','v_goalsAlignV','goalsLikes','goalsMembers','goalsJewels','goalsSubs','goalsGifts','goalsSupers'
+      'qaShowBadge','f5AlignH','f5AlignV','v_f5AlignH','v_f5AlignV','f5GroupCenterH','f5GroupCenterV','v_f5GroupCenterH','v_f5GroupCenterV','f5Sfx','goalsAlignH','goalsAlignV','v_goalsAlignH','v_goalsAlignV','goalsLikes','goalsMembers','goalsJewels','goalsSubs','goalsGifts','goalsSupers','goalsAnimContent','goalsHideDelay'
     ];
     
     function getSetupState(layoutContext = 'horiz') {
