@@ -1483,23 +1483,31 @@ public class CPHInline
     function fitPreviewCanvas() {
       const stage = document.getElementById('preview-stage');
       if (!stage) return;
+      if (fitPreviewCanvas._busy) {
+        fitPreviewCanvas._again = true;
+        return;
+      }
 
-      // Reset wrapper sizes prior to measuring stage dimensions so a large single-canvas
-      // preview never stretches the flex/grid container when switching back to Dual mode.
-      wrapHoriz.style.width = '0px';
-      wrapHoriz.style.height = '0px';
-      wrapVert.style.width = '0px';
-      wrapVert.style.height = '0px';
+      const resVal = parseInt(document.getElementById('cfg-res')?.value || '1080', 10);
+      const resScale = (resVal > 0 ? resVal : 1080) / 1080;
+      const measureKey = currentPreviewMode + '|' + stage.clientWidth + '|' + stage.clientHeight + '|' + resScale;
+      if (measureKey === fitPreviewCanvas._key) return;
 
+      fitPreviewCanvas._busy = true;
+      fitPreviewCanvas._again = false;
+      // Only collapse the wrappers when the view mode changes. Doing it on every
+      // resize reloads the preview geometry and the widgets jump back to their defaults.
+      if (fitPreviewCanvas._mode !== currentPreviewMode) {
+        wrapHoriz.style.width = '0px';
+        wrapHoriz.style.height = '0px';
+        wrapVert.style.width = '0px';
+        wrapVert.style.height = '0px';
+        fitPreviewCanvas._mode = currentPreviewMode;
+      }
       const pad = 48; // 20px padding per side + 8px buffer for outer 3px borders
       const gap = 20;
       const stageW = Math.max(320, stage.clientWidth - pad);
       const stageH = Math.max(240, stage.clientHeight - pad);
-
-      // Account for selected canvas resolution (720p, 1080p, 1440p, 2160p)
-      // Inside gta-overlay.html, body.obs-canvas scales by (res / 1080) from a 1920x1080 (or 1080x1920) base.
-      const resVal = parseInt(document.getElementById('cfg-res')?.value || '1080', 10);
-      const resScale = (resVal > 0 ? resVal : 1080) / 1080;
 
       const hLogicalW = Math.round(1920 * resScale);
       const hLogicalH = Math.round(1080 * resScale);
@@ -1559,6 +1567,14 @@ public class CPHInline
         const visH = Math.max(180, Math.floor(Math.min(stageH, maxVisHByWidth)));
         applyVertSize(visH);
       }
+      fitPreviewCanvas._key = currentPreviewMode + '|' + stage.clientWidth + '|' + stage.clientHeight + '|' + resScale;
+      setTimeout(() => {
+        fitPreviewCanvas._busy = false;
+        if (fitPreviewCanvas._again) {
+          fitPreviewCanvas._again = false;
+          fitPreviewCanvas();
+        }
+      }, 50);
     }
     window.addEventListener('resize', fitPreviewCanvas);
 
@@ -4618,19 +4634,25 @@ public class CPHInline
       broadcastLivePin();
     }
 
+    function setOverlayFrame(frame, params) {
+      if (!frame) return;
+      const next = new URL('gta-overlay.html?' + params.toString(), window.location.href).href;
+      if (frame.src !== next) frame.src = next;
+    }
+
     function initialLoadIframe() {
       updateGeneratedUrlOnly();
       if (frameHoriz) {
         const ph = new URLSearchParams(getSetupState('horiz'));
         if (pinCheckbox && pinCheckbox.checked) ph.set('preview', '1');
-        ph.set('layout', 'horizontal'); // explicitly define layout
-        frameHoriz.src = 'gta-overlay.html?' + ph.toString();
+        ph.set('layout', 'horizontal');
+        setOverlayFrame(frameHoriz, ph);
       }
       if (frameVert) {
         const pv = new URLSearchParams(getSetupState('vert'));
         if (pinCheckbox && pinCheckbox.checked) pv.set('preview', '1');
-        pv.set('layout', 'vertical'); // explicitly define layout
-        frameVert.src = 'gta-overlay.html?' + pv.toString();
+        pv.set('layout', 'vertical');
+        setOverlayFrame(frameVert, pv);
       }
     }
 

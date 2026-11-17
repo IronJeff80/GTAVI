@@ -477,7 +477,16 @@ class GTAOverlayEngine {
     }
 
     this.applyGlobalStyles();
-    window.addEventListener('resize', () => this.applyGlobalStyles());
+    this._vw = window.innerWidth;
+    this._vh = window.innerHeight;
+    window.addEventListener('resize', () => {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      if (w === this._vw && h === this._vh) return;
+      this._vw = w;
+      this._vh = h;
+      this.applyGlobalStyles();
+    });
 
 
     if (this.config.previewMode) {
@@ -617,6 +626,29 @@ class GTAOverlayEngine {
     if (this.dom.goalsInner) this.dom.goalsInner.style.setProperty('--goals-accent', tokens.accent);
   }
 
+  // Keep the entrance class in place. Reassigning className restarts the slide
+  // from the stylesheet position, which flashes the widget on every live update.
+  syncPinnedAnim(el, base, anim, pinned) {
+    if (!el || !anim) return;
+    if (!el.classList.contains(base)) el.classList.add(base);
+    if (!el.classList.contains(anim)) {
+      [...el.classList].forEach((c) => {
+        if (c !== anim && (c.startsWith('anim-') || c.startsWith('so-') || c.startsWith('qa-'))) el.classList.remove(c);
+      });
+      el.classList.add(anim);
+    }
+    if (pinned) {
+      if (!el.classList.contains('animate-in')) el.classList.add('animate-in');
+    } else if (el.classList.contains('animate-in')) {
+      el.classList.remove('animate-in');
+    }
+  }
+
+  setPxVar(root, name, value) {
+    if (!Number.isFinite(value)) return;
+    root.style.setProperty(name, Math.round(value) + 'px');
+  }
+
   applyGlobalStyles() {
     const root = document.documentElement;
     
@@ -655,7 +687,7 @@ class GTAOverlayEngine {
       const walkonResolved = this.resolveBg(this.config.walkonBg, this.config.bgUrl, this.config.noBg);
       this.applySurface(this.dom.walkonCard, '--card-bg-image', walkonResolved, false);
       if (this.dom.walkonContainer) {
-        this.dom.walkonContainer.className = `walkon-container ${this.config.cardAnim}` + (wasPinned ? ' animate-in' : '');
+        this.syncPinnedAnim(this.dom.walkonContainer, 'walkon-container', this.config.cardAnim, wasPinned);
       }
       if (this.dom.avatarWrap) this.dom.avatarWrap.style.display = this.config.showAvatar ? 'block' : 'none';
       if (this.dom.username) this.dom.username.style.display = this.config.showUser ? 'block' : 'none';
@@ -680,7 +712,7 @@ class GTAOverlayEngine {
         this.dom.shoutoutTitle.innerHTML = `<i class="fa-solid fa-bullhorn"></i> ${this.config.soTitle || 'SHOUTOUT'}`;
       }
       if (this.dom.shoutoutContainer) {
-        this.dom.shoutoutContainer.className = `shoutout-container ${this.config.soAnim}` + (wasSoPinned ? ' animate-in' : '');
+        this.syncPinnedAnim(this.dom.shoutoutContainer, 'shoutout-container', this.config.soAnim, wasSoPinned);
       }
       this.recalculateShoutoutCoords(baseW, baseH);
     }
@@ -738,7 +770,7 @@ class GTAOverlayEngine {
         this.dom.qaBadge.innerHTML = `<i class="fa-solid fa-comments"></i> ${this.config.qaTitle || 'Q&A HIGHLIGHT'}`;
       }
       if (this.dom.qaContainer) {
-        this.dom.qaContainer.className = `qa-container ${this.config.qaAnim}` + (wasQAPinned ? ' animate-in' : '');
+        this.syncPinnedAnim(this.dom.qaContainer, 'qa-container', this.config.qaAnim, wasQAPinned);
       }
       this.recalculateQACoords(baseW, baseH);
     }
@@ -891,42 +923,43 @@ class GTAOverlayEngine {
 
   updateDomCoords() {
     const root = document.documentElement;
+    const px = (name, value) => this.setPxVar(root, name, value);
     if (this.config.modules.walkon) {
-      root.style.setProperty('--card-scale', this.config.scale);
-      root.style.setProperty('--card-x', `${Math.round(this.config.posX)}px`);
-      root.style.setProperty('--card-y', `${Math.round(this.config.posY)}px`);
+      if (Number.isFinite(this.config.scale)) root.style.setProperty('--card-scale', this.config.scale);
+      px('--card-x', this.config.posX);
+      px('--card-y', this.config.posY);
     }
     if (this.config.modules.alerts) {
-      root.style.setProperty('--alert-scale', this.config.alertScale);
-      root.style.setProperty('--alert-x', `${Math.round(this.config.alertX)}px`);
-      root.style.setProperty('--alert-y', `${Math.round(this.config.alertY)}px`);
+      if (Number.isFinite(this.config.alertScale)) root.style.setProperty('--alert-scale', this.config.alertScale);
+      px('--alert-x', this.config.alertX);
+      px('--alert-y', this.config.alertY);
     }
     if (this.config.modules.shoutout) {
-      root.style.setProperty('--so-scale', this.config.soScale);
-      root.style.setProperty('--so-x', `${Math.round(this.config.soX)}px`);
-      root.style.setProperty('--so-y', `${Math.round(this.config.soY)}px`);
+      if (Number.isFinite(this.config.soScale)) root.style.setProperty('--so-scale', this.config.soScale);
+      px('--so-x', this.config.soX);
+      px('--so-y', this.config.soY);
     }
     if (this.config.modules.chat) {
-      root.style.setProperty('--chat-scale', this.config.chatScale);
-      root.style.setProperty('--chat-x', `${Math.round(this.config.chatX)}px`);
-      root.style.setProperty('--chat-y', `${Math.round(this.config.chatY)}px`);
+      if (Number.isFinite(this.config.chatScale)) root.style.setProperty('--chat-scale', this.config.chatScale);
+      px('--chat-x', this.config.chatX);
+      px('--chat-y', this.config.chatY);
     }
     if (this.config.modules.chatbox) {
-      root.style.setProperty('--cb-scale', this.config.cbScale);
-      root.style.setProperty('--cb-x', `${Math.round(this.config.cbX)}px`);
-      root.style.setProperty('--cb-y', `${Math.round(this.config.cbY)}px`);
-      root.style.setProperty('--cb-w', `${Math.round(this.config.cbW)}px`);
-      root.style.setProperty('--cb-h', `${Math.round(this.config.cbH)}px`);
+      if (Number.isFinite(this.config.cbScale)) root.style.setProperty('--cb-scale', this.config.cbScale);
+      px('--cb-x', this.config.cbX);
+      px('--cb-y', this.config.cbY);
+      px('--cb-w', this.config.cbW);
+      px('--cb-h', this.config.cbH);
     }
     if (this.config.modules.qa) {
-      root.style.setProperty('--qa-scale', this.config.qaScale);
-      root.style.setProperty('--qa-x', `${Math.round(this.config.qaX)}px`);
-      root.style.setProperty('--qa-y', `${Math.round(this.config.qaY)}px`);
+      if (Number.isFinite(this.config.qaScale)) root.style.setProperty('--qa-scale', this.config.qaScale);
+      px('--qa-x', this.config.qaX);
+      px('--qa-y', this.config.qaY);
     }
     if (this.config.modules.goals) {
-      root.style.setProperty('--goals-x', `${Math.round(this.config.goalsX)}px`);
-      root.style.setProperty('--goals-y', `${Math.round(this.config.goalsY)}px`);
-      root.style.setProperty('--goals-scale', this.config.goalsScale);
+      px('--goals-x', this.config.goalsX);
+      px('--goals-y', this.config.goalsY);
+      if (Number.isFinite(this.config.goalsScale)) root.style.setProperty('--goals-scale', this.config.goalsScale);
     }
     if (this.config.modules.first5) {
       root.style.setProperty('--f5-x', `${Math.round(this.config.f5X)}px`);
@@ -1428,6 +1461,10 @@ class GTAOverlayEngine {
         this.setPreviewPinned(Boolean(msg.pinned), { chrome: msg.chrome !== false });
       } else if (msg.type === 'LIVE_CONFIG_UPDATE') {
         const s = msg.state;
+        if (!s) return;
+        const liveSig = (msg.targetLayout || '') + '|' + JSON.stringify(s);
+        if (liveSig === this._liveSig) return;
+        this._liveSig = liveSig;
         const isVert = this.config.layout === 'vertical';
 
         // Update language & translations dynamically
