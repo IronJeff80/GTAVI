@@ -1,6 +1,7 @@
 /* ==========================================================================
    GTA VI OBS OVERLAYS - CORE ENGINE (js/overlays.js)
    v0.3.2 - Custom backgrounds via a direct image link on the live site
+   v0.2.4 - Twitch alerts (Follow, Sub, ReSub, Gift Subs, Bits, Raid)
    ========================================================================== */
 
 const DEFAULT_AVATAR_SVG = "data:image/svg+xml;utf8," + encodeURIComponent(
@@ -18,6 +19,8 @@ const i18nDict = {
     tier: "Tier", gifted: "Gifted", memberships: "Memberships", from: "From",
     anonymous: "Anonymous", amount: "Amount", sent: "Sent", jewels: "Jewels", gift: "Gift",
     newSub: "New Subscriber",
+    bits: "Bits", subs: "Subs", raiders: "Raiders", viewers: "Viewers",
+    twSub: "New Subscriber", twResub: "Resub", twGiftSubs: "Gift Subs", twGiftSubRec: "Gift Sub Received", twBits: "Bits Cheered", twFollow: "New Follower", twRaid: "Incoming Raid",
     defaultQaMsg: "Welcome to Leonida! Drop your questions in chat!",
     dragWalkon: "Walk-On Card", dragAlert: "Alert Box", dragShoutout: "Shoutout Toast",
     dragChat: "Horizontal Chat Bar", dragChatBox: "Chat Box", dragQA: "Q&A Highlight Toast",
@@ -29,6 +32,8 @@ const i18nDict = {
     tier: "Nível", gifted: "Presenteou", memberships: "Membros", from: "De",
     anonymous: "Anônimo", amount: "Valor", sent: "Enviou", jewels: "Joias", gift: "Presente",
     newSub: "Novo Inscrito",
+    bits: "Bits", subs: "Subs", raiders: "Invasores", viewers: "Espectadores",
+    twSub: "Novo Inscrito", twResub: "Resub", twGiftSubs: "Subs de Presente", twGiftSubRec: "Sub de Presente Recebida", twBits: "Bits Enviados", twFollow: "Novo Seguidor", twRaid: "Raid Recebida",
     defaultQaMsg: "Bem-vindo a Leonida! Mande suas perguntas no chat!",
     dragWalkon: "Card de Entrada", dragAlert: "Caixa de Alerta", dragShoutout: "Destaque (Shoutout)",
     dragChat: "Barra de Chat Horizontal", dragChatBox: "Caixa de Chat", dragQA: "Destaque de P&R",
@@ -40,6 +45,8 @@ const i18nDict = {
     tier: "Nivel", gifted: "Regaló", memberships: "Membresías", from: "De",
     anonymous: "Anónimo", amount: "Monto", sent: "Envió", jewels: "Joyas", gift: "Regalo",
     newSub: "Nuevo Suscriptor",
+    bits: "Bits", subs: "Subs", raiders: "Asaltantes", viewers: "Espectadores",
+    twSub: "Nuevo Suscriptor", twResub: "Resub", twGiftSubs: "Subs de Regalo", twGiftSubRec: "Sub de Regalo Recibida", twBits: "Bits Enviados", twFollow: "Nuevo Seguidor", twRaid: "Raid Entrante",
     defaultQaMsg: "¡Bienvenido a Leonida! ¡Deja tus preguntas en el chat!",
     dragWalkon: "Tarjeta de Entrada", dragAlert: "Caja de Alertas", dragShoutout: "Destacado (Shoutout)",
     dragChat: "Barra de Chat Horizontal", dragChatBox: "Caja de Chat", dragQA: "Destacado de P&R",
@@ -51,6 +58,8 @@ const i18nDict = {
     tier: "Niveau", gifted: "Offert", memberships: "Adhésions", from: "De",
     anonymous: "Anonyme", amount: "Montant", sent: "Envoyé", jewels: "Joyaux", gift: "Cadeau",
     newSub: "Nouvel Abonné",
+    bits: "Bits", subs: "Subs", raiders: "Raiders", viewers: "Spectateurs",
+    twSub: "Nouvel Abonné", twResub: "Resub", twGiftSubs: "Subs Offerts", twGiftSubRec: "Sub Offert Reçu", twBits: "Bits Envoyés", twFollow: "Nouveau Follower", twRaid: "Raid Entrant",
     defaultQaMsg: "Bienvenue à Leonida ! Posez vos questions dans le chat !",
     dragWalkon: "Carte d'Entrée", dragAlert: "Boîte d'Alerte", dragShoutout: "Toast Dédicace",
     dragChat: "Barre de Chat Horizontale", dragChatBox: "Boîte de Chat", dragQA: "Toast Q&R",
@@ -62,6 +71,8 @@ const i18nDict = {
     tier: "Stufe", gifted: "Verschenkt", memberships: "Mitgliedschaften", from: "Von",
     anonymous: "Anonym", amount: "Betrag", sent: "Gesendet", jewels: "Juwelen", gift: "Geschenk",
     newSub: "Neuer Abonnent",
+    bits: "Bits", subs: "Subs", raiders: "Raider", viewers: "Zuschauer",
+    twSub: "Neuer Abonnent", twResub: "Resub", twGiftSubs: "Geschenk-Subs", twGiftSubRec: "Geschenk-Sub erhalten", twBits: "Bits gesendet", twFollow: "Neuer Follower", twRaid: "Eingehender Raid",
     defaultQaMsg: "Willkommen in Leonida! Stellt eure Fragen im Chat!",
     dragWalkon: "Walk-On-Karte", dragAlert: "Alert-Box", dragShoutout: "Shoutout-Toast",
     dragChat: "Horizontale Chatleiste", dragChatBox: "Chatbox", dragQA: "F&A-Highlight-Toast",
@@ -82,6 +93,57 @@ function parseGoalsCustom(raw) {
     count: String((item && (item.count || item.countVar)) || '').trim(),
     goal: String((item && (item.goal || item.goalVar)) || '').trim()
   }));
+}
+
+// Twitch goal bars have their own fields (setup page Goals tab, Twitch): title, count global, goal global.
+const TWITCH_GOALS = [
+  ['twGoalsSubs',      'Subscriptions', 'subCount',      'subGoal'],
+  ['twGoalsFollowers', 'Followers',     'followerCount', 'followerGoal'],
+  ['twGoalsSubGifts',  'Sub Gifts',     'subGiftsCount', 'subGiftsGoal'],
+  ['twGoalsBits',      'Bits',          'bitsCount',     'bitsGoal']
+];
+function readTwitchGoals(get) {
+  const out = {};
+  TWITCH_GOALS.forEach(([key, title, count, goal]) => {
+    out[key] = get(key) !== '0';
+    out[key + 'Title'] = get(key + 'Title') || title;
+    out[key + 'Count'] = get(key + 'Count') || count;
+    out[key + 'Goal'] = get(key + 'Goal') || goal;
+  });
+  return out;
+}
+// Twitch alerts have their own types. Payloads from the pre-v0.2.5 Streamer.bot action used the YouTube types.
+const TWITCH_ALERT_TYPES = ['twSub', 'twResub', 'twGiftSub', 'twGiftBomb', 'twBits', 'follow', 'raid'];
+const LEGACY_TWITCH_ALERT_TYPES = { sub: 'twSub', member: 'twSub', milestone: 'twResub', giftRec: 'twGiftSub', gift: 'twGiftBomb', jewels: 'twBits' };
+// Which detail rows a Twitch alert shows (same layout as the matching YouTube alert).
+const TWITCH_ALERT_LAYOUT = { twSub: 'sub', twResub: 'milestone', twGiftSub: 'giftRec', twGiftBomb: 'gift', twBits: 'jewels' };
+
+// Twitch.ChatMessage -> chat item. Streamer.bot 1.1: { user: { id, login, name, role, subscribed }, text, messageId,
+// emotes, parts }. Older versions: { message: { userId, username, displayName, role, message, msgId, emotes, ... } }.
+// role: 1 viewer, 2 VIP, 3 moderator, 4 broadcaster.
+function normalizeTwitchChat(data) {
+  if (!data) return null;
+  const d = (data.message && typeof data.message === 'object') ? data.message : data;
+  const u = (d.user && typeof d.user === 'object') ? d.user : {};
+  const userName = u.name || u.login || d.displayName || d.username || (typeof d.user === 'string' ? d.user : '') || 'Twitch User';
+  const userId = u.id || d.userId || d.user_id || '';
+  const message = d.text ?? (typeof d.message === 'string' ? d.message : '') ?? '';
+  const roleNum = parseInt(u.role ?? d.role ?? 1, 10) || 1;
+  const isMod = Boolean(d.isModerator || u.isModerator || roleNum >= 3);
+  const isMember = Boolean(u.subscribed || d.subscriber || d.isSubscriber || d.isVip || roleNum === 2);
+  return {
+    userName,
+    userId,
+    message: message || d.rawInput || '',
+    role: isMod ? 'mod' : (isMember ? 'member' : 'viewer'),
+    emotes: d.emotes || [],
+    // Twitch GIF picker parts ({ type: 'gif', url }) become image parts so the chat draws them (animated).
+    parts: Array.isArray(d.parts)
+      ? d.parts.map(p => (p && p.type === 'gif' && p.url) ? { type: 'emote', source: 'gif', imageUrl: p.url, text: p.text || '' } : p)
+      : (d.parts || []),
+    avatar: u.profileImageUrl || d.avatarUrl || d.userProfileUrl || '',
+    msgId: d.messageId || d.msgId || `tw-${Date.now()}-${Math.random().toString(36).slice(2, 7)}`
+  };
 }
 
 function readAlertSeconds(raw) {
@@ -180,7 +242,14 @@ const GTAOverlayConfig = (() => {
       giftRec:      readAlertSeconds(params.get('ad_grc')),
       superchat:    readAlertSeconds(params.get('ad_sc')),
       supersticker: readAlertSeconds(params.get('ad_stk')),
-      jewels:       readAlertSeconds(params.get('ad_jwl'))
+      jewels:       readAlertSeconds(params.get('ad_jwl')),
+      follow:       readAlertSeconds(params.get('ad_fol')),
+      raid:         readAlertSeconds(params.get('ad_rd')),
+      twSub: readAlertSeconds(params.get('ad_twsub')),
+      twResub: readAlertSeconds(params.get('ad_twrs')),
+      twGiftSub: readAlertSeconds(params.get('ad_twgs')),
+      twGiftBomb: readAlertSeconds(params.get('ad_twgb')),
+      twBits: readAlertSeconds(params.get('ad_twbits'))
     },
     alertsConfig: {
       sub:          params.get('al_sub') !== '0',
@@ -190,7 +259,14 @@ const GTAOverlayConfig = (() => {
       giftRec:      params.get('al_grc') !== '0',
       superchat:    params.get('al_sc')  !== '0',
       supersticker: params.get('al_stk') !== '0',
-      jewels:       params.get('al_jwl') !== '0'
+      jewels:       params.get('al_jwl') !== '0',
+      follow:       params.get('al_fol') !== '0',
+      raid:         params.get('al_rd')  !== '0',
+      twSub: params.get('al_twsub') !== '0',
+      twResub: params.get('al_twrs') !== '0',
+      twGiftSub: params.get('al_twgs') !== '0',
+      twGiftBomb: params.get('al_twgb') !== '0',
+      twBits: params.get('al_twbits') !== '0'
     },
     alertColors: {
       sub:          params.get('ac_sub') || 'teal',
@@ -200,7 +276,14 @@ const GTAOverlayConfig = (() => {
       giftRec:      params.get('ac_grc') || 'teal',
       superchat:    params.get('ac_sc')  || 'yellow',
       supersticker: params.get('ac_stk') || 'yellow',
-      jewels:       params.get('ac_jwl') || 'yellow'
+      jewels:       params.get('ac_jwl') || 'yellow',
+      follow:       params.get('ac_fol') || 'purple',
+      raid:         params.get('ac_rd')  || 'pink',
+      twSub: params.get('ac_twsub') || 'teal',
+      twResub: params.get('ac_twrs') || 'purple',
+      twGiftSub: params.get('ac_twgs') || 'teal',
+      twGiftBomb: params.get('ac_twgb') || 'pink',
+      twBits: params.get('ac_twbits') || 'yellow'
     },
 
     // Module 3: Shoutout Toast Config
@@ -302,6 +385,8 @@ const GTAOverlayConfig = (() => {
     goalsScale: getPos('goalsScale', 'v_goalsScale', '1'),
     goalsAlignH: getBool('goalsAlignH', 'v_goalsAlignH', '0'),
     goalsAlignV: getBool('goalsAlignV', 'v_goalsAlignV', '0'),
+    // Streaming platform: picks YouTube or Twitch names for alerts and goal bars.
+    platform: (params.get('platform') || '').toLowerCase() === 'twitch' ? 'twitch' : 'youtube',
     goalsMode: params.get('goalsMode') || 'ticker',
     goalsShowDur: parseInt(params.get('goalsShowDur') || '10', 10) * 1000,
     goalsGapDur: parseInt(params.get('goalsGapDur') || '1', 10) * 1000,
@@ -335,6 +420,7 @@ const GTAOverlayConfig = (() => {
     goalsSupersCount: params.get('goalsSupersCount') || 'superCount',
     goalsSupersGoal: params.get('goalsSupersGoal') || 'superGoal',
     goalsCustom: parseGoalsCustom(params.get('goalsCustom')),
+    ...readTwitchGoals(k => params.get(k)),
     f5X:      getPos('f5X', 'v_f5X', '0'),
     f5Y:      getPos('f5Y', 'v_f5Y', '0'),
     f5AlignH: (params.get(isVert ? 'v_f5AlignH' : 'f5AlignH') ?? (isVert ? '0' : '1')) === '1',
@@ -1357,19 +1443,22 @@ class GTAOverlayEngine {
       });
 
       this.client.on('Twitch.ChatMessage', (payload) => {
-        const d = payload?.data?.message || payload?.data || payload;
-        this.handleTwitchChatEvent(d);
+        this.handleTwitchChatEvent(payload?.data || payload);
       });
+      // Streamer.bot 1.1 sends ids as messageId / user.id; older versions used targetMessageId / user_id / userId.
       this.client.on('Twitch.ChatMessageDeleted', (payload) => {
-        const msgId = payload?.data?.targetMessageId || payload?.data?.messageId;
+        const d = payload?.data || {};
+        const msgId = d.targetMessageId || d.messageId || d.message?.msgId;
         if (msgId) this.removeChatMessageById(msgId);
       });
       this.client.on('Twitch.UserTimedOut', (payload) => {
-        const uId = payload?.data?.user_id || payload?.data?.userId;
+        const d = payload?.data || {};
+        const uId = d.user?.id || d.user_id || d.userId || d.targetUser?.id;
         if (uId) this.removeChatMessagesByUser(uId);
       });
       this.client.on('Twitch.UserBanned', (payload) => {
-        const uId = payload?.data?.user_id || payload?.data?.userId;
+        const d = payload?.data || {};
+        const uId = d.user?.id || d.user_id || d.userId || d.targetUser?.id;
         if (uId) this.removeChatMessagesByUser(uId);
       });
     }
@@ -1409,6 +1498,11 @@ class GTAOverlayEngine {
           this.goalsData[this.config.goalsGiftsGoal] = 50;
           this.goalsData[this.config.goalsSupersCount] = 12;
           this.goalsData[this.config.goalsSupersGoal] = 40;
+          [[64, 100], [420, 1000], [18, 50], [1500, 2000]].forEach(([cur, goal], i) => {
+            const key = TWITCH_GOALS[i][0];
+            this.goalsData[this.config[key + 'Count']] = cur;
+            this.goalsData[this.config[key + 'Goal']] = goal;
+          });
           (this.config.goalsCustom || []).forEach((g, i) => {
             if (g.count) this.goalsData[g.count] = (i + 1) * 15;
             if (g.goal) this.goalsData[g.goal] = 100;
@@ -1466,7 +1560,14 @@ class GTAOverlayEngine {
           giftRec:      readAlertSeconds(s.ad_grc),
           superchat:    readAlertSeconds(s.ad_sc),
           supersticker: readAlertSeconds(s.ad_stk),
-          jewels:       readAlertSeconds(s.ad_jwl)
+          jewels:       readAlertSeconds(s.ad_jwl),
+          follow:       readAlertSeconds(s.ad_fol),
+          raid:         readAlertSeconds(s.ad_rd),
+          twSub: readAlertSeconds(s.ad_twsub),
+          twResub: readAlertSeconds(s.ad_twrs),
+          twGiftSub: readAlertSeconds(s.ad_twgs),
+          twGiftBomb: readAlertSeconds(s.ad_twgb),
+          twBits: readAlertSeconds(s.ad_twbits)
         };
         this.config.alertsConfig = {
           sub:          s.al_sub !== '0',
@@ -1476,7 +1577,14 @@ class GTAOverlayEngine {
           giftRec:      s.al_grc !== '0',
           superchat:    s.al_sc  !== '0',
           supersticker: s.al_stk !== '0',
-          jewels:       s.al_jwl !== '0'
+          jewels:       s.al_jwl !== '0',
+          follow:       s.al_fol !== '0',
+          raid:         s.al_rd  !== '0',
+          twSub: s.al_twsub !== '0',
+          twResub: s.al_twrs !== '0',
+          twGiftSub: s.al_twgs !== '0',
+          twGiftBomb: s.al_twgb !== '0',
+          twBits: s.al_twbits !== '0'
         };
         this.config.alertColors = {
           sub:          s.ac_sub || 'teal',
@@ -1486,7 +1594,14 @@ class GTAOverlayEngine {
           giftRec:      s.ac_grc || 'teal',
           superchat:    s.ac_sc  || 'yellow',
           supersticker: s.ac_stk || 'yellow',
-          jewels:       s.ac_jwl || 'yellow'
+          jewels:       s.ac_jwl || 'yellow',
+          follow:       s.ac_fol || 'purple',
+          raid:         s.ac_rd  || 'pink',
+          twSub: s.ac_twsub || 'teal',
+          twResub: s.ac_twrs || 'purple',
+          twGiftSub: s.ac_twgs || 'teal',
+          twGiftBomb: s.ac_twgb || 'pink',
+          twBits: s.ac_twbits || 'yellow'
         };
 
         // Shoutout
@@ -1597,6 +1712,8 @@ class GTAOverlayEngine {
         this.config.goalsColor = s.goalsColor || 'teal';
         this.config.goalsLikes = s.goalsLikes !== '0';
         this.config.goalsMembers = s.goalsMembers !== '0';
+        const prevPlatform = this.config.platform;
+        if (s.platform !== undefined) this.config.platform = s.platform === 'twitch' ? 'twitch' : 'youtube';
         this.config.goalsJewels = s.goalsJewels !== '0';
         this.config.goalsSubs = s.goalsSubs !== '0';
         this.config.goalsGifts = s.goalsGifts !== '0';
@@ -1621,6 +1738,11 @@ class GTAOverlayEngine {
         this.config.goalsSupersCount = s.goalsSupersCount || 'superCount';
         this.config.goalsSupersGoal = s.goalsSupersGoal || 'superGoal';
         if (s.goalsCustom !== undefined) this.config.goalsCustom = parseGoalsCustom(s.goalsCustom);
+        Object.assign(this.config, readTwitchGoals(k => s[k]));
+        if (this.config.platform !== prevPlatform && this.client && typeof this.client.getGlobals === 'function') {
+          // Platform switched: the goal bars now read other globals, so fetch them again.
+          this.client.getGlobals(true).then(res => { if (res && res.variables) this.updateGoalsFromGlobals(res.variables); }).catch(() => {});
+        }
 
         this.config.f5X = this.num(isVert ? s.v_f5X : s.f5X, 0);
         this.config.f5Y = this.num(isVert ? s.v_f5Y : s.f5Y, 0);
@@ -1743,7 +1865,12 @@ class GTAOverlayEngine {
   }
 
   enqueueAlert(data) {
-    const t = data.alertType || 'generic';
+    const isTwitch = this.config.platform === 'twitch';
+    let t = data.alertType || 'generic';
+    // Old GTA_Alert actions sent the YouTube types for Twitch events.
+    if (isTwitch && LEGACY_TWITCH_ALERT_TYPES[t]) { t = LEGACY_TWITCH_ALERT_TYPES[t]; data = { ...data, alertType: t }; }
+    // Twitch alerts only play on Twitch, YouTube alerts only on YouTube.
+    if (t !== 'generic' && TWITCH_ALERT_TYPES.includes(t) !== isTwitch) return;
     if (t !== 'generic' && this.config.alertsConfig[t] === false) return;
     
     this.alertQueue.push(data);
@@ -1775,7 +1902,11 @@ class GTAOverlayEngine {
 
     const type = raw.alertType || 'sub';
     this.lastAlertType = type;
-    this.dom.alertBox.className = `alert-box alert-${type}`;
+    const platform = this.config.platform === 'twitch' ? 'twitch' : 'youtube';
+    const isTwitch = platform === 'twitch';
+    // Twitch alerts reuse the detail rows of the matching YouTube alert.
+    const layout = TWITCH_ALERT_LAYOUT[type] || type;
+    this.dom.alertBox.className = `alert-box alert-${type} platform-${platform}`;
     this.applyAlertAccentColor(type);
 
     const triggerName = this.getField(raw, 'triggerName') || 'New Event';
@@ -1793,7 +1924,10 @@ class GTAOverlayEngine {
     const jewelsName = this.getField(raw, 'jewelsName');
     const jewelsUrl = this.getField(raw, 'jewelsUrl');
 
-    document.getElementById('alert-event-name').textContent = triggerName;
+    const twitchTitleKey = { twSub: 'twSub', twResub: 'twResub', twGiftBomb: 'twGiftSubs', twGiftSub: 'twGiftSubRec', twBits: 'twBits', follow: 'twFollow', raid: 'twRaid' }[type];
+    const tTitles = this.config.t || i18nDict.en;
+    const eventTitle = isTwitch && twitchTitleKey ? (tTitles[twitchTitleKey] || i18nDict.en[twitchTitleKey]) : triggerName;
+    document.getElementById('alert-event-name').textContent = eventTitle;
     document.getElementById('alert-user-name').textContent = userName;
     
     const alertAv = document.getElementById('alert-avatar');
@@ -1803,26 +1937,29 @@ class GTAOverlayEngine {
     bodyEl.innerHTML = '';
 
     const t = this.config.t || i18nDict.en;
-    if (type === 'member' && levelName) {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tier}</span><span class="alert-highlight">${this.escapeHtml(levelName)}</span></div>`;
-    } else if (type === 'milestone') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tenure}</span><span class="alert-highlight">${this.escapeHtml(months)} ${t.months}</span></div>`;
-      if (levelName) bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tier}</span><span class="alert-highlight">${this.escapeHtml(levelName)}</span></div>`;
-    } else if (type === 'gift') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.gifted}</span><span class="alert-highlight">${this.escapeHtml(count)} ${t.memberships}</span></div>`;
-    } else if (type === 'giftRec') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.from}</span><span class="alert-highlight">${this.escapeHtml(gifterUser || t.anonymous)}</span></div>`;
-    } else if (type === 'superchat') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.amount}</span><span class="alert-highlight amount">${this.escapeHtml(amount)}</span></div>`;
-    } else if (type === 'supersticker') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.amount}</span><span class="alert-highlight amount">${this.escapeHtml(amount)}</span></div>`;
+    const esc = (v) => this.escapeHtml(v);
+    if ((layout === 'member' || (layout === 'sub' && isTwitch)) && levelName) {
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tier}</span><span class="alert-highlight">${esc(levelName)}</span></div>`;
+    } else if (layout === 'milestone') {
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tenure}</span><span class="alert-highlight">${esc(months)} ${t.months}</span></div>`;
+      if (levelName) bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.tier}</span><span class="alert-highlight">${esc(levelName)}</span></div>`;
+    } else if (layout === 'gift') {
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.gifted}</span><span class="alert-highlight">${esc(count)} ${isTwitch ? t.subs : t.memberships}</span></div>`;
+    } else if (layout === 'giftRec') {
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.from}</span><span class="alert-highlight">${esc(gifterUser || t.anonymous)}</span></div>`;
+    } else if (layout === 'superchat') {
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.amount}</span><span class="alert-highlight amount">${esc(amount)}</span></div>`;
+    } else if (layout === 'supersticker') {
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.amount}</span><span class="alert-highlight amount">${esc(amount)}</span></div>`;
       const sticker = this.safeImgUrl(stickerUrl);
-      if (sticker) bodyEl.innerHTML += `<div class="alert-media"><img src="${this.escapeHtml(sticker)}" /></div>`;
-    } else if (type === 'jewels') {
-      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.sent}</span><span class="alert-highlight amount">${this.escapeHtml(jewelsAmount)} ${t.jewels}</span></div>`;
-      if (jewelsName) bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.gift}</span><span class="alert-highlight">${this.escapeHtml(jewelsName)}</span></div>`;
+      if (sticker) bodyEl.innerHTML += `<div class="alert-media"><img src="${esc(sticker)}" /></div>`;
+    } else if (layout === 'jewels') {
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.sent}</span><span class="alert-highlight amount">${esc(jewelsAmount)} ${isTwitch ? t.bits : t.jewels}</span></div>`;
+      if (jewelsName) bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.gift}</span><span class="alert-highlight">${esc(jewelsName)}</span></div>`;
       const jewels = this.safeImgUrl(jewelsUrl);
-      if (jewels) bodyEl.innerHTML += `<div class="alert-media"><img src="${this.escapeHtml(jewels)}" /></div>`;
+      if (jewels) bodyEl.innerHTML += `<div class="alert-media"><img src="${esc(jewels)}" /></div>`;
+    } else if (layout === 'raid') {
+      bodyEl.innerHTML += `<div class="alert-detail-row"><span>${t.raiders}</span><span class="alert-highlight amount">${esc(count)} ${t.viewers}</span></div>`;
     }
 
     if (message) {
@@ -1924,7 +2061,7 @@ class GTAOverlayEngine {
     const u = d.user || {};
     const userName = u.name || d.userName || d.user || 'YouTube User';
     const userId = u.id || d.userId || '';
-    const message = d.message || d.rawInput || '';
+    const message = d.message || d.text || d.rawInput || '';
     const isMod = Boolean(u.isModerator || u.isOwner || d.isModerator || d.isOwner);
     const isMember = Boolean(u.isSponsor || u.isMember || d.isSponsor || d.isMember);
     const emotes = d.emotes || [];
@@ -1945,25 +2082,60 @@ class GTAOverlayEngine {
   }
 
   handleTwitchChatEvent(d) {
-    if (!d) return;
-    const userName = d.displayName || d.username || d.user || 'Twitch User';
-    const userId = d.userId || d.user_id || '';
-    const message = d.message || d.rawInput || '';
-    const roleNum = parseInt(d.role || '1', 10);
-    const isMod = Boolean(d.isModerator || roleNum >= 3);
-    const isMember = Boolean(d.isSubscriber || d.isVip || roleNum === 2);
-    const emotes = d.emotes || [];
-    const avatar = d.avatarUrl || d.userProfileUrl || '';
-    const msgId = d.msgId || `tw-${Date.now()}`;
+    const item = normalizeTwitchChat(d);
+    if (!item) return;
+    // Twitch chat has no picture: use the saved Twitch user variable userProfileUrl
+    // (written by "[Settings] Save user Vars on First Words"). Twitch platform only.
+    // Looked up for the chat bar and the Chat Box, each with its own Show Avatars setting.
+    const wantAvatar = this.config.platform === 'twitch' && this.client && item.userId &&
+      ((this.config.modules.chat && this.config.chatShowAvatars) || (this.config.modules.chatbox && this.config.cbAvatars));
+    if (wantAvatar && !item.avatar) item.avatar = this.twitchChatAvatars?.get(item.userId) || '';
+    this.handleIncomingChatMessage(item);
+    if (wantAvatar && !item.avatar) this.lookupTwitchChatAvatar(item.userId);
+  }
 
-    this.handleIncomingChatMessage({
-      userName,
-      userId,
-      message,
-      role: isMod ? 'mod' : (isMember ? 'member' : 'viewer'),
-      emotes,
-      avatar,
-      msgId
+  // Saved Twitch pictures: all of them once per page load, then one user at a time for anyone missing.
+  async lookupTwitchChatAvatar(userId) {
+    if (!this.twitchChatAvatars) this.twitchChatAvatars = new Map();
+    if (!this.twitchChatAvatarTries) this.twitchChatAvatarTries = new Map();
+    try {
+      if (!this.twitchChatAvatarsLoaded) {
+        this.twitchChatAvatarsLoaded = this.client.getUserGlobals('twitch', 'userProfileUrl', true)
+          .then(res => (res?.variables || []).forEach(v => { if (v.userId && v.value) this.twitchChatAvatars.set(String(v.userId), String(v.value)); }))
+          .catch(() => {});
+      }
+      await this.twitchChatAvatarsLoaded;
+      let url = this.twitchChatAvatars.get(userId);
+      // Not saved yet (their First Words may still be saving it): ask for this user, once now and once ~2s later.
+      const tries = this.twitchChatAvatarTries.get(userId) || 0;
+      if (!url && tries < 2) {
+        this.twitchChatAvatarTries.set(userId, tries + 1);
+        if (tries > 0) await new Promise(r => setTimeout(r, 2000));
+        const res = await this.client.getUserGlobal('twitch', userId, 'userProfileUrl', true).catch(() => null);
+        url = res?.status === 'ok' ? String(res.variable?.value || '') : '';
+        if (url) this.twitchChatAvatars.set(userId, url);
+        else if (tries === 0) return this.lookupTwitchChatAvatar(userId);
+      }
+      if (url) this.fillChatAvatar(userId, url);
+    } catch (e) { /* no picture: the line stays as it is */ }
+  }
+
+  fillChatAvatar(userId, url) {
+    // Chat Box: give that user's lines the picture and redraw them in place (no entry animation).
+    const boxRows = (this.chatboxLog || []).filter(row => String(row.userId) === String(userId) && !row.avatar);
+    if (boxRows.length) {
+      boxRows.forEach(row => { row.avatar = url; });
+      if (this.config.cbAvatars) this.repaintChatBox();
+    }
+    if (!this.dom.chatTrack || !this.config.chatShowAvatars) return;
+    this.dom.chatTrack.querySelectorAll('.chat-item').forEach(el => {
+      if (el.dataset.sender !== String(userId) || el.querySelector('.chat-avatar')) return;
+      const img = document.createElement('img');
+      img.className = 'chat-avatar';
+      img.alt = '';
+      img.onerror = () => { img.style.display = 'none'; };
+      img.src = url;
+      el.insertBefore(img, el.firstChild);
     });
   }
 
@@ -2635,6 +2807,7 @@ class GTAOverlayEngine {
       this.config.goalsGiftsCount, this.config.goalsGiftsGoal,
       this.config.goalsSupersCount, this.config.goalsSupersGoal
     ];
+    TWITCH_GOALS.forEach(([key]) => vars.push(this.config[key + 'Count'], this.config[key + 'Goal']));
     (this.config.goalsCustom || []).forEach(g => {
       if (g.count) vars.push(g.count);
       if (g.goal) vars.push(g.goal);
@@ -2721,14 +2894,20 @@ class GTAOverlayEngine {
 
   seedPreviewGoals() {
     if (!this.config.previewMode || this._goalsPreviewSeeded === false) return;
-    const samples = [
-      [this.config.goalsLikesCount, 1280, this.config.goalsLikesGoal, 5000],
-      [this.config.goalsMembersCount, 42, this.config.goalsMembersGoal, 100],
-      [this.config.goalsJewelsCount, 860, this.config.goalsJewelsGoal, 2000],
-      [this.config.goalsSubsCount, 310, this.config.goalsSubsGoal, 1000],
-      [this.config.goalsGiftsCount, 18, this.config.goalsGiftsGoal, 50],
-      [this.config.goalsSupersCount, 12, this.config.goalsSupersGoal, 40]
-    ];
+    // Only the current platform's bars (Twitch: Subscriptions, Followers, Sub Gifts, Bits).
+    const samples = this.config.platform === 'twitch'
+      ? [[42, 100], [310, 1000], [18, 50], [860, 2000]].map(([cv, gv], i) => {
+          const key = TWITCH_GOALS[i][0];
+          return [this.config[key + 'Count'], cv, this.config[key + 'Goal'], gv];
+        })
+      : [
+          [this.config.goalsLikesCount, 1280, this.config.goalsLikesGoal, 5000],
+          [this.config.goalsMembersCount, 42, this.config.goalsMembersGoal, 100],
+          [this.config.goalsJewelsCount, 860, this.config.goalsJewelsGoal, 2000],
+          [this.config.goalsSubsCount, 310, this.config.goalsSubsGoal, 1000],
+          [this.config.goalsGiftsCount, 18, this.config.goalsGiftsGoal, 50],
+          [this.config.goalsSupersCount, 12, this.config.goalsSupersGoal, 40]
+        ];
     (this.config.goalsCustom || []).forEach((g, i) => {
       if (g.count && g.goal) samples.push([g.count, (i + 1) * 15, g.goal, 100]);
     });
@@ -2807,12 +2986,18 @@ class GTAOverlayEngine {
       const label = `${this.formatGoalAmount(rawCurrent, currentNum)} / ${this.formatGoalAmount(missingTarget ? 100 : rawTarget, target)}`;
       bars.push({ title, current: currentNum, target, pct, countVar, label });
     };
-    add(this.config.goalsLikes, this.config.goalsLikesTitle, this.config.goalsLikesCount, this.config.goalsLikesGoal);
-    add(this.config.goalsMembers, this.config.goalsMembersTitle, this.config.goalsMembersCount, this.config.goalsMembersGoal);
-    add(this.config.goalsJewels, this.config.goalsJewelsTitle, this.config.goalsJewelsCount, this.config.goalsJewelsGoal);
-    add(this.config.goalsSubs, this.config.goalsSubsTitle, this.config.goalsSubsCount, this.config.goalsSubsGoal);
-    add(this.config.goalsGifts, this.config.goalsGiftsTitle, this.config.goalsGiftsCount, this.config.goalsGiftsGoal);
-    add(this.config.goalsSupers, this.config.goalsSupersTitle, this.config.goalsSupersCount, this.config.goalsSupersGoal);
+    // Each platform has its own goal fields (Twitch: twGoals*).
+    const c = this.config;
+    if (c.platform === 'twitch') {
+      TWITCH_GOALS.forEach(([key]) => add(c[key], c[key + 'Title'], c[key + 'Count'], c[key + 'Goal']));
+    } else {
+      add(c.goalsLikes, c.goalsLikesTitle, c.goalsLikesCount, c.goalsLikesGoal);
+      add(c.goalsMembers, c.goalsMembersTitle, c.goalsMembersCount, c.goalsMembersGoal);
+      add(c.goalsJewels, c.goalsJewelsTitle, c.goalsJewelsCount, c.goalsJewelsGoal);
+      add(c.goalsSubs, c.goalsSubsTitle, c.goalsSubsCount, c.goalsSubsGoal);
+      add(c.goalsGifts, c.goalsGiftsTitle, c.goalsGiftsCount, c.goalsGiftsGoal);
+      add(c.goalsSupers, c.goalsSupersTitle, c.goalsSupersCount, c.goalsSupersGoal);
+    }
     (this.config.goalsCustom || []).forEach(g => add(g.on, g.title, g.count, g.goal));
     const signature = bars.map(b => b.title + '\u0002' + b.countVar).join('\u0001');
     const inner = this.dom.goalsInner;

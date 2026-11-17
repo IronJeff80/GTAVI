@@ -203,6 +203,13 @@
           </select>
         </label>
         <label style="flex-direction:row; align-items:center; gap:8px;">
+          <span style="color:#8c96a6;"><i class="fa-solid fa-tower-broadcast"></i></span>
+          <select id="cfg-platform">
+            <option value="youtube" data-i18n="opt_platform_youtube" selected>YouTube</option>
+            <option value="twitch" data-i18n="opt_platform_twitch">Twitch</option>
+          </select>
+        </label>
+        <label style="flex-direction:row; align-items:center; gap:8px;">
           <span style="color:#8c96a6;"><i class="fa-solid fa-display"></i></span>
           <select id="cfg-res">
             <option value="720" data-i18n="res_720">720p Canvas</option>
@@ -274,7 +281,7 @@
         </a>
       </div>
 
-      <div class="panel" id="panel-livesub">
+      <div class="panel" id="panel-livesub" data-platform="youtube">
         <div class="panel-title"><i class="fa-brands fa-youtube"></i> <span data-i18n="panel_livesub">Live Subscriber Count</span></div>
         <p style="font-size:0.75rem; color:#9aa4b2;" data-i18n="desc_livesub">YouTube Studio does not send the live subscriber total through chat. A Tampermonkey script reads the number on screen and sends it to Streamer.bot. Pick the browser you will leave open.</p>
         <div class="choice-switcher" id="livesub-browser">
@@ -386,7 +393,7 @@
         </div>
         <label><span data-i18n="lbl_bg_fill_color">Card Base Fill</span> <div class="color-picker-group"><input type="color" id="picker-cBg" value="#303030"><input type="text" id="cfg-cBg" value="#303030"></div></label>
       </div>
-      <div class="panel">
+      <div class="panel" id="panel-member-emotes" data-platform="youtube">
         <div class="panel-title"><i class="fa-solid fa-face-smile"></i> <span data-i18n="panel_member_emotes">YouTube Member Emotes</span></div>
         <div id="emote-status" class="status-log" data-i18n="emote_status_disconnected">Connect Streamer.bot on the General tab to load or save member emotes.</div>
         <div class="grid-2">
@@ -404,7 +411,7 @@
         </div>
         <div id="emote-list" class="emote-list"></div>
       </div>
-      <div class="panel">
+      <div class="panel" id="panel-emote-form" data-platform="youtube">
         <div class="panel-title" id="emote-form-title"><span data-i18n="emote_form_add">Add New Emote</span></div>
         <label><span data-i18n="lbl_emote_name">Emote Name</span>
           <div class="emote-code">
@@ -421,7 +428,7 @@
           <button class="btn btn-teal" id="btn-emote-add" type="button"><span data-i18n="btn_emote_add">Add Emote</span></button>
         </div>
       </div>
-      <div class="panel">
+      <div class="panel" id="panel-emote-import" data-platform="youtube">
         <div class="panel-title"><span data-i18n="btn_emote_import">Import JSON</span></div>
         <label><span data-i18n="lbl_emote_paste">Paste a memberEmojiMap object</span>
           <textarea id="emote-json" style="min-height:88px; resize:vertical; font-family:monospace; font-size:0.72rem;" data-i18n-placeholder="ph_emote_json" placeholder='{":_3stars:":"https://..."}'></textarea>
@@ -553,7 +560,7 @@ public class CPHInline
 
     <!-- TAB 3: ALERTS -->
     <div id="tab-alerts" class="tab-content">
-      <div class="panel">
+      <div class="panel" id="panel-yt-events" data-platform="youtube">
         <div class="panel-title"><i class="fa-brands fa-youtube"></i> <span data-i18n="panel_yt_events">YouTube Events &amp; Accent Colors</span></div>
         <p style="font-size:0.72rem; color:#9aa4b2;" data-i18n="desc_yt_events">Choose an accent color and visibility for each alert. Duration 0 uses the global alert time. Any other number of seconds overrides it.</p>
 
@@ -564,7 +571,19 @@ public class CPHInline
         <div class="alert-config-row"><span data-i18n="al_gift_rec">Gift Membership Received</span><select id="cfg-ac_grc"><option value="teal" data-i18n="opt_teal" selected>TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_grc" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_grc" checked></div></div>
         <div class="alert-config-row"><span data-i18n="al_superchat">Super Chat</span><select id="cfg-ac_sc"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_sc" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_sc" checked></div></div>
         <div class="alert-config-row"><span data-i18n="al_supersticker">Super Sticker</span><select id="cfg-ac_stk"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_stk" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_stk" checked></div></div>
-        <div class="alert-config-row"><span data-i18n="al_jewels">Jewels Gifted</span><select id="cfg-ac_jwl"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_jwl" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_jwl" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_jewels_bits">Jewels / Bits</span><select id="cfg-ac_jwl"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_jwl" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_jwl" checked></div></div>
+      </div>
+
+      <div class="panel" id="panel-twitch-events" data-platform="twitch">
+        <div class="panel-title"><i class="fa-brands fa-twitch"></i> <span data-i18n="panel_twitch_events">Twitch Events</span></div>
+        <p style="font-size:0.72rem; color:#9aa4b2;" data-i18n="desc_twitch_events">Choose an accent color and visibility for each Twitch alert. Duration 0 uses the global alert time. Any other number of seconds overrides it.</p>
+        <div class="alert-config-row"><span data-i18n="al_tw_sub">Subs</span><select id="cfg-ac_twsub"><option value="teal" data-i18n="opt_teal" selected>TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_twsub" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_twsub" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_tw_resub">Re-subs</span><select id="cfg-ac_twrs"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple" selected>PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_twrs" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_twrs" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_tw_giftsub">Gift Subs</span><select id="cfg-ac_twgs"><option value="teal" data-i18n="opt_teal" selected>TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_twgs" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_twgs" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_tw_bomb">Sub Bombs</span><select id="cfg-ac_twgb"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink" selected>PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_twgb" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_twgb" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_tw_bits">Cheers / Bits</span><select id="cfg-ac_twbits"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow" selected>YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_twbits" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_twbits" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_follow">New Follower</span><select id="cfg-ac_fol"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink">PINK</option><option value="purple" data-i18n="opt_purple" selected>PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_fol" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_fol" checked></div></div>
+        <div class="alert-config-row"><span data-i18n="al_raid">Incoming Raid</span><select id="cfg-ac_rd"><option value="teal" data-i18n="opt_teal">TEAL</option><option value="pink" data-i18n="opt_pink" selected>PINK</option><option value="purple" data-i18n="opt_purple">PURPLE</option><option value="yellow" data-i18n="opt_yellow">YELLOW</option></select><div class="alert-dur"><input type="number" id="cfg-ad_rd" value="0" min="0" max="300" step="1"><span>s</span></div><div class="switch-cell"><input type="checkbox" class="switch" id="chk-al_rd" checked></div></div>
       </div>
 
       <div class="panel">
@@ -1244,7 +1263,7 @@ public class CPHInline
           </label>
         </div>
         <p style="font-size:0.68rem; color:#8c96a6; margin-top:-4px;" data-i18n="desc_goals_ticker">In ticker mode these move the whole goal card on and off screen. The card stays hidden through the gap and the repeat delay.</p>
-        <div class="toggle-strip">
+        <div class="toggle-strip" data-platform="youtube">
           <label class="mini-switch-card"><span data-i18n="chk_goals_likes">Likes</span><input type="checkbox" class="switch" id="chk-goalsLikes" checked></label>
           <label class="mini-switch-card"><span data-i18n="chk_goals_members">Memberships</span><input type="checkbox" class="switch" id="chk-goalsMembers" checked></label>
           <label class="mini-switch-card"><span data-i18n="chk_goals_jewels">Jewels</span><input type="checkbox" class="switch" id="chk-goalsJewels" checked></label>
@@ -1252,10 +1271,16 @@ public class CPHInline
           <label class="mini-switch-card"><span data-i18n="chk_goals_gifts">Member Gifts</span><input type="checkbox" class="switch" id="chk-goalsGifts" checked></label>
           <label class="mini-switch-card"><span data-i18n="chk_goals_supers">Super Chats/Stickers</span><input type="checkbox" class="switch" id="chk-goalsSupers" checked></label>
         </div>
+        <div class="toggle-strip" data-platform="twitch">
+          <label class="mini-switch-card"><span data-i18n="chk_tw_goals_subs">Subscriptions</span><input type="checkbox" class="switch" id="chk-twGoalsSubs" checked></label>
+          <label class="mini-switch-card"><span data-i18n="chk_tw_goals_followers">Followers</span><input type="checkbox" class="switch" id="chk-twGoalsFollowers" checked></label>
+          <label class="mini-switch-card"><span data-i18n="chk_tw_goals_subgifts">Sub Gifts</span><input type="checkbox" class="switch" id="chk-twGoalsSubGifts" checked></label>
+          <label class="mini-switch-card"><span data-i18n="chk_tw_goals_bits">Bits</span><input type="checkbox" class="switch" id="chk-twGoalsBits" checked></label>
+        </div>
       </div>
       <div class="panel">
         <div class="panel-title"><i class="fa-solid fa-gear"></i> <span data-i18n="panel_goals_vars">Goal Variables</span></div>
-        <div class="grid-2">
+        <div class="grid-2" data-platform="youtube">
           <label><span data-i18n="lbl_goals_likes_title">Likes Title</span> <input type="text" id="cfg-goalsLikesTitle" value="Likes"></label>
           <label><span data-i18n="lbl_goals_likes_count">Likes Count Var</span> <input type="text" id="cfg-goalsLikesCount" value="likesCount"></label>
           <label><span data-i18n="lbl_goals_likes_goal">Likes Goal Var</span> <input type="text" id="cfg-goalsLikesGoal" value="LikesGoal"></label>
@@ -1274,6 +1299,20 @@ public class CPHInline
           <label><span data-i18n="lbl_goals_supers_title">Super Chats/Stickers Title</span> <input type="text" id="cfg-goalsSupersTitle" value="Super Chats/Stickers"></label>
           <label><span data-i18n="lbl_goals_supers_count">Super Chats/Stickers Count Var</span> <input type="text" id="cfg-goalsSupersCount" value="superCount"></label>
           <label><span data-i18n="lbl_goals_supers_goal">Super Chats/Stickers Goal Var</span> <input type="text" id="cfg-goalsSupersGoal" value="superGoal"></label>
+        </div>
+        <div class="grid-2" data-platform="twitch">
+          <label><span data-i18n="lbl_tw_goals_subs_title">Subscriptions Title</span> <input type="text" id="cfg-twGoalsSubsTitle" value="Subscriptions"></label>
+          <label><span data-i18n="lbl_tw_goals_subs_count">Subscriptions Count Var</span> <input type="text" id="cfg-twGoalsSubsCount" value="subCount"></label>
+          <label><span data-i18n="lbl_tw_goals_subs_goal">Subscriptions Goal Var</span> <input type="text" id="cfg-twGoalsSubsGoal" value="subGoal"></label>
+          <label><span data-i18n="lbl_tw_goals_followers_title">Followers Title</span> <input type="text" id="cfg-twGoalsFollowersTitle" value="Followers"></label>
+          <label><span data-i18n="lbl_tw_goals_followers_count">Followers Count Var</span> <input type="text" id="cfg-twGoalsFollowersCount" value="followerCount"></label>
+          <label><span data-i18n="lbl_tw_goals_followers_goal">Followers Goal Var</span> <input type="text" id="cfg-twGoalsFollowersGoal" value="followerGoal"></label>
+          <label><span data-i18n="lbl_tw_goals_subgifts_title">Sub Gifts Title</span> <input type="text" id="cfg-twGoalsSubGiftsTitle" value="Sub Gifts"></label>
+          <label><span data-i18n="lbl_tw_goals_subgifts_count">Sub Gifts Count Var</span> <input type="text" id="cfg-twGoalsSubGiftsCount" value="subGiftsCount"></label>
+          <label><span data-i18n="lbl_tw_goals_subgifts_goal">Sub Gifts Goal Var</span> <input type="text" id="cfg-twGoalsSubGiftsGoal" value="subGiftsGoal"></label>
+          <label><span data-i18n="lbl_tw_goals_bits_title">Bits Title</span> <input type="text" id="cfg-twGoalsBitsTitle" value="Bits"></label>
+          <label><span data-i18n="lbl_tw_goals_bits_count">Bits Count Var</span> <input type="text" id="cfg-twGoalsBitsCount" value="bitsCount"></label>
+          <label><span data-i18n="lbl_tw_goals_bits_goal">Bits Goal Var</span> <input type="text" id="cfg-twGoalsBitsGoal" value="bitsGoal"></label>
         </div>
       </div>
       <div class="panel">
@@ -1305,14 +1344,21 @@ public class CPHInline
         <div class="grid-2">
           <label><span data-i18n="lbl_sim_alert_type">Alert Type to Simulate</span>
             <select id="sim-alert-type">
-              <option value="sub" data-i18n="al_new_sub">New Subscriber</option>
-              <option value="member" data-i18n="al_new_mem">New Member</option>
-              <option value="milestone" data-i18n="al_milestone">Membership Milestone</option>
-              <option value="gift" data-i18n="al_gift_sent">Membership Gift</option>
-              <option value="giftRec" data-i18n="al_gift_rec">Gift Received</option>
-              <option value="superchat" data-i18n="al_superchat">Super Chat</option>
-              <option value="supersticker" data-i18n="al_supersticker">Super Sticker</option>
-              <option value="jewels" data-i18n="al_jewels">Jewels Gifted</option>
+              <option value="sub" data-sim-platform="youtube" data-i18n="al_new_sub">New Subscriber</option>
+              <option value="member" data-sim-platform="youtube" data-i18n="al_new_mem">New Member</option>
+              <option value="milestone" data-sim-platform="youtube" data-i18n="al_milestone">Membership Milestone</option>
+              <option value="gift" data-sim-platform="youtube" data-i18n="al_gift_sent">Membership Gift</option>
+              <option value="giftRec" data-sim-platform="youtube" data-i18n="al_gift_rec">Gift Received</option>
+              <option value="superchat" data-sim-platform="youtube" data-i18n="al_superchat">Super Chat</option>
+              <option value="supersticker" data-sim-platform="youtube" data-i18n="al_supersticker">Super Sticker</option>
+              <option value="jewels" data-sim-platform="youtube" data-i18n="al_jewels_bits">Jewels / Bits</option>
+              <option value="twSub" data-sim-platform="twitch" data-i18n="al_tw_sub">Subs</option>
+              <option value="twResub" data-sim-platform="twitch" data-i18n="al_tw_resub">Re-subs</option>
+              <option value="twGiftSub" data-sim-platform="twitch" data-i18n="al_tw_giftsub">Gift Subs</option>
+              <option value="twGiftBomb" data-sim-platform="twitch" data-i18n="al_tw_bomb">Sub Bombs</option>
+              <option value="twBits" data-sim-platform="twitch" data-i18n="al_tw_bits">Cheers / Bits</option>
+              <option value="follow" data-sim-platform="twitch" data-i18n="al_follow">New Follower</option>
+              <option value="raid" data-sim-platform="twitch" data-i18n="al_raid">Incoming Raid</option>
             </select>
           </label>
           <label><span data-i18n="lbl_sim_chat_role">Chat Role to Simulate</span>
@@ -1858,6 +1904,34 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Jewels Gifted",
+    "al_jewels_bits": "Jewels / Bits",
+    "panel_twitch_events": "Twitch Events",
+    "desc_twitch_events": "Choose an accent color and visibility for each Twitch alert. Duration 0 uses the global alert time. Any other number of seconds overrides it.",
+    "al_tw_sub": "Subs",
+    "al_tw_resub": "Re-subs",
+    "al_tw_giftsub": "Gift Subs",
+    "al_tw_bomb": "Sub Bombs",
+    "al_tw_bits": "Cheers / Bits",
+    "chk_tw_goals_subs": "Subscriptions",
+    "lbl_tw_goals_subs_title": "Subscriptions Title",
+    "lbl_tw_goals_subs_count": "Subscriptions Count Var",
+    "lbl_tw_goals_subs_goal": "Subscriptions Goal Var",
+    "chk_tw_goals_followers": "Followers",
+    "lbl_tw_goals_followers_title": "Followers Title",
+    "lbl_tw_goals_followers_count": "Followers Count Var",
+    "lbl_tw_goals_followers_goal": "Followers Goal Var",
+    "chk_tw_goals_subgifts": "Sub Gifts",
+    "lbl_tw_goals_subgifts_title": "Sub Gifts Title",
+    "lbl_tw_goals_subgifts_count": "Sub Gifts Count Var",
+    "lbl_tw_goals_subgifts_goal": "Sub Gifts Goal Var",
+    "chk_tw_goals_bits": "Bits",
+    "lbl_tw_goals_bits_title": "Bits Title",
+    "lbl_tw_goals_bits_count": "Bits Count Var",
+    "lbl_tw_goals_bits_goal": "Bits Goal Var",
+    "al_follow": "New Follower",
+    "al_raid": "Incoming Raid",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Alerts Position & Timing",
     "lbl_sb_alert_event": "SB Custom Alert Event",
     "panel_so_pos": "Shoutout Toast Position & Timing",
@@ -2307,6 +2381,34 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Joias Enviadas",
+    "al_jewels_bits": "Joias / Bits",
+    "panel_twitch_events": "Eventos da Twitch",
+    "desc_twitch_events": "Escolha a cor de destaque e a visibilidade de cada alerta. Duração 0 usa o tempo global. Qualquer outro número, em segundos, substitui o global.",
+    "al_tw_sub": "Subs",
+    "al_tw_resub": "Resubs",
+    "al_tw_giftsub": "Subs de Presente",
+    "al_tw_bomb": "Bombas de Subs",
+    "al_tw_bits": "Cheers / Bits",
+    "chk_tw_goals_subs": "Inscrições",
+    "lbl_tw_goals_subs_title": "Título (Inscrições)",
+    "lbl_tw_goals_subs_count": "Var de Contagem (Inscrições)",
+    "lbl_tw_goals_subs_goal": "Var da Meta (Inscrições)",
+    "chk_tw_goals_followers": "Seguidores",
+    "lbl_tw_goals_followers_title": "Título (Seguidores)",
+    "lbl_tw_goals_followers_count": "Var de Contagem (Seguidores)",
+    "lbl_tw_goals_followers_goal": "Var da Meta (Seguidores)",
+    "chk_tw_goals_subgifts": "Subs de Presente",
+    "lbl_tw_goals_subgifts_title": "Título (Subs de Presente)",
+    "lbl_tw_goals_subgifts_count": "Var de Contagem (Subs de Presente)",
+    "lbl_tw_goals_subgifts_goal": "Var da Meta (Subs de Presente)",
+    "chk_tw_goals_bits": "Bits",
+    "lbl_tw_goals_bits_title": "Título (Bits)",
+    "lbl_tw_goals_bits_count": "Var de Contagem (Bits)",
+    "lbl_tw_goals_bits_goal": "Var da Meta (Bits)",
+    "al_follow": "Novo Seguidor",
+    "al_raid": "Raid Recebida",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Posição e Tempo dos Alertas",
     "lbl_sb_alert_event": "Evento de Alerta SB",
     "panel_so_pos": "Posição e Tempo do Shoutout",
@@ -2771,6 +2873,34 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Joyas Regaladas",
+    "al_jewels_bits": "Joyas / Bits",
+    "panel_twitch_events": "Eventos de Twitch",
+    "desc_twitch_events": "Elige el color de acento y la visibilidad de cada alerta. Duración 0 usa el tiempo global. Cualquier otro número, en segundos, lo sustituye.",
+    "al_tw_sub": "Subs",
+    "al_tw_resub": "Resubs",
+    "al_tw_giftsub": "Subs de Regalo",
+    "al_tw_bomb": "Bombas de Subs",
+    "al_tw_bits": "Cheers / Bits",
+    "chk_tw_goals_subs": "Suscripciones",
+    "lbl_tw_goals_subs_title": "Título (Suscripciones)",
+    "lbl_tw_goals_subs_count": "Var de Conteo (Suscripciones)",
+    "lbl_tw_goals_subs_goal": "Var de Meta (Suscripciones)",
+    "chk_tw_goals_followers": "Seguidores",
+    "lbl_tw_goals_followers_title": "Título (Seguidores)",
+    "lbl_tw_goals_followers_count": "Var de Conteo (Seguidores)",
+    "lbl_tw_goals_followers_goal": "Var de Meta (Seguidores)",
+    "chk_tw_goals_subgifts": "Subs de Regalo",
+    "lbl_tw_goals_subgifts_title": "Título (Subs de Regalo)",
+    "lbl_tw_goals_subgifts_count": "Var de Conteo (Subs de Regalo)",
+    "lbl_tw_goals_subgifts_goal": "Var de Meta (Subs de Regalo)",
+    "chk_tw_goals_bits": "Bits",
+    "lbl_tw_goals_bits_title": "Título (Bits)",
+    "lbl_tw_goals_bits_count": "Var de Conteo (Bits)",
+    "lbl_tw_goals_bits_goal": "Var de Meta (Bits)",
+    "al_follow": "Nuevo Seguidor",
+    "al_raid": "Raid Entrante",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Posición y Tiempo de Alertas",
     "lbl_sb_alert_event": "Evento de Alerta Personalizado SB",
     "panel_so_pos": "Posición y Tiempo del Destacado",
@@ -3250,6 +3380,34 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Joyaux Offerts",
+    "al_jewels_bits": "Joyaux / Bits",
+    "panel_twitch_events": "Événements Twitch",
+    "desc_twitch_events": "Choisissez la couleur d'accent et la visibilité de chaque alerte. Une durée de 0 utilise le temps global. Tout autre nombre de secondes le remplace.",
+    "al_tw_sub": "Subs",
+    "al_tw_resub": "Resubs",
+    "al_tw_giftsub": "Subs Offerts",
+    "al_tw_bomb": "Bombes de Subs",
+    "al_tw_bits": "Cheers / Bits",
+    "chk_tw_goals_subs": "Abonnements",
+    "lbl_tw_goals_subs_title": "Titre (Abonnements)",
+    "lbl_tw_goals_subs_count": "Var Compteur (Abonnements)",
+    "lbl_tw_goals_subs_goal": "Var Objectif (Abonnements)",
+    "chk_tw_goals_followers": "Followers",
+    "lbl_tw_goals_followers_title": "Titre (Followers)",
+    "lbl_tw_goals_followers_count": "Var Compteur (Followers)",
+    "lbl_tw_goals_followers_goal": "Var Objectif (Followers)",
+    "chk_tw_goals_subgifts": "Subs Offerts",
+    "lbl_tw_goals_subgifts_title": "Titre (Subs Offerts)",
+    "lbl_tw_goals_subgifts_count": "Var Compteur (Subs Offerts)",
+    "lbl_tw_goals_subgifts_goal": "Var Objectif (Subs Offerts)",
+    "chk_tw_goals_bits": "Bits",
+    "lbl_tw_goals_bits_title": "Titre (Bits)",
+    "lbl_tw_goals_bits_count": "Var Compteur (Bits)",
+    "lbl_tw_goals_bits_goal": "Var Objectif (Bits)",
+    "al_follow": "Nouveau Follower",
+    "al_raid": "Raid Entrant",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Position et Durée des Alertes",
     "lbl_sb_alert_event": "Événement d'Alerte SB",
     "panel_so_pos": "Position et Durée de la Dédicace",
@@ -3714,6 +3872,34 @@ public class CPHInline
     "al_superchat": "Super Chat",
     "al_supersticker": "Super Sticker",
     "al_jewels": "Juwelen geschenkt",
+    "al_jewels_bits": "Juwelen / Bits",
+    "panel_twitch_events": "Twitch-Events",
+    "desc_twitch_events": "Wähle Akzentfarbe und Sichtbarkeit für jeden Alert. Dauer 0 nutzt die globale Zeit. Jede andere Sekundenzahl überschreibt sie.",
+    "al_tw_sub": "Subs",
+    "al_tw_resub": "Resubs",
+    "al_tw_giftsub": "Geschenk-Subs",
+    "al_tw_bomb": "Sub-Bomben",
+    "al_tw_bits": "Cheers / Bits",
+    "chk_tw_goals_subs": "Abos",
+    "lbl_tw_goals_subs_title": "Titel (Abos)",
+    "lbl_tw_goals_subs_count": "Zählvariable (Abos)",
+    "lbl_tw_goals_subs_goal": "Zielvariable (Abos)",
+    "chk_tw_goals_followers": "Follower",
+    "lbl_tw_goals_followers_title": "Titel (Follower)",
+    "lbl_tw_goals_followers_count": "Zählvariable (Follower)",
+    "lbl_tw_goals_followers_goal": "Zielvariable (Follower)",
+    "chk_tw_goals_subgifts": "Geschenk-Subs",
+    "lbl_tw_goals_subgifts_title": "Titel (Geschenk-Subs)",
+    "lbl_tw_goals_subgifts_count": "Zählvariable (Geschenk-Subs)",
+    "lbl_tw_goals_subgifts_goal": "Zielvariable (Geschenk-Subs)",
+    "chk_tw_goals_bits": "Bits",
+    "lbl_tw_goals_bits_title": "Titel (Bits)",
+    "lbl_tw_goals_bits_count": "Zählvariable (Bits)",
+    "lbl_tw_goals_bits_goal": "Zielvariable (Bits)",
+    "al_follow": "Neuer Follower",
+    "al_raid": "Eingehender Raid",
+    "opt_platform_youtube": "YouTube",
+    "opt_platform_twitch": "Twitch",
     "panel_alerts_pos": "Alert-Position & Timing",
     "lbl_sb_alert_event": "Eigenes SB-Alert-Event",
     "panel_so_pos": "Shoutout-Position & Timing",
@@ -4469,8 +4655,9 @@ public class CPHInline
       'fontHeading','fontBody','bg','walkon-bg','so-bg','qa-bg','alert-bg','chat-bg','vAvatar','vTier',
       'cPink','cTeal','cPurple','cYellow','cStroke','cBorder','cBg','palette',
       'alertEvent','ax','ay','ascale','v_ax','v_ay','v_ascale','aDur',
-      'ac_sub','ac_mem','ac_ms','ac_gft','ac_grc','ac_sc','ac_stk','ac_jwl',
-      'ad_sub','ad_mem','ad_ms','ad_gft','ad_grc','ad_sc','ad_stk','ad_jwl',
+      'platform',
+      'ac_sub','ac_mem','ac_ms','ac_gft','ac_grc','ac_sc','ac_stk','ac_jwl','ac_fol','ac_rd','ac_twsub','ac_twrs','ac_twgs','ac_twgb','ac_twbits',
+      'ad_sub','ad_mem','ad_ms','ad_gft','ad_grc','ad_sc','ad_stk','ad_jwl','ad_fol','ad_rd','ad_twsub','ad_twrs','ad_twgs','ad_twgb','ad_twbits',
       'soX','soY','soScale','v_soX','v_soY','v_soScale',
       'soDur','soAnim','soLayout','soColor','soTitle','soVar','soEvent',
       'chatX','chatY','chatW','chatScale','v_chatX','v_chatY','v_chatW','v_chatScale',
@@ -4482,14 +4669,16 @@ public class CPHInline
       'cb-bg','cb-msg-bg','cbAccent','cbMem','cbMod','cbView','cbMsg','cbFill','cbFillOp','cbPrefixes','cbIgUsers',
       'qaX','qaY','qaScale','v_qaX','v_qaY','v_qaScale',
       'qaDur','qaAnim','qaColor','qaTitle','qaVar','qaEvent',
-      'f5X','f5Y','v_f5X','v_f5Y','f5GroupX','f5GroupY','v_f5GroupX','v_f5GroupY','f5Size','v_f5Size','f5InDir','f5InStyle','f5OutDir','f5OutStyle','f5Shape','f5Gap','v_f5Gap','f5Width','v_f5Width','f5Height','v_f5Height','f5Align','f5EndDelay','f5SfxVol','f5Color1','f5Color2','f5Color3','f5Color4','f5Color5','f5Event','goalsX','goalsY','goalsScale','v_goalsX','v_goalsY','v_goalsScale','goalsMode','goalsShowDur','goalsGapDur','goalsRepeatDelay','goalsAnimIn','goalsAnimOut','goalsColor','goals-bg','goalsLikesTitle','goalsLikesCount','goalsLikesGoal','goalsMembersTitle','goalsMembersCount','goalsMembersGoal','goalsJewelsTitle','goalsJewelsCount','goalsJewelsGoal','goalsSubsTitle','goalsSubsCount','goalsSubsGoal','goalsGiftsTitle','goalsGiftsCount','goalsGiftsGoal','goalsSupersTitle','goalsSupersCount','goalsSupersGoal'
+      'f5X','f5Y','v_f5X','v_f5Y','f5GroupX','f5GroupY','v_f5GroupX','v_f5GroupY','f5Size','v_f5Size','f5InDir','f5InStyle','f5OutDir','f5OutStyle','f5Shape','f5Gap','v_f5Gap','f5Width','v_f5Width','f5Height','v_f5Height','f5Align','f5EndDelay','f5SfxVol','f5Color1','f5Color2','f5Color3','f5Color4','f5Color5','f5Event','goalsX','goalsY','goalsScale','v_goalsX','v_goalsY','v_goalsScale','goalsMode','goalsShowDur','goalsGapDur','goalsRepeatDelay','goalsAnimIn','goalsAnimOut','goalsColor','goals-bg','goalsLikesTitle','goalsLikesCount','goalsLikesGoal','goalsMembersTitle','goalsMembersCount','goalsMembersGoal','goalsJewelsTitle','goalsJewelsCount','goalsJewelsGoal','goalsSubsTitle','goalsSubsCount','goalsSubsGoal','goalsGiftsTitle','goalsGiftsCount','goalsGiftsGoal','goalsSupersTitle','goalsSupersCount','goalsSupersGoal',
+      'twGoalsSubsTitle','twGoalsSubsCount','twGoalsSubsGoal','twGoalsFollowersTitle','twGoalsFollowersCount','twGoalsFollowersGoal','twGoalsSubGiftsTitle','twGoalsSubGiftsCount','twGoalsSubGiftsGoal','twGoalsBitsTitle','twGoalsBitsCount','twGoalsBitsGoal'
     ];
     const checkboxToggles = [
-      'al_sub','al_mem','al_ms','al_gft','al_grc','al_sc','al_stk','al_jwl',
+      'al_sub','al_mem','al_ms','al_gft','al_grc','al_sc','al_stk','al_jwl','al_fol','al_rd','al_twsub','al_twrs','al_twgs','al_twgb','al_twbits',
       'showAvatar','showUser','showTier',
       'chatAv','chatBadges','chatUpper','chatNoBg','chatNoCmd',
       'cbAv','cbBadges','cbUpper','cbShadow','cbRoleAccent','cbNoBg','cbNoCmd',
-      'qaShowBadge','f5AlignH','f5AlignV','v_f5AlignH','v_f5AlignV','f5GroupCenterH','f5GroupCenterV','v_f5GroupCenterH','v_f5GroupCenterV','f5Sfx','goalsAlignH','goalsAlignV','v_goalsAlignH','v_goalsAlignV','goalsLikes','goalsMembers','goalsJewels','goalsSubs','goalsGifts','goalsSupers'
+      'qaShowBadge','f5AlignH','f5AlignV','v_f5AlignH','v_f5AlignV','f5GroupCenterH','f5GroupCenterV','v_f5GroupCenterH','v_f5GroupCenterV','f5Sfx','goalsAlignH','goalsAlignV','v_goalsAlignH','v_goalsAlignV','goalsLikes','goalsMembers','goalsJewels','goalsSubs','goalsGifts','goalsSupers',
+      'twGoalsSubs','twGoalsFollowers','twGoalsSubGifts','twGoalsBits'
     ];
     
     function getSetupState(layoutContext = 'horiz') {
@@ -4746,6 +4935,7 @@ public class CPHInline
       if (raw.lookupAction !== undefined && document.getElementById('cfg-lookupAction')) {
         document.getElementById('cfg-lookupAction').value = raw.lookupAction;
       }
+      applyPlatformUi(false);
       if (raw.testUserInput !== undefined && document.getElementById('test-user-input')) {
         document.getElementById('test-user-input').value = raw.testUserInput;
       }
@@ -4760,6 +4950,8 @@ public class CPHInline
           el.checked = (String(s[id]) === '1' || s[id] === true);
         }
       });
+
+      migrateLegacyTwitchGoals(s);
 
       // 4. Restore Horizontal & Vertical Alignment Checkboxes & Disabled States
       const alignGroups = [
@@ -4978,7 +5170,7 @@ public class CPHInline
               payload: {
                 userName: u.name || d.userName || 'YouTube User',
                 userId: u.id || d.userId || '',
-                message: d.message || '',
+                message: d.message || d.text || '',
                 emotes: d.emotes || [],
                 parts: d.parts || [],
                 role: (u.isModerator || u.isOwner) ? 'mod' : ((u.isSponsor || u.isMember) ? 'member' : 'viewer'),
@@ -4988,9 +5180,105 @@ public class CPHInline
           }
         });
       });
+      sbAdminClient.on('Twitch.ChatMessage', (payload) => {
+        // Streamer.bot 1.1: { user: { id, name, role, subscribed }, text, messageId, emotes, parts }; older: { message: {...} }.
+        const data = payload?.data || payload;
+        if (!data) return;
+        const d = (data.message && typeof data.message === 'object') ? data.message : data;
+        const u = (d.user && typeof d.user === 'object') ? d.user : {};
+        const roleNum = parseInt(u.role ?? d.role ?? 1, 10) || 1;   // 1 viewer, 2 VIP, 3 mod, 4 broadcaster
+        const isMod = Boolean(d.isModerator || roleNum >= 3);
+        const isMember = Boolean(u.subscribed || d.isSubscriber || d.isVip || roleNum === 2);
+        [frameHoriz, frameVert].forEach(frame => {
+          if (frame && frame.contentWindow) {
+            frame.contentWindow.postMessage({
+              type: 'TRIGGER_CHAT_TEST',
+              payload: {
+                userName: u.name || u.login || d.displayName || d.username || (typeof d.user === 'string' ? d.user : '') || 'Twitch User',
+                userId: u.id || d.userId || d.user_id || '',
+                message: d.text ?? (typeof d.message === 'string' ? d.message : (d.rawInput || '')),
+                emotes: d.emotes || [],
+                parts: d.parts || [],
+                role: isMod ? 'mod' : (isMember ? 'member' : 'viewer'),
+                avatar: u.profileImageUrl || d.avatarUrl || d.userProfileUrl || '',
+                msgId: d.messageId || d.msgId || undefined
+              }
+            }, '*');
+          }
+        });
+      });
     }
     const btnConnectSb = document.getElementById('btn-connect-sb');
     if (btnConnectSb) btnConnectSb.addEventListener('click', connectSetupToSB);
+
+    // Platform (YouTube / Twitch): the overlay uses it for every platform-specific name.
+    // Panels, goal fields and simulator options tagged data-platform / data-sim-platform only show on their platform.
+    // Twitch has its own alert rows (ac_/ad_/al_ tw*) and goal fields (twGoals*), so nothing is shared with YouTube.
+    // Before v0.2.5 Twitch reused the YouTube goal fields; these were the Twitch values written into them.
+    const LEGACY_TWITCH_GOAL_VALUES = [
+      ['goalsMembersTitle', 'Memberships', 'Subs'],
+      ['goalsMembersCount', 'memberCount', 'subCount'],
+      ['goalsMembersGoal', 'memberGoal', 'subGoal'],
+      ['goalsJewelsTitle', 'Jewels', 'Bits'],
+      ['goalsJewelsGoal', 'JewelsGoal', 'jewelsGoal'],
+      ['goalsSubsTitle', 'Subscribers', 'Followers'],
+      ['goalsSubsCount', 'liveSubCount', 'followerCount'],
+      ['goalsSubsGoal', 'liveSubGoal', 'followerGoal'],
+      ['goalsGiftsTitle', 'Membership Gifts', 'Gift Subs']
+    ];
+    // Old config files: move the Twitch goals out of the YouTube fields (once), then restore the YouTube defaults.
+    function migrateLegacyTwitchGoals(s) {
+      const twKeys = ['twGoalsSubs', 'twGoalsFollowers', 'twGoalsSubGifts', 'twGoalsBits'];
+      const hasTwitchGoals = twKeys.some(k => s[k] !== undefined || s[k + 'Title'] !== undefined);
+      if (!hasTwitchGoals && s.platform === 'twitch') {
+        const ytDefaults = { goalsMembersTitle: 'Memberships', goalsMembersCount: 'memberCount', goalsMembersGoal: 'memberGoal',
+          goalsSubsTitle: 'Subscribers', goalsSubsCount: 'liveSubCount', goalsSubsGoal: 'liveSubGoal',
+          goalsGiftsTitle: 'Membership Gifts', goalsGiftsCount: 'membershipGiftsCount', goalsGiftsGoal: 'membershipGiftsGoal',
+          goalsJewelsTitle: 'Jewels', goalsJewelsCount: 'jewelsCount', goalsJewelsGoal: 'JewelsGoal' };
+        const renamed = { Subs: 'Subscriptions', 'Gift Subs': 'Sub Gifts', membershipGiftsCount: 'subGiftsCount', membershipGiftsGoal: 'subGiftsGoal',
+          jewelsCount: 'bitsCount', jewelsGoal: 'bitsGoal' };
+        [['goalsMembers', 'twGoalsSubs'], ['goalsSubs', 'twGoalsFollowers'], ['goalsGifts', 'twGoalsSubGifts'], ['goalsJewels', 'twGoalsBits']].forEach(([yt, tw]) => {
+          // A value that is not the YouTube default was a Twitch setting: move it, and give the YouTube field its default back.
+          ['Title', 'Count', 'Goal'].forEach(f => {
+            const v = s[yt + f];
+            if (v === undefined || v === '' || v === ytDefaults[yt + f]) return;
+            const twEl = document.getElementById(`cfg-${tw}${f}`);
+            if (twEl) twEl.value = renamed[v] || v;
+            const ytEl = document.getElementById(`cfg-${yt}${f}`);
+            if (ytEl) ytEl.value = ytDefaults[yt + f];
+          });
+          const chk = document.getElementById(`chk-${tw}`);
+          if (chk && s[yt] !== undefined) chk.checked = String(s[yt]) === '1' || s[yt] === true;
+          const ytChk = document.getElementById(`chk-${yt}`);
+          if (ytChk) ytChk.checked = true;
+        });
+      }
+      LEGACY_TWITCH_GOAL_VALUES.forEach(([id, ytName, twName]) => {
+        const el = document.getElementById(`cfg-${id}`);
+        if (el && el.value.trim() === twName) el.value = ytName;
+      });
+    }
+    function applyPlatformUi(fromUser) {
+      const isTw = document.getElementById('cfg-platform')?.value === 'twitch';
+      const platform = isTw ? 'twitch' : 'youtube';
+      document.querySelectorAll('[data-platform]').forEach(el => { el.style.display = el.dataset.platform === platform ? '' : 'none'; });
+      const sb107Btn = document.getElementById('btn-open-sb-import-107');
+      if (sb107Btn) sb107Btn.style.display = isTw ? 'none' : '';
+      const simType = document.getElementById('sim-alert-type');
+      if (simType) {
+        simType.querySelectorAll('option[data-sim-platform]').forEach(o => { const off = o.dataset.simPlatform !== platform; o.hidden = off; o.disabled = off; });
+        const cur = simType.selectedOptions[0];
+        if (cur && cur.disabled) simType.value = isTw ? 'twSub' : 'sub';
+      }
+      if (!fromUser) return;
+      const actionEl = document.getElementById('cfg-lookupAction');
+      if (actionEl && ['', 'GTA_LookupYouTubeUser', 'GTA_LookupTwitchUser'].includes(actionEl.value.trim())) {
+        actionEl.value = isTw ? 'GTA_LookupTwitchUser' : 'GTA_LookupYouTubeUser';
+      }
+    }
+    const platformEl = document.getElementById('cfg-platform');
+    if (platformEl) platformEl.addEventListener('change', () => { applyPlatformUi(true); syncLiveConfig(); });
+    applyPlatformUi(false);
 
     const OBS_STORE = 'gta-obs-connection';
     let obsWs = null;
@@ -5319,6 +5607,14 @@ public class CPHInline
         if (type === 'superchat') { p.triggerName = t('al_superchat'); p.amount = "$20.00"; p.message = "Love the stream!"; }
         if (type === 'supersticker') { p.triggerName = t('al_supersticker'); p.amount = "$5.00"; p.stickerImageUrl = "https://www.gstatic.com/youtube/img/pdg/gift/assets/loot_box.webp"; p.message = "Awesome!"; }
         if (type === 'jewels') { p.triggerName = t('al_jewels'); p.jewelsAmount = 150; p.jewelsName = "Controller"; p.jewelsUrl = "https://www.gstatic.com/youtube/img/pdg/gift/assets/controller.webp"; }
+        if (type === 'follow') { p.triggerName = t('al_follow'); }
+        if (type === 'raid') { p.triggerName = t('al_raid'); p.userName = 'BigStreamer'; p.count = 42; }
+        // Twitch sample data (same fields GTA_Master_Alerts.cs broadcasts for each Twitch trigger).
+        if (type === 'twSub') { p.triggerName = t('al_tw_sub'); p.levelName = '1'; }
+        if (type === 'twResub') { p.triggerName = t('al_tw_resub'); p.levelName = '1'; p.months = 12; p.message = "Keep up the great streams!"; }
+        if (type === 'twGiftSub') { p.triggerName = t('al_tw_giftsub'); p.gifterUser = "TommyV_86"; }
+        if (type === 'twGiftBomb') { p.triggerName = t('al_tw_bomb'); p.count = 5; }
+        if (type === 'twBits') { p.triggerName = t('al_tw_bits'); p.jewelsAmount = 500; p.message = "Take my bits!"; }
         sendToBoth({ type: 'TRIGGER_ALERT_TEST', payload: p });
       });
     }
@@ -6008,14 +6304,17 @@ public class CPHInline
     const label = document.getElementById('sb-import-version-label');
     if (!modal || !ta) return;
 
+    // The import matches the Platform setting: YouTube-only or Twitch-only actions (Twitch needs 1.1.0).
+    const platform = document.getElementById('cfg-platform')?.value === 'twitch' ? 'twitch' : 'youtube';
     const versions = {
-      '1.0.7': { label: '1.0.7 Stable', file: 'streamerbot/Streamer.Bot-1.0.7-ImportCode.txt' },
-      '1.1.0': { label: '1.1.0 Alpha', file: 'streamerbot/Streamer.Bot-1.1.0-Alpha-ImportCode.txt' }
+      '1.0.7': { label: '1.0.7 Stable', files: { youtube: 'streamerbot/Streamer.Bot-1.0.7-ImportCode.txt' } },
+      '1.1.0': { label: '1.1.0 Alpha', files: { youtube: 'streamerbot/Streamer.Bot-1.1.0-Alpha-ImportCode.txt', twitch: 'streamerbot/Streamer.Bot-1.1.0-Alpha-Twitch-ImportCode.txt' } }
     };
     const ver = versions[versionKey];
-    if (!ver) return;
+    if (!ver || !ver.files[platform]) return;
+    ver.file = ver.files[platform];
 
-    if (label) label.textContent = ver.label;
+    if (label) label.textContent = `${ver.label} · ${platform === 'twitch' ? 'Twitch' : 'YouTube'}`;
     ta.value = t('sb_loading');
     modal.style.display = 'flex';
 
@@ -6054,7 +6353,8 @@ public class CPHInline
     const blob = new Blob([ta.value], {type: 'text/plain'});
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = 'GTA-VI-Widget-Hub-SBImport-v0.3.0.txt';
+    const platform = document.getElementById('cfg-platform')?.value === 'twitch' ? 'Twitch' : 'YouTube';
+    a.download = `GTA-VI-Widget-Hub-SBImport-${platform}-v0.3.0.txt`;
     a.click();
     URL.revokeObjectURL(a.href);
   });
